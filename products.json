@@ -1,0 +1,162 @@
+[
+  {
+    "id": 1,
+    "clave": "CLV001",
+    "descripcion": "Descripción del ítem 1",
+    "estatus": true,
+    "imagen": "imagen1.jpg",
+    "isCompleted": false
+  },
+  {
+    "id": 2,
+    "clave": "CLV002",
+    "descripcion": "Descripción del ítem 2",
+    "estatus": false,
+    "imagen": "imagen2.jpg",
+    "isCompleted": true
+  },
+  {
+    "id": 3,
+    "clave": "CLV003",
+    "descripcion": "Descripción del ítem 3",
+    "estatus": true,
+    "imagen": "imagen3.jpg",
+    "isCompleted": false
+  },
+  {
+    "id": 4,
+    "clave": "CLV004",
+    "descripcion": "Descripción del ítem 4",
+    "estatus": false,
+    "imagen": "imagen4.jpg",
+    "isCompleted": true
+  },
+  {
+    "id": 5,
+    "clave": "CLV005",
+    "descripcion": "Descripción del ítem 5",
+    "estatus": true,
+    "imagen": "imagen5.jpg",
+    "isCompleted": false
+  },
+  {
+    "id": 6,
+    "clave": "CLV006",
+    "descripcion": "Descripción del ítem 6",
+    "estatus": true,
+    "imagen": "imagen6.jpg",
+    "isCompleted": true
+  },
+  {
+    "id": 7,
+    "clave": "CLV007",
+    "descripcion": "Descripción del ítem 7",
+    "estatus": false,
+    "imagen": "imagen7.jpg",
+    "isCompleted": false
+  },
+  {
+    "id": 8,
+    "clave": "CLV008",
+    "descripcion": "Descripción del ítem 8",
+    "estatus": true,
+    "imagen": "imagen8.jpg",
+    "isCompleted": true
+  },
+  {
+    "id": 9,
+    "clave": "CLV009",
+    "descripcion": "Descripción del ítem 9",
+    "estatus": false,
+    "imagen": "imagen9.jpg",
+    "isCompleted": false
+  },
+  {
+    "id": 10,
+    "clave": "CLV010",
+    "descripcion": "Descripción del ítem 10",
+    "estatus": true,
+    "imagen": "imagen10.jpg",
+    "isCompleted": true
+  },
+  {
+    "id": 11,
+    "clave": "CLV011",
+    "descripcion": "Descripción del ítem 11",
+    "estatus": true,
+    "imagen": "imagen11.jpg",
+    "isCompleted": false
+  },
+  {
+    "id": 12,
+    "clave": "CLV012",
+    "descripcion": "Descripción del ítem 12",
+    "estatus": false,
+    "imagen": "imagen12.jpg",
+    "isCompleted": true
+  },
+  {
+    "id": 13,
+    "clave": "CLV013",
+    "descripcion": "Descripción del ítem 13",
+    "estatus": true,
+    "imagen": "imagen13.jpg",
+    "isCompleted": false
+  },
+  {
+    "id": 14,
+    "clave": "CLV014",
+    "descripcion": "Descripción del ítem 14",
+    "estatus": true,
+    "imagen": "imagen14.jpg",
+    "isCompleted": true
+  },
+  {
+    "id": 15,
+    "clave": "CLV015",
+    "descripcion": "Descripción del ítem 15",
+    "estatus": false,
+    "imagen": "imagen15.jpg",
+    "isCompleted": false
+  },
+  {
+    "id": 16,
+    "clave": "CLV016",
+    "descripcion": "Descripción del ítem 16",
+    "estatus": true,
+    "imagen": "imagen16.jpg",
+    "isCompleted": true
+  },
+  {
+    "id": 17,
+    "clave": "CLV017",
+    "descripcion": "Descripción del ítem 17",
+    "estatus": true,
+    "imagen": "imagen17.jpg",
+    "isCompleted": false
+  },
+  {
+    "id": 18,
+    "clave": "CLV018",
+    "descripcion": "Descripción del ítem 18",
+    "estatus": false,
+    "imagen": "imagen18.jpg",
+    "isCompleted": true
+  },
+  {
+    "id": 19,
+    "clave": "CLV019",
+    "descripcion": "Descripción del ítem 19",
+    "estatus": true,
+    "imagen": "imagen19.jpg",
+    "isCompleted": false
+  },
+  {
+    "id": 20,
+    "clave": "CLV020",
+    "descripcion": "Descripción del ítem 20",
+    "estatus": true,
+    "imagen": "imagen20.jpg",
+    "isCompleted": true
+  }
+]
