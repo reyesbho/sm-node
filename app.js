@@ -1,17 +1,25 @@
-const express = require('express');
-let products = require('./products.json'); // Assuming products.json is in the same directory
-const crypto = require('node:crypto');
-const { validateProduct, validatePartialProduct } = require('./validators/productValidator');
+import express, { json } from 'express';
+import { randomUUID } from 'node:crypto';
+import { validateProduct, validatePartialProduct } from './validators/productValidator.js';
 const ACCEPTED_ORIGIN = [
     'http://localhost:8080',
     'http://localhost:3000',
     'http://sweetmomets:8080',
     'https://sweetmomets.com'
 ]; // Replace with your actual origin
-const cors = require('cors');
+import cors from 'cors';
+import fs from 'node:fs';
+
+// Load products from a JSON file
+//let products = JSON.parse(fs.readFileSync('./products.json', 'utf-8') || '[]');
+
+//crate your own required products
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const products = require('./products.json'); // Assuming products.json is in the same directory
 
 const app = express();
-app.use(express.json()); // Middleware to parse JSON bodies
+app.use(json()); // Middleware to parse JSON bodies
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin || ACCEPTED_ORIGIN.includes(origin)) {
@@ -58,7 +66,7 @@ app.post('/api/products', (req, res) => {
     }
 
     const newProduct = {
-        id: crypto.randomUUID(),
+        id: randomUUID(),
         ...result.data
     };
 
@@ -86,6 +94,18 @@ app.patch('/api/products/:id', (req, res) => {
 
     products[productIndex] = updatedProduct;
     res.json(updatedProduct);
+});
+
+app.delete('/api/products/:id', (req, res) => {
+    const {id} = req.params;
+    const productIndex = products.findIndex(p => p.id === id);
+
+    if (productIndex === -1) {
+        return res.status(404).send('Product not found');
+    }
+
+    products.splice(productIndex, 1);
+    res.status(204).send();
 });
 
 app.listen(port, () => {
