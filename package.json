@@ -1,0 +1,22 @@
+{
+  "name": "sm-node",
+  "version": "1.0.0",
+  "description": "backend for sweet moments",
+  "repository": {
+    "type": "git",
+    "url": "sm-node"
+  },
+  "license": "ISC",
+  "author": "reyesbho",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "cors": "2.8.5",
+    "express": "5.1.0",
+    "zod": "3.25.65"
+  }
+}
