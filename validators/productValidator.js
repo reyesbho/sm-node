@@ -1,24 +1,19 @@
 
-const z = require('zod');
+import { object, string, boolean } from 'zod';
 
-const productSchema = z.object({
-        clave: z.string().min(5, 'Min caracter length is 5'),
-        descripcion: z.string().min(5, 'Min caracter length is 5'),
-        imagen: z.string().optional(),
-        estatus: z.boolean().default(true),
-        isCompleted: z.boolean().default(false)
+const productSchema = object({
+        clave: string().min(5, 'Min caracter length is 5'),
+        descripcion: string().min(5, 'Min caracter length is 5'),
+        imagen: string().optional(),
+        estatus: boolean().default(true),
+        isCompleted: boolean().default(false)
     });
 
 
-function validateProduct(product) {
+export  function validateProduct(product) {
     return productSchema.safeParse(product);
 }
 
-function validatePartialProduct(product) {
+export function validatePartialProduct(product) {
     return productSchema.partial().safeParse(product);
 }   
-
-module.exports = {
-    validateProduct,
-    validatePartialProduct
-};
