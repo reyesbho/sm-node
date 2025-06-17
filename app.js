@@ -4,6 +4,7 @@ const crypto = require('node:crypto');
 const { validateProduct, validatePartialProduct } = require('./validators/productValidator');
 const ACCEPTED_ORIGIN = [
     'http://localhost:8080',
+    'http://localhost:3000',
     'http://sweetmomets:8080',
     'https://sweetmomets.com'
 ]; // Replace with your actual origin
