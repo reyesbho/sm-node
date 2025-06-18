@@ -1,28 +1,29 @@
 import express from 'express';
-import { producsRouter } from './routes/product.js';
 import { corsMiddleware } from './middlewares/cors.js';
+import { createProductRouter } from './routes/product.js';
 
 // Load products from a JSON file
 //let products = JSON.parse(fs.readFileSync('./products.json', 'utf-8') || '[]');
 
-const app = express();
+export function createApp({productModel}) {
+  const app = express();
+  app.disable('x-powered-by'); // Disable 'X-Powered-By' header for security
+  const port = process.env.PORT ?? 3000;
 
-app.disable('x-powered-by'); // Disable 'X-Powered-By' header for security
-const port = process.env.PORT ?? 3000;
+  app.use(express.json()); // Middleware to parse JSON bodies
+  app.use(corsMiddleware()); // Use custom CORS middleware
 
-app.use(express.json()); // Middleware to parse JSON bodies
+  app.get('/', (req, res) => {
+    res.send('Hello World!');
+  });
 
-app.use(corsMiddleware()); // Use custom CORS middleware
+  // Import and use the product router
+  app.use('/api/products', createProductRouter({productModel}));
 
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
+  app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
+  });
 
-// Import and use the product router
-app.use('/api/products', producsRouter);
+  return app;
+}
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
-
-export default app;
