@@ -10,11 +10,10 @@ export class ProductController {
 
     static async getById(req, res) {
         const {id} = req.params;  
-        const product = await ProductModel.getById(id);
+        const product = await ProductModel.getById({id});
         if (!product) {
             return res.status(422).send('Product not found');
         }
-        
          return res.json(product);
     }
 

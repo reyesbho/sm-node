@@ -1,7 +1,7 @@
 import { readJSON } from "../utils/utils.js";
 import { randomUUID } from 'node:crypto';
 
-const products = readJSON('../data/products.json'); // Assuming products.json is in the same directory
+let products = readJSON('../data/products.json'); // Assuming products.json is in the same directory
 
 export class ProductModel {
     static async getAll ({clave}) {
@@ -14,7 +14,8 @@ export class ProductModel {
     }
 
     static async getById ({id}) {
-        return products.find(p => p.id === id);
+        const product = products.find(p => p.id == id);
+        return product;
     }
 
     static async create (inputProduct) {
@@ -28,7 +29,7 @@ export class ProductModel {
     }   
 
     static async delete ({id}) {
-        const productIndex = products.findIndex(p => p.id === id);
+        const productIndex = products.findIndex(p => p.id == id);
         if (productIndex === -1) {
             return false; // Product not found
         }
