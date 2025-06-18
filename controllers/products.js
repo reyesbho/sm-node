@@ -12,7 +12,7 @@ export class ProductController {
         const {id} = req.params;  
         const product = await ProductModel.getById({id});
         if (!product) {
-            return res.status(422).send('Product not found');
+            return res.status(422).send({message: 'Product not found'});
         }
          return res.json(product);
     }
@@ -36,7 +36,7 @@ export class ProductController {
         const updateProduct = await ProductModel.update({id, ...result.data});
 
         if (updateProduct === false) {
-            return res.status(404).send('Product not found');
+            return res.status(404).send({message: 'Product not found'});
         }
 
         return res.json(updateProduct);
@@ -45,10 +45,9 @@ export class ProductController {
     static async delete(req, res) {
         const {id} = req.params;
         const result = await ProductModel.delete({id});
-
         if (result === false) {
-            return res.status(404).send('Product not found');
+            return res.status(404).send({message: 'Product not found'});
         }
-        return res.status(204).send();
+        return res.status(204).send('Product deleted successfully');
     }
 }
