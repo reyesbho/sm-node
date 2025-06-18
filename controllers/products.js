@@ -2,38 +2,42 @@ import { ProductModel } from "../models/Product.js";
 import { validateProduct, validatePartialProduct } from '../schemas/product.js';
 
 export class ProductController {
-    static async getAll(req, res) {
+    constructor ({productModel}) {
+        this.productModel = productModel;
+    }
+
+    getAll = async(req, res) => {
         const { search } = req.query;
-        const products = await ProductModel.getAll({ clave: search });
+        const products = await this.productModel.getAll({ clave: search });
         return res.json(products);
     }
 
-    static async getById(req, res) {
+    getById = async(req, res) => {
         const {id} = req.params;  
-        const product = await ProductModel.getById({id});
+        const product = await this.productModel.getById({id});
         if (!product) {
             return res.status(422).send({message: 'Product not found'});
         }
          return res.json(product);
     }
 
-    static async create(req, res) {
+    create = async(req, res) => {
         const result = validateProduct(req.body);
         if (result.error) {
             return res.status(400).json({error:JSON.parse(result.error.message)});
         }
-        const newProduct = await ProductModel.create(result.data);
+        const newProduct = await this.productModel.create(result.data);
         return res.status(201).json(newProduct);
     }
 
-    static async update(req, res) {
+    update = async(req, res) => {
         const {id} = req.params;
         const result = validatePartialProduct(req.body);
         if (result.error) {
             return res.status(400).json({error:JSON.parse(result.error.message)});
         }
 
-        const updateProduct = await ProductModel.update({id, ...result.data});
+        const updateProduct = await this.productModel.update({id, ...result.data});
 
         if (updateProduct === false) {
             return res.status(404).send({message: 'Product not found'});
@@ -42,9 +46,9 @@ export class ProductController {
         return res.json(updateProduct);
     }   
 
-    static async delete(req, res) {
+    delete = async(req, res) => {
         const {id} = req.params;
-        const result = await ProductModel.delete({id});
+        const result = await this.productModel.delete({id});
         if (result === false) {
             return res.status(404).send({message: 'Product not found'});
         }
