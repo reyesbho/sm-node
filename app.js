@@ -1,4 +1,4 @@
-import express, { json } from 'express';
+import express from 'express';
 import { producsRouter } from './routes/product.js';
 import { corsMiddleware } from './middlewares/cors.js';
 
@@ -10,7 +10,7 @@ const app = express();
 app.disable('x-powered-by'); // Disable 'X-Powered-By' header for security
 const port = process.env.PORT ?? 3000;
 
-app.use(json()); // Middleware to parse JSON bodies
+app.use(express.json()); // Middleware to parse JSON bodies
 
 app.use(corsMiddleware()); // Use custom CORS middleware
 
