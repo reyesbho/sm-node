@@ -9,15 +9,18 @@
   "license": "ISC",
   "author": "reyesbho",
   "type": "module",
-  "main": "app.js",  
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:local": "node server-with-local.js",
-    "start:postgres": "node server-with-local.js"
+    "start": "node server-with-local.js",
+    "start:local": "node --watch server-with-local.js",
+    "start:firebase": "node --watch server-with-firebase.js"
   },
   "dependencies": {
     "cors": "2.8.5",
+    "dotenv": "16.5.0",
     "express": "5.1.0",
+    "firebase": "11.9.1",
     "zod": "3.25.65"
   }
 }

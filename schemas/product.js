@@ -2,11 +2,13 @@
 import { object, string, boolean } from 'zod';
 
 const productSchema = object({
-        clave: string().min(5, 'Min caracter length is 5'),
         descripcion: string().min(5, 'Min caracter length is 5'),
         imagen: string().optional(),
         estatus: boolean().default(true),
-        isCompleted: boolean().default(false)
+        tag: string()
+            .max(10, 'Max character length is 10')
+            .regex(/^[a-z]+$/, 'Only lowercase letters without spaces or numbers allowed')
+            .optional()
     });
 
 

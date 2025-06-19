@@ -1,4 +1,3 @@
-import { ProductModel } from "../models/Product.js";
 import { validateProduct, validatePartialProduct } from '../schemas/product.js';
 
 export class ProductController {
@@ -7,8 +6,8 @@ export class ProductController {
     }
 
     getAll = async(req, res) => {
-        const { search } = req.query;
-        const products = await this.productModel.getAll({ clave: search });
+        const { tag } = req.query;
+        const products = await this.productModel.getAll({tag });
         return res.json(products);
     }
 

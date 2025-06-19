@@ -4,10 +4,10 @@ import { randomUUID } from 'node:crypto';
 let products = readJSON('../data/products.json'); // Assuming products.json is in the same directory
 
 export class ProductModel {
-    static async getAll ({clave}) {
-        if (clave) {
+    static async getAll ({tag}) {
+        if (tag) {
             return products.filter(product => 
-                product.clave.toLowerCase().includes(clave.toLowerCase())
+                product.tag.toLowerCase() === tag.toLowerCase()
             );
         }
         return products;
