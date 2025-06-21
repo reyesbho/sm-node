@@ -1,5 +1,5 @@
 import { createApp } from "./app.js";
-import { ProductModel } from "./models/Product.js";
+import { ProductModel } from "./src/models/Product.js";
 
  const app = createApp({productModel: ProductModel});
 
