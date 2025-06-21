@@ -1,11 +1,12 @@
 import express from 'express';
 import { corsMiddleware } from './src/middlewares/cors.js';
 import { createProductRouter } from './src/routes/product.js';
+import { createSizeProductRouter } from './src/routes/sizeProduct.js';
 
 // Load products from a JSON file
 //let products = JSON.parse(fs.readFileSync('./products.json', 'utf-8') || '[]');
 
-export function createApp({productModel}) {
+export function createApp({productModel, sizeProductModel}) {
   const app = express();
   app.disable('x-powered-by'); // Disable 'X-Powered-By' header for security
   const port = process.env.PORT ?? 3000;
@@ -19,6 +20,8 @@ export function createApp({productModel}) {
 
   // Import and use the product router
   app.use('/api/products', createProductRouter({productModel}));
+
+  app.use('/api/sizes', createSizeProductRouter({ sizeProductModel }));
 
   app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
