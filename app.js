@@ -1,6 +1,6 @@
 import express from 'express';
-import { corsMiddleware } from './middlewares/cors.js';
-import { createProductRouter } from './routes/product.js';
+import { corsMiddleware } from './src/middlewares/cors.js';
+import { createProductRouter } from './src/routes/product.js';
 
 // Load products from a JSON file
 //let products = JSON.parse(fs.readFileSync('./products.json', 'utf-8') || '[]');
