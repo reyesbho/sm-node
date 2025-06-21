@@ -1,6 +1,26 @@
 import { createApp } from "./app.js";
-import { ProductModel } from "./models/firebase/Product.js";
+import { ProductModel } from "./src/models/firebase/Product.js";
+import { SizeProductModel } from "./src/models/firebase/SizeProduct.js";
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+import { config } from "dotenv";
+config(); // Load environment variables from .env file
+const firebaseConfig = {
+  apiKey: process.env.APIKEY,
+  authDomain: process.env.AUTHDOMAIN,
+  databaseURL: process.env.DATABASEURL,
+  projectId: process.env.PROJECTID,
+  storageBucket: process.env.STORAGEBUCKET,
+  messagingSenderId: process.env.MESSAGINGSENDERID,
+  appId: process.env.APPID
+};
+// Log the configuration for debugging
+const firebase = initializeApp(firebaseConfig);
+const firestoreDb = getFirestore(firebase);
 
- const app = createApp({productModel: ProductModel});
+const productModel = new ProductModel({firestoreDb});
+const sizeProductModel = new SizeProductModel({firestoreDb});
+
+ const app = createApp({productModel, sizeProductModel});
 
  export default app;

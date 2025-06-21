@@ -1,5 +1,4 @@
-import {object} from 'zod';
-import { date, number, string } from 'zod/v4';
+import {object, date, number, string, boolean} from 'zod';
 
 export const pedidoSchema = object({
     fechaEntrega: date(),
