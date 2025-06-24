@@ -4,6 +4,7 @@ import { SizeProductModel } from "./src/models/firebase/SizeProduct.js";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { config } from "dotenv";
+import { PedidoModel } from "./src/models/firebase/Pedido.js";
 config(); // Load environment variables from .env file
 const firebaseConfig = {
   apiKey: process.env.APIKEY,
@@ -20,7 +21,8 @@ const firestoreDb = getFirestore(firebase);
 
 const productModel = new ProductModel({firestoreDb});
 const sizeProductModel = new SizeProductModel({firestoreDb});
+const pedidoModel = new PedidoModel({firestoreDb});
 
- const app = createApp({productModel, sizeProductModel});
+ const app = createApp({productModel, sizeProductModel, pedidoModel});
 
  export default app;

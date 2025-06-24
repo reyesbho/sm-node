@@ -1,17 +1,18 @@
 import {object, date, number, string, boolean} from 'zod';
 
 export const pedidoSchema = object({
-    fechaEntrega: date(),
+    fechaEntrega: string().refine(val => !isNaN(Date.parse(val)),{message:'Debe ser una fecha valida'}),
     lugarEntrega: string().optional(),
     cliente: string().min(5, 'Min character length is 5'),
     productos: object({
-        id: string().min(1, 'Product ID is required'),
         cantidad: number().int().positive('Quantity must be a positive integer'),
         size:object({
-            descripcion : string().min(20, 'Min character length is 5'),
+            id: string().min(1, 'Product ID is required'),
+            descripcion : string().min(5, 'Min character length is 5'),
             estatus: boolean().default(true),
         }),
         producto: object({
+            id: string().min(1, 'Product ID is required'),
             descripcion: string().min(5, 'Min caracter length is 5'),
             imagen: string().optional()
         }),
