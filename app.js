@@ -2,11 +2,12 @@ import express from 'express';
 import { corsMiddleware } from './src/middlewares/cors.js';
 import { createProductRouter } from './src/routes/product.js';
 import { createSizeProductRouter } from './src/routes/sizeProduct.js';
+import { createPedidoRouter } from './src/routes/pedido.js';
 
 // Load products from a JSON file
 //let products = JSON.parse(fs.readFileSync('./products.json', 'utf-8') || '[]');
 
-export function createApp({productModel, sizeProductModel}) {
+export function createApp({productModel, sizeProductModel, pedidoModel}) {
   const app = express();
   app.disable('x-powered-by'); // Disable 'X-Powered-By' header for security
   const port = process.env.PORT ?? 3000;
@@ -18,10 +19,14 @@ export function createApp({productModel, sizeProductModel}) {
     res.send('Hello World!');
   });
 
-  // Import and use the product router
+  // roter for product
   app.use('/api/products', createProductRouter({productModel}));
 
+  //router for sizes
   app.use('/api/sizes', createSizeProductRouter({ sizeProductModel }));
+
+  //router fro pedidos
+  app.use('/api/pedidos', createPedidoRouter({pedidoModel}))
 
   app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
