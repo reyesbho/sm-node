@@ -23,7 +23,7 @@ export class PedidoController {
     getById = async (req, res) => {
         const {id} = req.params;
         const pedido = await this.pedidoModel.getById({id});
-        if(!pedido){
+        if(pedido == false){
             return res.status(422).send({message: 'Product not found'});
         }
         return res.json(pedido);
@@ -36,7 +36,7 @@ export class PedidoController {
             return res.status(400).json({message: JSON.parse(result.error.message)});
         }
         const updatePedido = await this.pedidoModel.update({id, ...result.data});
-        if(!updatePedido){
+        if(updatePedido == false){
             return res.status(404).send({message:'Product not found'});
         }
         return res.json(updatePedido);
