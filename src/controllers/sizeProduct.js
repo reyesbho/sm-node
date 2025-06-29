@@ -14,7 +14,7 @@ export class SizeProductController {
     getById = async (req, res) => {
         const { id } = req.params;
         const sizeProduct = await this.sizeProductModel.getById({ id });
-        if (!sizeProduct) {
+        if (sizeProduct == false) {
             return res.status(422).send({ message: 'Size product not found' });
         }
         return res.json(sizeProduct);
@@ -37,7 +37,7 @@ export class SizeProductController {
         }
         const updatedSizeProduct = await this.sizeProductModel.update({ id, ...result.data });
 
-        if (!updatedSizeProduct) {
+        if (updatedSizeProduct == false) {
             return res.status(404).send({ message: 'Size product not found' });
         }
 
@@ -47,7 +47,7 @@ export class SizeProductController {
     delete = async (req, res) => {
         const { id } = req.params;
         const result = await this.sizeProductModel.delete({ id });
-        if (!result) {
+        if (result == false) {
             return res.status(404).send({ message: 'Size product not found' });
         }
         return res.status(204).send('Size product deleted successfully');

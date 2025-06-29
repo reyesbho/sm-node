@@ -14,7 +14,7 @@ export class ProductController {
     getById = async(req, res) => {
         const {id} = req.params;  
         const product = await this.productModel.getById({id});
-        if (!product) {
+        if (product == false) {
             return res.status(422).send({message: 'Product not found'});
         }
          return res.json(product);
