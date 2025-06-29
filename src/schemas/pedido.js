@@ -8,8 +8,7 @@ export const pedidoSchema = object({
         cantidad: number().int().positive('Quantity must be a positive integer'),
         size:object({
             id: string().min(1, 'Product ID is required'),
-            descripcion : string().min(5, 'Min character length is 5'),
-            estatus: boolean().default(true),
+            descripcion : string().min(5, 'Min character length is 5')
         }),
         producto: object({
             id: string().min(1, 'Product ID is required'),
@@ -19,7 +18,7 @@ export const pedidoSchema = object({
         caracteristicas: string().array().optional(),
         precio: number().positive('Price must be a positive number').default(0),
     }).array(),
-});
+}).passthrough();
 
 
 export function validatePedido(pedido) {

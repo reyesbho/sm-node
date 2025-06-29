@@ -1,5 +1,6 @@
-import { addDoc, collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { estatusPago, estatusPedido } from "../../utils/utils.js";
+import { date } from "zod/v4";
 
 export class PedidoModel{
     constructor({firestoreDb}){
@@ -17,6 +18,8 @@ export class PedidoModel{
     async getAll({fechaInicio, fechaFin, estatus, pagina, sizePagina}){
         const pedidos = [];
         const filters = [];
+        //always ignore delete 
+        filters.push(where('estatus', '!=', estatusPedido.DELETE));
         if(estatus){
             filters.push(where('estatus','==', estatus));
         }
@@ -45,9 +48,26 @@ export class PedidoModel{
         pedido.estatus = estatusPedido.INCOMPLETE;
         pedido.estatusPago = estatusPago.PENDIENTE;
         pedido.total =  inputPedido.productos.reduce((sum, producto) => sum + producto.precio, 0);
-        //fechaActualizacion
         pedido.registradoPor = 'reyesbho';
         const doc = await addDoc(this.refCollection, pedido);
         return this.getById({id : doc.id});        
+    }
+
+    async update({id, ...inputPedido}){
+        const ref = doc(this.firestoreDb, 'pedidos', id);
+        const pedidoAux= {...inputPedido};
+        pedidoAux.fechaActualizacion = new Date();
+        await updateDoc(ref, pedidoAux);
+        const updatedPedido = await this.getById({id});
+        return updatedPedido;
+    }
+
+    async delete({id}){
+        const pedido = await this.getById({id});
+        if(!pedido){
+            return false;
+        }
+        await this.update({id, estatus: estatusPedido.DELETE});
+        return true;
     }
 }
