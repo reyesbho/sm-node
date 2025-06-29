@@ -7,7 +7,8 @@ export const estatusPedido = Object.freeze({
     BACKLOG:'INCOMPLETO',
     DONE:'PAGADO',
     CANCELED:'CANCELED',
-    INCOMPLETE:'INCOMPLETE'
+    INCOMPLETE:'INCOMPLETE',
+    DELETE: 'DELETE'
 })
 
 export const estatusPago = Object.freeze({
