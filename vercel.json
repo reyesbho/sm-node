@@ -2,7 +2,7 @@
     "version": 2, 
     "builds": [
         {
-            "src": "server-with-local.js",
+            "src": "server-with-firebase.js",
             "use": "@vercel/node",
             "config": {
                 "includeFiles": [
@@ -14,7 +14,7 @@
     "routes": [
         {
             "src": "/(.*)",
-            "dest": "server-with-local.js"
+            "dest": "server-with-firebase.js"
         }
     ]
 }
