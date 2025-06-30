@@ -6,11 +6,17 @@ export class UserModel{
 
     async create({inputUser}){
         const {email, password} = inputUser;
-        const user = await createUserWithEmailAndPassword(this.auth, email, password);
-        if(!user){
-            return false;
+        try {
+            const user = await createUserWithEmailAndPassword(this.auth, email, password);
+            if(!user){
+                return false;
+            }
+            return user;    
+        } catch (error) {
+            if(error.code == 'auth/email-already-in-use')
+                throw new Error('User already exists');
         }
-        return user;
+        
     }
 
     async login ({inputUser}){

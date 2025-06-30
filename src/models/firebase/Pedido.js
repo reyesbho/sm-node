@@ -1,6 +1,5 @@
 import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
-import { estatusPago, estatusPedido } from "../../utils/utils.js";
-import { date } from "zod/v4";
+import { estatusPedido } from "../../utils/utils.js";
 
 export class PedidoModel{
     constructor({firestoreDb}){
@@ -44,11 +43,6 @@ export class PedidoModel{
 
     async create({inputPedido}){
         const pedido = {...inputPedido};
-        pedido.fechaCreacion = new Date();
-        pedido.estatus = estatusPedido.INCOMPLETE;
-        pedido.estatusPago = estatusPago.PENDIENTE;
-        pedido.total =  inputPedido.productos.reduce((sum, producto) => sum + producto.precio, 0);
-        pedido.registradoPor = 'reyesbho';
         const doc = await addDoc(this.refCollection, pedido);
         return this.getById({id : doc.id});        
     }
