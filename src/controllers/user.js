@@ -29,6 +29,7 @@ export class UserController {
             res.status(401).json({message:"Authentication failed"});
         }
         const access_token = await userCredential.user.auth.currentUser.getIdToken();
+        //TODO:creo que no se debe setear en la cookie desde aca si no en el front
         return res.status(200)
                 .cookie('access_token', access_token,{
                     httpOnly:true,
@@ -36,11 +37,13 @@ export class UserController {
                     sameSite:'strict',
                     maxAge: 1000 * 60 * 60
                 } )
-                .json({message: 'Succefull authentication'});
+                .json({token: access_token});
     }
 
     logout = async(req, res) => {
         const  logout = await this.userModel.logout();
+        //TODO:creo que esto va en el front
+        res.clearCookie('access_token');
         if(logout == false){
             return res.status(401).json({message:"Error al deslogearse"});
         }
