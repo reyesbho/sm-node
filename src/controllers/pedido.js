@@ -1,4 +1,5 @@
 import { validatePartialPedido, validatePedido } from "../schemas/pedido.js";
+import { estatusPago, estatusPedido } from "../utils/utils.js";
 
 export class PedidoController {
     constructor({pedidoModel}){
@@ -16,7 +17,13 @@ export class PedidoController {
         if(result.error){
             return res.status(400).json({error: JSON.parse(result.error)})
         }
-        const newPedido = await this.pedidoModel.create({inputPedido: result.data});
+        const dataAux = {...result.data};
+        dataAux.registradoPor = req.session.user;
+        dataAux.fechaCreacion = new Date();
+        dataAux.estatus = estatusPedido.INCOMPLETE;
+        dataAux.estatusPago = estatusPago.PENDIENTE;
+        dataAux.total =  dataAux.productos.reduce((sum, producto) => sum + producto.precio, 0);
+        const newPedido = await this.pedidoModel.create({inputPedido: dataAux});
         return res.status(200).json(newPedido);
     }
 

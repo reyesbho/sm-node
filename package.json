@@ -17,16 +17,18 @@
     "start:firebase": "node --watch server-with-firebase.js"
   },
   "dependencies": {
+    "cookie-parser": "^1.4.7",
     "cors": "2.8.5",
     "dotenv": "16.5.0",
     "express": "5.1.0",
     "firebase": "11.9.1",
+    "firebase-admin": "^13.4.0",
     "zod": "3.25.65"
   },
   "devDependencies": {
     "standard": "^17.1.2"
   },
   "eslintConfig": {
-    "extends":"standard"
+    "extends": "standard"
   }
 }

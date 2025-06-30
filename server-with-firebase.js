@@ -7,6 +7,7 @@ import { getAuth } from "firebase/auth";
 import { config } from "dotenv";
 import { PedidoModel } from "./src/models/firebase/Pedido.js";
 import {UserModel} from './src/models/firebase/User.js'
+import { AuthenticationMidlleware } from "./src/middlewares/authentication.js";
 config(); // Load environment variables from .env file
 const firebaseConfig = {
   apiKey: process.env.APIKEY,
@@ -26,7 +27,8 @@ const productModel = new ProductModel({firestoreDb});
 const sizeProductModel = new SizeProductModel({firestoreDb});
 const pedidoModel = new PedidoModel({firestoreDb});
 const userModel = new UserModel({auth});
+const authenticationModel = new AuthenticationMidlleware();
 
- const app = createApp({productModel, sizeProductModel, pedidoModel, userModel});
+ const app = createApp({authenticationModel ,productModel, sizeProductModel, pedidoModel, userModel});
 
  export default app;
