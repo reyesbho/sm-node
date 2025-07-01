@@ -24,26 +24,32 @@ export class UserController {
         if(result.error){
             return res.status(400).json({message: JSON.parse(result.error.message)});
         }
-        const userCredential = await this.userModel.login({inputUser: result.data});
-        if(userCredential == false){
+        const user = await this.userModel.login({inputUser: result.data});
+        if(user == false){
             res.status(401).json({message:"Authentication failed"});
         }
-        const access_token = await userCredential.user.auth.currentUser.getIdToken();
-        //TODO:creo que no se debe setear en la cookie desde aca si no en el front
+        const access_token = await user.getIdToken();
+        const refresh_token = await user.refreshToken;
         return res.status(200)
                 .cookie('access_token', access_token,{
                     httpOnly:true,
                     secure:process.env.NODE_ENV == 'production',
-                    sameSite:'lax',
+                    sameSite:(process.env.NODE_ENV == 'production' ? none : 'lax'),
                     maxAge: 1000 * 60 * 60
+                } )
+                .cookie('refresh_token', refresh_token,{
+                    httpOnly:true,
+                    secure:process.env.NODE_ENV == 'production',
+                    sameSite:(process.env.NODE_ENV == 'production' ? none : 'lax'),
+                    maxAge: 1000 * 60 * 60 * 12
                 } )
                 .json({token: access_token});
     }
 
     logout = async(req, res) => {
         const  logout = await this.userModel.logout();
-        //TODO:creo que esto va en el front
         res.clearCookie('access_token');
+        res.clearCookie('refresh_token');
         if(logout == false){
             return res.status(401).json({message:"Error al deslogearse"});
         }

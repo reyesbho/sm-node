@@ -1,4 +1,5 @@
 import {createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { ErrorCodeFirebase } from "../../utils/utils.js";
 export class UserModel{
     constructor({auth}){
         this.auth = auth;
@@ -13,7 +14,7 @@ export class UserModel{
             }
             return user;    
         } catch (error) {
-            if(error.code == 'auth/email-already-in-use')
+            if(error.code === ErrorCodeFirebase.EMAIL_EXIST)
                 throw new Error('User already exists');
         }
         
@@ -25,7 +26,7 @@ export class UserModel{
         if(!login){
             return false;
         }
-        return login;
+        return login.user;
     }
 
     async logout (){
