@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, limit, orderBy, query, startAfter, updateDoc, where } from "firebase/firestore";
 import { estatusPedido } from "../../utils/utils.js";
 
 export class PedidoModel{
@@ -14,20 +14,48 @@ export class PedidoModel{
      * pagina
      * tamañoPagina
      *  **/
-    async getAll({fechaInicio, fechaFin, estatus, pagina, sizePagina}){
-        const pedidos = [];
+    async getAll({fechaInicio, fechaFin, estatus, cursorFechaCreacion, pageSize}){
         const filters = [];
+        const realLimit = pageSize + 1;
         //always ignore delete 
         filters.push(where('estatus', '!=', estatusPedido.DELETE));
-        if(estatus){
+        if(estatus && estatus != 'ALL'){
             filters.push(where('estatus','==', estatus));
         }
-        const q = query(this.refCollection, ...filters);
+        const offsetMillis = 6 * 60 * 60 * 1000; // para UTC-6
+        if (fechaInicio) {
+            const inicioLocal = new Date(new Date(fechaInicio).getTime() + offsetMillis);
+            filters.push(where('fechaEntrega', '>=', inicioLocal));
+        }
+
+        if (fechaFin) {
+            const finLocal = new Date(new Date(fechaFin).getTime() + offsetMillis);
+            filters.push(where('fechaEntrega', '<=', finLocal));
+        }
+        
+        let q = query(this.refCollection,
+                      ...filters,
+                      orderBy('fechaCreacion'),
+                      ...(cursorFechaCreacion ? [startAfter(new Date(cursorFechaCreacion))] : []),
+                      limit(realLimit));
+
         const querySnapshot = await getDocs(q);
-        querySnapshot.forEach(doc => {
-            pedidos.push({id: doc.id, ...doc.data()});
-        })
-        return pedidos;
+        const sliceDocs = querySnapshot.docs.slice(0, pageSize);
+        const pedidos = sliceDocs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        // Cursor para la siguiente página (fecha del último doc)
+        const lastDoc = sliceDocs[sliceDocs.length - 1];
+        const nextCursor = lastDoc ? lastDoc.data().fechaCreacion.toDate().toISOString() : null;
+
+        return {
+            pedidos,
+            nextCursor, // úsalo como cursorFechaEntrega para la siguiente página
+            hasMore: querySnapshot.size >= pageSize,
+            total: querySnapshot.size
+        };
     }
 
     async getById({id}){

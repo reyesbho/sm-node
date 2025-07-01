@@ -1,3 +1,4 @@
+import { Timestamp } from "firebase/firestore";
 import { validatePartialPedido, validatePedido } from "../schemas/pedido.js";
 import { estatusPago, estatusPedido } from "../utils/utils.js";
 
@@ -7,8 +8,8 @@ export class PedidoController {
     }
 
     getAll = async(req, res) => {
-        const {fechaInicio, fechaFin, estatus, pagina, sizePagina} = req.query;
-        const pedidos =  await this.pedidoModel.getAll({fechaInicio, fechaFin, estatus, pagina, sizePagina});
+        const {fechaInicio, fechaFin, estatus, cursorFechaCreacion, pageSize} = req.query;
+        const pedidos =  await this.pedidoModel.getAll({fechaInicio, fechaFin, estatus, cursorFechaCreacion, pageSize});
         return res.json(pedidos);
     }
 
@@ -23,6 +24,7 @@ export class PedidoController {
         dataAux.estatus = estatusPedido.INCOMPLETE;
         dataAux.estatusPago = estatusPago.PENDIENTE;
         dataAux.total =  dataAux.productos.reduce((sum, producto) => sum + producto.precio, 0);
+        dataAux.fechaEntrega = Timestamp.fromDate(new Date(result.data.fechaEntrega));
         const newPedido = await this.pedidoModel.create({inputPedido: dataAux});
         return res.status(200).json(newPedido);
     }
