@@ -34,13 +34,13 @@ export class UserController {
                 .cookie('access_token', access_token,{
                     httpOnly:true,
                     secure:process.env.NODE_ENV == 'production',
-                    sameSite:(process.env.NODE_ENV == 'production' ? none : 'lax'),
+                    sameSite:(process.env.NODE_ENV == 'production' ? 'None' : 'lax'),
                     maxAge: 1000 * 60 * 60
                 } )
                 .cookie('refresh_token', refresh_token,{
                     httpOnly:true,
                     secure:process.env.NODE_ENV == 'production',
-                    sameSite:(process.env.NODE_ENV == 'production' ? none : 'lax'),
+                    sameSite:(process.env.NODE_ENV == 'production' ? 'None' : 'lax'),
                     maxAge: 1000 * 60 * 60 * 12
                 } )
                 .json({token: access_token});
