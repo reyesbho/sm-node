@@ -1,7 +1,12 @@
 import {object, date, number, string, boolean} from 'zod';
 
+const timestampSchema = object({
+  seconds: number().int().nonnegative(),
+  nanoseconds: number().int().min(0).max(999_999_999),
+});
+
 export const pedidoSchema = object({
-    fechaEntrega: string().refine(val => !isNaN(Date.parse(val)),{message:'Debe ser una fecha valida'}),
+    fechaEntrega: timestampSchema,
     lugarEntrega: string().optional(),
     cliente: string().min(5, 'Min character length is 5'),
     productos: object({
@@ -17,7 +22,7 @@ export const pedidoSchema = object({
         }),
         caracteristicas: string().array().optional(),
         precio: number().positive('Price must be a positive number').default(0),
-    }).array(),
+    }).array().optional(),
 }).passthrough();
 
 

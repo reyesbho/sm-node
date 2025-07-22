@@ -39,12 +39,12 @@ export class SizeProductModel {
         return this.getById({id: doc.id});
     }
 
-     async delete({id}) {
+     async updateState({id}) {
         const size = await this.getById({id});
         if (!size) {
             return false; // Size not found
         }
-        await this.update({id, estatus: false}); 
+        await this.update({id, estatus: !size.estatus}); 
         return true; 
     }
 

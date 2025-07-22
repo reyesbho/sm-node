@@ -4,8 +4,8 @@ const require = createRequire(import.meta.url);
 export const readJSON = (filePath) => require(filePath);
 
 export const estatusPedido = Object.freeze({
-    BACKLOG:'INCOMPLETO',
-    DONE:'PAGADO',
+    BACKLOG:'BACKLOG',
+    DONE:'DONE',
     CANCELED:'CANCELED',
     INCOMPLETE:'INCOMPLETE',
     DELETE: 'DELETE'
