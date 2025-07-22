@@ -17,12 +17,13 @@ export class PedidoModel{
     async getAll({fechaInicio, fechaFin, estatus, cursorFechaCreacion, pageSize}){
         const filters = [];
         const realLimit = pageSize + 1;
+        const offsetMillis = 6 * 60 * 60 * 1000; // para UTC-6
         //always ignore delete 
         filters.push(where('estatus', '!=', estatusPedido.DELETE));
         if(estatus && estatus != 'ALL'){
             filters.push(where('estatus','==', estatus));
         }
-        const offsetMillis = 6 * 60 * 60 * 1000; // para UTC-6
+        
         if (fechaInicio) {
             const inicioLocal = new Date(new Date(fechaInicio).getTime() + offsetMillis);
             filters.push(where('fechaEntrega', '>=', inicioLocal));
@@ -76,6 +77,7 @@ export class PedidoModel{
     }
 
     async update({id, ...inputPedido}){
+        console.log('update', id, inputPedido);
         const ref = doc(this.firestoreDb, 'pedidos', id);
         const pedidoAux= {...inputPedido};
         pedidoAux.fechaActualizacion = new Date();

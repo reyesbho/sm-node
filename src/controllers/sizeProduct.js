@@ -44,12 +44,12 @@ export class SizeProductController {
         return res.json(updatedSizeProduct);
     }
 
-    delete = async (req, res) => {
+    updateState = async (req, res) => {
         const { id } = req.params;
-        const result = await this.sizeProductModel.delete({ id });
+        const result = await this.sizeProductModel.updateState({ id });
         if (result == false) {
             return res.status(404).send({ message: 'Size product not found' });
         }
-        return res.status(204).send('Size product deleted successfully');
+        return res.status(204).send('Size product update successfully');
     }
 }

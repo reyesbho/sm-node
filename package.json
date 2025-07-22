@@ -23,6 +23,7 @@
     "express": "5.1.0",
     "firebase": "11.9.1",
     "firebase-admin": "^13.4.0",
+    "uuid": "^11.1.0",
     "zod": "3.25.65"
   },
   "devDependencies": {

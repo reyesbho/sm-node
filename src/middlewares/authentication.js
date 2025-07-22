@@ -44,7 +44,6 @@ export class AuthenticationMidlleware{
                 return res.status(401).json({message:'Invalid token'})    
             }
         }
-
         const refreshToken = req.cookies.refresh_token;
         if(!refreshToken){
             return res.status(401).json({message:'Acess not authorized'})
@@ -76,7 +75,6 @@ export class AuthenticationMidlleware{
             
             return next();
         } catch (error) {
-            console.error('Error renovando token:', error.message);
             return res.status(401).json({ message: 'Session close' });
         }
     }
