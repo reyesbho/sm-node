@@ -25,13 +25,17 @@ export class PedidoModel{
         }
         
         if (fechaInicio) {
-            const inicioLocal = new Date(new Date(fechaInicio).getTime() + offsetMillis);
-            filters.push(where('fechaEntrega', '>=', inicioLocal));
+            const [day, month, year] = fechaInicio.split('-');
+            const fechaInicioDate = new Date(Number(year), Number(month) - 1, Number(day));
+            filters.push(where('fechaEntrega', '>=', fechaInicioDate));
         }
 
         if (fechaFin) {
-            const finLocal = new Date(new Date(fechaFin).getTime() + offsetMillis);
-            filters.push(where('fechaEntrega', '<=', finLocal));
+            const [day, month, year] = fechaFin.split('-');
+            const fechaFinDate = new Date(Number(year), Number(month) - 1, Number(day));
+             // Establecer hora al final del día
+            fechaFinDate.setHours(23, 59, 59, 999);
+            filters.push(where('fechaEntrega', '<=', fechaFinDate));
         }
         
         let q = query(this.refCollection,
