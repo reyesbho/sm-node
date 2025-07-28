@@ -1,7 +1,7 @@
 import {boolean, object, string} from 'zod';
 
 const sizeProduct = object({
-    descripcion : string().min(4, 'Min character length is 4'),
+    descripcion : string().min(3, 'Min character length is 3'),
     estatus: boolean().default(true),
     tags: string().array().optional()
 });
