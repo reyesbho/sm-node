@@ -58,4 +58,12 @@ export class ProductModel {
         return updatedProduct; // Return the updated product
     }
 
+     async updateState({id}) {
+        const producto = await this.getById({id});
+        if (!producto) {
+            return false; // product not found
+        }
+        await this.update({id, estatus: !producto.estatus}); 
+        return true; 
+    }
 }
