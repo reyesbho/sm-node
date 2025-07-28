@@ -4,7 +4,8 @@ const ACCEPTED_ORIGIN = [
             'https://sweetmoments.mx',
             'https://www.sweetmoments.mx',
             'https://services.sweetmoments.mx',
-            'https://www.services.sweetmoments.mx'
+            'https://www.services.sweetmoments.mx',
+            'http://localhost:5173',
         ]; 
 
 export const corsMiddleware = () => cors({

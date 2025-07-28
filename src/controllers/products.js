@@ -53,4 +53,13 @@ export class ProductController {
         }
         return res.status(204).send('Product deleted successfully');
     }
+    
+    updateState = async(req, res) => {
+        const {id} = req.params;
+        const result = await this.productModel.updateState({id});
+        if (result === false) {
+            return res.status(404).send({message: 'Product not found'});
+        }
+        return res.status(204).send('Product updated successfully');
+    }
 }
