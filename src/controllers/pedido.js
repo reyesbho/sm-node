@@ -25,7 +25,7 @@ export class PedidoController {
         dataAux.fechaCreacion = new Date();
         dataAux.estatus = estatusPedido.INCOMPLETE;
         dataAux.estatusPago = estatusPago.PENDIENTE;
-        dataAux.total = (dataAux.productos ? dataAux.productos.reduce((sum, producto) => sum + producto.precio, 0) : 0);
+        dataAux.total = (dataAux.productos ? dataAux.productos.reduce((sum, producto) => sum + (producto.precio * producto.cantidad), 0) : 0);
         dataAux.fechaEntrega = Timestamp.fromDate(new Date(dataAux.fechaEntrega.seconds * 1000 + dataAux.fechaEntrega.nanoseconds / 1e6));
         dataAux.productos?.forEach(producto => {
            producto.id = uuidv4();
