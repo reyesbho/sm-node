@@ -13,11 +13,11 @@ export const pedidoSchema = object({
         cantidad: number().int().positive('Quantity must be a positive integer'),
         size:object({
             id: string().min(1, 'Product ID is required'),
-            descripcion : string().min(5, 'Min character length is 5')
+            descripcion : string().min(3, 'Min character length is 3')
         }),
         producto: object({
             id: string().min(1, 'Product ID is required'),
-            descripcion: string().min(5, 'Min caracter length is 5'),
+            descripcion: string().min(3, 'Min caracter length is 3'),
             imagen: string().optional()
         }),
         caracteristicas: string().array().optional(),
