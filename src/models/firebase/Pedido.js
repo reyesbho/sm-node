@@ -27,6 +27,7 @@ export class PedidoModel{
         if (fechaInicio) {
             const [day, month, year] = fechaInicio.split('-');
             const fechaInicioDate = new Date(Number(year), Number(month) - 1, Number(day));
+            fechaInicioDate.setHours(0, 0, 0, 0);
             filters.push(where('fechaEntrega', '>=', fechaInicioDate));
         }
 
