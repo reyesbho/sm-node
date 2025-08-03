@@ -38,7 +38,7 @@ export class PedidoController {
         const {id} = req.params;
         const pedido = await this.pedidoModel.getById({id});
         if(pedido == false){
-            return res.status(422).send({message: 'Product not found'});
+            return res.status(404).send({message: 'Product not found'});
         }
         return res.json(pedido);
     }

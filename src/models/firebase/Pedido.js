@@ -68,7 +68,7 @@ export class PedidoModel{
         const ref = doc(this.firestoreDb, 'pedidos', id);
         const docSnap = await getDoc(ref);
         if(!docSnap.exists()){
-            return null;
+            return false;
         }
         const data = docSnap.data();
         return {id: docSnap.id, ...data};

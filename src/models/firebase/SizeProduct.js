@@ -28,7 +28,7 @@ export class SizeProductModel {
         const ref = doc(this.firestoreDb, 'sizes', id);
         const docSnap = await getDoc(ref);
         if (!docSnap.exists()) {
-            return null; // Size not found
+            return false; 
         }
         const data = docSnap.data();
         return { id: docSnap.id, ...data };

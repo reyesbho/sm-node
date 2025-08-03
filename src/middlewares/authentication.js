@@ -29,10 +29,15 @@ export class AuthenticationMidlleware{
 
 
     authenticate = async(req, res, next) => {
-        const token = req.cookies.access_token;
+        let token = req.cookies.access_token;
         req.session = {user: null};
         if(!token){
-            return res.status(401).json({message:'Acess not authorized'})
+            const tokenBearer = req.headers.authorization;
+            if(tokenBearer && tokenBearer.startsWith('Bearer ')){
+                token = tokenBearer.split(' ')[1];
+            }else{  
+                return res.status(401).json({message:'Acess not authorized'})
+            }
         }
 
         try{

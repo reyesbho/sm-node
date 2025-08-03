@@ -11,7 +11,7 @@
   "type": "module",
   "main": "app.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --detectOpenHandles --forceExit",
     "start": "node --watch server.js"
   },
   "dependencies": {

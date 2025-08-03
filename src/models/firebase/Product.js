@@ -31,7 +31,7 @@ export class ProductModel {
         const ref = doc(this.firestoreDb, 'products', id);
         const docSnap = await getDoc(ref);
         if (!docSnap.exists()) {
-            return null; // Product not found
+            return false;
         }
         const data = docSnap.data();
         return { id: docSnap.id, ...data };
@@ -45,7 +45,7 @@ export class ProductModel {
      async delete ({id}) {
         const product = await this.getById({id});
         if (!product) {
-            return false; // Product not found
+            return false;
         }
         await this.update({id, estatus: false}); 
         return true; 
@@ -55,13 +55,13 @@ export class ProductModel {
         const ref = doc(this.firestoreDb, 'products', id);
         await updateDoc(ref, inputProduct);
         const updatedProduct = await this.getById({id});
-        return updatedProduct; // Return the updated product
+        return updatedProduct; 
     }
 
      async updateState({id}) {
         const producto = await this.getById({id});
         if (!producto) {
-            return false; // product not found
+            return false; 
         }
         await this.update({id, estatus: !producto.estatus}); 
         return true; 
