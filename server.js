@@ -29,6 +29,6 @@ const pedidoModel = new PedidoModel({firestoreDb});
 const userModel = new UserModel({auth});
 const authenticationModel = new AuthenticationMidlleware();
 
- const {app, server} = createApp({authenticationModel ,productModel, sizeProductModel, pedidoModel, userModel});
+ const app = createApp({authenticationModel ,productModel, sizeProductModel, pedidoModel, userModel});
 
- export default {app, server};
+ export default app;
