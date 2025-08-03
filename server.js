@@ -31,4 +31,4 @@ const authenticationModel = new AuthenticationMidlleware();
 
  const {app, server} = createApp({authenticationModel ,productModel, sizeProductModel, pedidoModel, userModel});
 
- export {app, server};
+ export default {app, server};
