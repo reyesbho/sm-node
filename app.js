@@ -34,10 +34,10 @@ export function createApp({authenticationModel, productModel, sizeProductModel, 
   //router fro pedidos
   app.use('/api/pedidos', authenticationModel.authenticate, createPedidoRouter({pedidoModel}))
 
-  const server = app.listen(port, () => {
+  app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
   });
 
-  return {app, server};
+  return app;
 }
 
