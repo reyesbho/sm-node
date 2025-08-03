@@ -22,11 +22,16 @@ export class UserModel{
 
     async login ({inputUser}){
         const {email, password} = inputUser;
-        const login = await signInWithEmailAndPassword(this.auth, email, password);
-        if(!login){
+        try{
+            const login = await signInWithEmailAndPassword(this.auth, email, password);
+            if(!login){
+                return false;
+            }
+            return login.user;
+        }catch(error){
             return false;
         }
-        return login.user;
+        
     }
 
     async logout (){

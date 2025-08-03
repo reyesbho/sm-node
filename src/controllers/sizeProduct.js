@@ -15,7 +15,7 @@ export class SizeProductController {
         const { id } = req.params;
         const sizeProduct = await this.sizeProductModel.getById({ id });
         if (sizeProduct == false) {
-            return res.status(422).send({ message: 'Size product not found' });
+            return res.status(404).send({ message: 'Size product not found' });
         }
         return res.json(sizeProduct);
     }

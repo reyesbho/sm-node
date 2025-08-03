@@ -26,7 +26,7 @@ export class UserController {
         }
         const user = await this.userModel.login({inputUser: result.data});
         if(user == false){
-            res.status(401).json({message:"Authentication failed"});
+            return res.status(401).json({message:"Authentication failed"});
         }
         const access_token = await user.getIdToken();
         const refresh_token = await user.refreshToken;
