@@ -17,6 +17,7 @@ export function createApp({authenticationModel, productModel, sizeProductModel, 
   app.use(express.json()); // Middleware to parse JSON bodies
   app.use(corsMiddleware()); // Use custom CORS middleware
   app.use(cookieParser());
+  app.use(express.json({ limit: '6mb' })); // Increase JSON body size limit
 
   app.get('/', (req, res) => {
     res.send('Hello World!');
