@@ -12,31 +12,34 @@
   "main": "app.js",
   "scripts": {
     "test": "jest --detectOpenHandles --forceExit",
-    "start": "node --watch server.js"
+    "start:dev": "cross-env  NODE_ENV=development node --watch server.js",
+    "start:prod": "cross-env  NODE_ENV=production  node --watch server.js",
+    "start": "cross-env  NODE_ENV=production  node --watch server.js"
   },
   "dependencies": {
-    "cookie-parser": "^1.4.7",
+    "cookie-parser": "1.4.7",
     "cors": "2.8.5",
     "dotenv": "16.5.0",
     "express": "5.1.0",
     "firebase": "11.9.1",
-    "firebase-admin": "^13.4.0",
-    "uuid": "^11.1.0",
+    "firebase-admin": "13.4.0",
+    "uuid": "11.1.0",
     "zod": "3.25.65"
   },
   "devDependencies": {
-    "@babel/core": "^7.28.0",
-    "@babel/preset-env": "^7.28.0",
-    "@babel/preset-typescript": "^7.27.1",
-    "@jest/globals": "^30.0.5",
-    "@types/jest": "^30.0.0",
-    "@types/supertest": "^6.0.3",
-    "babel-jest": "^30.0.5",
-    "jest": "^30.0.5",
-    "standard": "^17.1.2",
-    "supertest": "^7.1.4",
-    "ts-jest": "^29.4.0",
-    "ts-node": "^10.9.2"
+    "@babel/core": "7.28.0",
+    "@babel/preset-env": "7.28.0",
+    "@babel/preset-typescript": "7.27.1",
+    "@jest/globals": "30.0.5",
+    "@types/jest": "30.0.0",
+    "@types/supertest": "6.0.3",
+    "babel-jest": "30.0.5",
+    "cross-env": "10.0.0",
+    "jest": "30.0.5",
+    "standard": "17.1.2",
+    "supertest": "7.1.4",
+    "ts-jest": "29.4.0",
+    "ts-node": "10.9.2"
   },
   "eslintConfig": {
     "extends": "standard"

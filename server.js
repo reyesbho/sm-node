@@ -8,7 +8,11 @@ import { config } from "dotenv";
 import { PedidoModel } from "./src/models/firebase/Pedido.js";
 import {UserModel} from './src/models/firebase/User.js'
 import { AuthenticationMidlleware } from "./src/middlewares/authentication.js";
-config(); // Load environment variables from .env file
+// Definir cuál archivo usar según NODE_ENV
+// Cargar archivo .env según el entorno
+const envFile = `.env.${process.env.NODE_ENV || "development"}`;
+config({ path: envFile });
+
 const firebaseConfig = {
   apiKey: process.env.APIKEY,
   authDomain: process.env.AUTHDOMAIN,
