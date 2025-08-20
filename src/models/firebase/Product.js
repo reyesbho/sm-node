@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 
 
 export class ProductModel {
@@ -47,7 +47,7 @@ export class ProductModel {
         if (!product) {
             return false;
         }
-        await this.update({id, estatus: false}); 
+        await deleteDoc(doc(this.firestoreDb, 'products', id));
         return true; 
     }
 

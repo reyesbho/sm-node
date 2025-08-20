@@ -1,4 +1,4 @@
-import { addDoc, collection,  doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection,  deleteDoc,  doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 
 
 export class SizeProductModel {
@@ -52,5 +52,14 @@ export class SizeProductModel {
         const ref = doc(this.firestoreDb, 'sizes', id);
         await updateDoc(ref, inputSize);
         return this.getById({id});
+    }
+
+    delete = async ({id}) => {
+        const size = await this.getById({id});
+        if (!size) {
+            return false; // Size not found
+        }
+        await deleteDoc(doc(this.firestoreDb, 'sizes', id));
+        return true;
     }
 }
