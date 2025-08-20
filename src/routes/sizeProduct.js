@@ -9,6 +9,7 @@ export const createSizeProductRouter = ({ sizeProductModel }) => {
     sizeProductRouter.post("/", sizeProductController.create);
     sizeProductRouter.patch("/:id", sizeProductController.update);
     sizeProductRouter.put("/:id", sizeProductController.updateState);
+    sizeProductRouter.delete("/:id", sizeProductController.delete);
 
     return sizeProductRouter;
 };
