@@ -52,4 +52,13 @@ export class SizeProductController {
         }
         return res.status(204).send('Size product update successfully');
     }
+
+    delete = async (req, res) => {
+        const { id } = req.params;
+        const result = await this.sizeProductModel.delete({ id });
+        if (result == false) {
+            return res.status(404).send({ message: 'Size product not found' });
+        }
+        return res.status(204).send('Size product deleted successfully');
+    }
 }

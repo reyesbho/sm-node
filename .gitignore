@@ -136,3 +136,5 @@ dist
 .pnp.*
 .vercel
 api.http
+.env.production
+.env.development
