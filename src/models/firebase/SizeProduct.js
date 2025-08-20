@@ -13,8 +13,8 @@ export class SizeProductModel {
         if (tag) {
             filters.push(where('tags', 'array-contains', tag));
         } 
-        if(estatus){
-            filters.push(where('estatus', '==', (estatus == 'ACTIVO' ? true : false)));
+        if(estatus!== undefined && estatus !== null) {
+            filters.push(where('estatus', '==', (estatus ? true : false)));
         }
         const q = query(this.refCollection, ...filters);
         const querySnapshot = await getDocs(q);    
