@@ -20,7 +20,7 @@ export class AuthenticationMidlleware{
         
         const app = initializeApp({
           credential: cert(firebaseConfig),
-          databaseURL: "https://sweetmoments-17dc5-default-rtdb.firebaseio.com"
+          databaseURL: process.env.DATABASE_URL
         });
 
         this.auth = getAuth(app);
