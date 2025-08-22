@@ -5,6 +5,7 @@ import { createSizeProductRouter } from './src/routes/sizeProduct.js';
 import { createPedidoRouter } from './src/routes/pedido.js';
 import { createUserRouter } from './src/routes/user.js';
 import cookieParser from 'cookie-parser';
+import { createPedidoPublicRouter } from './src/routes/pedidoPublic.js';
 
 // Load products from a JSON file
 //let products = JSON.parse(fs.readFileSync('./products.json', 'utf-8') || '[]');
@@ -25,6 +26,9 @@ export function createApp({authenticationModel, productModel, sizeProductModel, 
 
   //user
   app.use('/user', createUserRouter({userModel}));
+
+  // Public routes for pedidos
+  app.use('/api/public/pedidos', createPedidoPublicRouter({pedidoModel}));
 
   // roter for product
   app.use('/api/products',authenticationModel.authenticate, createProductRouter({productModel}));
