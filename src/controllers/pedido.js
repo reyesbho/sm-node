@@ -14,7 +14,6 @@ export class PedidoController {
         const {fechaInicio, fechaFin, estatus, cursorFechaCreacion, pageSize} = req.query;
         const response =  await this.pedidoModel.getAll({fechaInicio, fechaFin, estatus, cursorFechaCreacion, pageSize});
         // Remove sensitive information from pedidos
-        console.log(response);
         const pedidosPublic = response.pedidos.map( (pedido) => {
             return {
                 id: pedido.id,

@@ -82,7 +82,6 @@ export class PedidoModel{
     }
 
     async update({id, ...inputPedido}){
-        console.log('update', id, inputPedido);
         const ref = doc(this.firestoreDb, 'pedidos', id);
         const pedidoAux= {...inputPedido};
         pedidoAux.fechaActualizacion = new Date();
