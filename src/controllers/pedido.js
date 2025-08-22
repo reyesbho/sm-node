@@ -2,11 +2,29 @@ import { Timestamp } from "firebase/firestore";
 import { validatePartialPedido, validatePedido } from "../schemas/pedido.js";
 import { estatusPago, estatusPedido } from "../utils/utils.js";
 import { v4 as uuidv4 } from 'uuid';
+import { id } from "zod/v4/locales";
 
 
 export class PedidoController {
     constructor({pedidoModel}){
         this.pedidoModel = pedidoModel;
+    }
+
+    getAllPublic = async(req, res) => {
+        const {fechaInicio, fechaFin, estatus, cursorFechaCreacion, pageSize} = req.query;
+        const response =  await this.pedidoModel.getAll({fechaInicio, fechaFin, estatus, cursorFechaCreacion, pageSize});
+        // Remove sensitive information from pedidos
+        console.log(response);
+        const pedidosPublic = response.pedidos.map( (pedido) => {
+            return {
+                id: pedido.id,
+                fechaEntrega: pedido.fechaEntrega,
+                cliente: pedido.cliente,
+                lugarEntrega: pedido.lugarEntrega
+            }
+        });
+        // Return the sanitized pedidos
+        return res.json(pedidosPublic);
     }
 
     getAll = async(req, res) => {
@@ -23,7 +41,7 @@ export class PedidoController {
         const {id, ...dataAux} = result.data;
         dataAux.registradoPor = req.session.user;
         dataAux.fechaCreacion = new Date();
-        dataAux.estatus = estatusPedido.INCOMPLETE;
+        dataAux.estatus = estatusPedido.BACKLOG;
         dataAux.estatusPago = estatusPago.PENDIENTE;
         dataAux.total = (dataAux.productos ? dataAux.productos.reduce((sum, producto) => sum + (producto.precio * producto.cantidad), 0) : 0);
         dataAux.fechaEntrega = Timestamp.fromDate(new Date(dataAux.fechaEntrega.seconds * 1000 + dataAux.fechaEntrega.nanoseconds / 1e6));
