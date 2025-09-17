@@ -1,4 +1,4 @@
-import { validateUser } from "../schemas/user.js";
+import { validateUser } from "../schemas/userSchema.js";
 
 export class UserController {
     constructor({userModel}){

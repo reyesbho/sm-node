@@ -1,4 +1,4 @@
-import { validateSizeProduct,validatePartialSizeProduct } from '../schemas/sizeProduct.js';
+import { validateSizeProduct,validatePartialSizeProduct } from '../schemas/sizeProductSchema.js';
 
 export class SizeProductController {
     constructor({ sizeProductModel }) {

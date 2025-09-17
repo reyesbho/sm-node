@@ -1,11 +1,11 @@
 import express from 'express';
 import { corsMiddleware } from './src/middlewares/cors.js';
-import { createProductRouter } from './src/routes/product.js';
-import { createSizeProductRouter } from './src/routes/sizeProduct.js';
-import { createPedidoRouter } from './src/routes/pedido.js';
-import { createUserRouter } from './src/routes/user.js';
+import { createProductRouter } from './src/routes/productRouter.js';
+import { createSizeProductRouter } from './src/routes/sizeProductRouter.js';
+import { createPedidoRouter } from './src/routes/pedidoRouter.js';
+import { createUserRouter } from './src/routes/userRouter.js';
 import cookieParser from 'cookie-parser';
-import { createPedidoPublicRouter } from './src/routes/pedidoPublic.js';
+import { createPedidoPublicRouter } from './src/routes/pedidoPublicRouter.js';
 
 // Load products from a JSON file
 //let products = JSON.parse(fs.readFileSync('./products.json', 'utf-8') || '[]');

@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import { validatePartialPedido, validatePedido } from "../schemas/pedido.js";
+import { validatePartialPedido, validatePedido } from "../schemas/pedidoSchema.js";
 import { estatusPago, estatusPedido } from "../utils/utils.js";
 import { v4 as uuidv4 } from 'uuid';
 import { id } from "zod/v4/locales";

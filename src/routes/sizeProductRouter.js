@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { SizeProductController } from "../controllers/sizeProduct.js";
+import { SizeProductController } from "../controllers/sizeProductController.js";
 export const createSizeProductRouter = ({ sizeProductModel }) => {
     const sizeProductRouter = Router();
     const sizeProductController = new SizeProductController({ sizeProductModel });
