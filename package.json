@@ -11,7 +11,7 @@
   "type": "module",
   "main": "app.js",
   "scripts": {
-    "test": "jest --detectOpenHandles --forceExit",
+    "test": " cross-env  NODE_ENV=development  jest --detectOpenHandles --forceExit ",
     "start:dev": "cross-env  NODE_ENV=development node --watch server.js",
     "start:prod": "cross-env  NODE_ENV=production  node --watch server.js",
     "start": "cross-env  NODE_ENV=production  node --watch server.js"

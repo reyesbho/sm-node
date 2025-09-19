@@ -1,9 +1,6 @@
 import {object, date, number, string, boolean} from 'zod';
+import { timestampSchema } from '../utils/utils';
 
-const timestampSchema = object({
-  seconds: number().int().nonnegative(),
-  nanoseconds: number().int().min(0).max(999_999_999),
-});
 
 export const pedidoSchema = object({
     fechaEntrega: timestampSchema,

@@ -1,3 +1,4 @@
+import { number, object } from "zod";
 
 export const estatusPedido = Object.freeze({
     BACKLOG:'BACKLOG',
@@ -17,3 +18,8 @@ export const ErrorCodeFirebase = Object.freeze({
     EXPIRED_TOKEN :'auth/id-token-expired',
     EMAIL_EXIST: 'auth/email-already-in-use'
 })
+
+export const timestampSchema = object({
+  seconds: number().int().nonnegative(),
+  nanoseconds: number().int().min(0).max(999_999_999),
+});

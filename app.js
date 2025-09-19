@@ -6,11 +6,12 @@ import { createPedidoRouter } from './src/routes/pedidoRouter.js';
 import { createUserRouter } from './src/routes/userRouter.js';
 import cookieParser from 'cookie-parser';
 import { createPedidoPublicRouter } from './src/routes/pedidoPublicRouter.js';
+import { createRolRouter } from './src/routes/rolRouter.js';
 
 // Load products from a JSON file
 //let products = JSON.parse(fs.readFileSync('./products.json', 'utf-8') || '[]');
 
-export function createApp({authenticationModel, productModel, sizeProductModel, pedidoModel, userModel}) {
+export function createApp({authenticationModel, productModel, sizeProductModel, pedidoModel, userModel, rolModel}) {
   const app = express();
   app.disable('x-powered-by'); // Disable 'X-Powered-By' header for security
   const port = process.env.PORT ?? 3000;
@@ -38,6 +39,9 @@ export function createApp({authenticationModel, productModel, sizeProductModel, 
 
   //router fro pedidos
   app.use('/api/pedidos', authenticationModel.authenticate, createPedidoRouter({pedidoModel}))
+
+  //router for roles
+  app.use('/api/roles', authenticationModel.authenticate, createRolRouter({rolModel}))
 
   app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);

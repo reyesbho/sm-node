@@ -8,6 +8,7 @@ import { config } from "dotenv";
 import { PedidoModel } from "./src/models/firebase/Pedido.js";
 import {UserModel} from './src/models/firebase/User.js'
 import { AuthenticationMidlleware } from "./src/middlewares/authentication.js";
+import { RolModel } from "./src/models/firebase/Rol.js";
 // Definir cuál archivo usar según NODE_ENV
 // Cargar archivo .env según el entorno
 const envFile = `.env.${process.env.NODE_ENV || "development"}`;
@@ -31,8 +32,9 @@ const productModel = new ProductModel({firestoreDb});
 const sizeProductModel = new SizeProductModel({firestoreDb});
 const pedidoModel = new PedidoModel({firestoreDb});
 const userModel = new UserModel({auth});
+const rolModel = new RolModel({firestoreDb});
 const authenticationModel = new AuthenticationMidlleware();
 
- const app = createApp({authenticationModel ,productModel, sizeProductModel, pedidoModel, userModel});
+ const app = createApp({authenticationModel ,productModel, sizeProductModel, pedidoModel, userModel, rolModel});
 
  export default app;

@@ -8,19 +8,18 @@ afterAll(() => {
 });
 
 let authCookie: string;
+let sizeId: string;
 describe("Catalogs sizes", () => {
-    it("should authtenticate the request", async () => {
+    // Ejecutar autenticación antes de todos los tests
+    beforeAll(async () => {
         const response = await request(server).post("/user/login")
-        .send(
-            {
-                "email":"test@test.com",
-                "password":"HolaMundo123*"
-            }
-        );
+        .send({
+            "email": "test@test.com",
+            "password": "HolaMundo123*"
+        });
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('token');
         expect(response.body.token).toBeDefined();
-        // guarda la cookie del login
         authCookie = response.body.token;
     });
 
@@ -32,10 +31,10 @@ describe("Catalogs sizes", () => {
     });
     
     it("should return a size by ID", async () => {
-        const response = await request(server).get("/api/sizes/F5kvF254DPYGgwv6yuj7")
+        const response = await request(server).get("/api/sizes/DqClNoblfJUfQJaoieLv")
         .set('Cookie', `access_token=${authCookie}`);
         expect(response.status).toBe(200);
-        expect(response.body).toHaveProperty('id', 'F5kvF254DPYGgwv6yuj7');
+        expect(response.body).toHaveProperty('id', 'DqClNoblfJUfQJaoieLv');
     });
     
     it("should return 404 for non-existing size", async () => {
@@ -44,7 +43,7 @@ describe("Catalogs sizes", () => {
         expect(response.status).toBe(404);
     });
 
-    let sizeId: string;
+    
     it("should create a new size", async () => {
         const newSize = {
             descripcion: "TestSize",
@@ -56,6 +55,7 @@ describe("Catalogs sizes", () => {
         expect(response.status).toBe(201);
         expect(response.body).toHaveProperty('id');
         expect(response.body.descripcion).toBe('TestSize');
+        expect(response.body.id).toBeDefined();
         sizeId = response.body.id; // guarda el ID del nuevo tamaño
     });
 
@@ -75,8 +75,14 @@ describe("Catalogs sizes", () => {
 
     it("should update status an existing size", async () => {
         const response = await request(server).put(`/api/sizes/${sizeId}`)
+        .set('Cookie', `access_token=${authCookie}`)
+        .send({estatus: false});
+        expect(response.status).toBe(204);
+    });
+
+    it("should delete an existing size", async () => {
+        const response = await request(server).delete(`/api/sizes/${sizeId}`)
         .set('Cookie', `access_token=${authCookie}`);
         expect(response.status).toBe(204);
-        expect(response.body).toHaveProperty('id', sizeId);
     });
 });
