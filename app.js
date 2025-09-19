@@ -11,7 +11,7 @@ import { createRolRouter } from './src/routes/rolRouter.js';
 // Load products from a JSON file
 //let products = JSON.parse(fs.readFileSync('./products.json', 'utf-8') || '[]');
 
-export function createApp({authenticationModel, productModel, sizeProductModel, pedidoModel, userModel, rolModel}) {
+export function createApp({authenticationModel, productModel, sizeProductModel, pedidoModel, userModel, rolModel}, startServer = true) {
   const app = express();
   app.disable('x-powered-by'); // Disable 'X-Powered-By' header for security
   const port = process.env.PORT ?? 3000;
@@ -43,9 +43,12 @@ export function createApp({authenticationModel, productModel, sizeProductModel, 
   //router for roles
   app.use('/api/roles', authenticationModel.authenticate, createRolRouter({rolModel}))
 
-  app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-  });
+  // Solo iniciar el servidor si startServer es true (por defecto)
+  if (startServer) {
+    app.listen(port, () => {
+      console.log(`Server is running on http://localhost:${port}`);
+    });
+  }
 
   return app;
 }

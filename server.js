@@ -35,6 +35,6 @@ const userModel = new UserModel({auth});
 const rolModel = new RolModel({firestoreDb});
 const authenticationModel = new AuthenticationMidlleware();
 
- const app = createApp({authenticationModel ,productModel, sizeProductModel, pedidoModel, userModel, rolModel});
+ const app = createApp({authenticationModel ,productModel, sizeProductModel, pedidoModel, userModel, rolModel}, true);
 
  export default app;
