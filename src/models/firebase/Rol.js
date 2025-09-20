@@ -1,4 +1,4 @@
-import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 
 export class RolModel {
 
@@ -17,6 +17,19 @@ export class RolModel {
             roles.push({ id: doc.id, ...doc.data() });
         });
         return roles;
+    }
+
+    async getByClave({clave}){
+        const roles = [];
+        if(!clave){
+            return null;
+        }
+        const q = query(this.refCollection, where('clave', '==', clave));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach(doc => {
+            roles.push({ id: doc.id, ...doc.data() });
+        });
+        return (roles.length >  0 ? roles[0] : []);
     }
 
     async getById({ id }) {

@@ -1,21 +1,35 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { ErrorCodeFirebase } from "../../utils/utils.js";
-import { collection, deleteDoc, doc, setDoc } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDoc, setDoc } from "firebase/firestore";
 
 export class UserModel{
     constructor({auth, firestoreDb, authAdmin}){
         this.auth = auth;
         this.firestoreDb = firestoreDb;
         this.authAdmin = authAdmin;
-        this.refCollection = collection(firestoreDb, 'usuario');
+        this.collection = 'usuario';
+        this.refCollection = collection(firestoreDb, this.collection);
     }
 
 
-    async createUserCatalog({user}){
-        return await setDoc(doc(this.firestoreDb, 'usuario', user.id), {email:user.email});
+    async getById ({id}) {
+        const ref = doc(this.firestoreDb, this.collection, id);
+        const docSnap = await getDoc(ref);
+        if (!docSnap.exists()) {
+            return false;
+        }
+        const data = docSnap.data();
+        return { id: docSnap.id, ...data };
     }
 
-    async create({inputUser}){
+    async createUserCatalog({user, rol}){
+        await setDoc(doc(this.firestoreDb, this.collection, user.id), {email:user.email, rol: rol});
+        const newUserCatalog = await this.getById({id: user.id});
+        return newUserCatalog;
+    }
+
+    async create({inputUser, rol}){
+        console.log("UserModel", rol);
         const {email, password} = inputUser;
         try {
             const userCredentials = await createUserWithEmailAndPassword(this.auth, email, password);
@@ -23,8 +37,8 @@ export class UserModel{
                 return false;
             }
             const {uid} = userCredentials.user;
-            await this.createUserCatalog({user: {id: uid, email}});
-            return {id: uid, email};
+            const newUser = await this.createUserCatalog({user: {id: uid, email}, rol});
+            return newUser;
         } catch (error) {
             if(error.code === ErrorCodeFirebase.EMAIL_EXIST)
                 throw new Error('User already exists');
@@ -33,7 +47,7 @@ export class UserModel{
 
     async delete({ uid }) {
         try {
-          await deleteDoc(doc(this.firestoreDb, "usuario", uid));
+          await deleteDoc(doc(this.firestoreDb, this.collection, uid));
       
           await this.authAdmin.deleteUser(uid);
       

@@ -1,8 +1,10 @@
 import { validateUser } from "../schemas/userSchema.js";
+import { ROL_CONSTANT } from "../utils/Rol.utils.js";
 
 export class UserController {
-    constructor({userModel}){
+    constructor({userModel, rolModel}){
         this.userModel = userModel;
+        this.rolModel = rolModel;
     }
 
     create = async(req, res) => {
@@ -11,9 +13,11 @@ export class UserController {
             return res.status(400).json({message:JSON.parse(result.error.message)});
         }
         try{
-            const newUser = await this.userModel.create({inputUser: result.data});
+            const rol = await this.rolModel.getByClave({clave: ROL_CONSTANT.USUARIO});
+            const newUser = await this.userModel.create({inputUser: result.data, rol});
             return res.json(newUser);
         }catch(error){
+            console.log(error)
             res.status(400).json({message: error.message});
         }
         

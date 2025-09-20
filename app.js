@@ -27,7 +27,7 @@ export function createApp({authenticationModel, productModel, sizeProductModel, 
   });
 
   //user
-  app.use('/user', createUserRouter({userModel}));
+  app.use('/user', createUserRouter({userModel, rolModel}));
   //user
   app.use('/user',authenticationModel.authenticate, createUserPrivateRouter({userModel}));
 
