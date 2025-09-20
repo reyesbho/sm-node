@@ -1,6 +1,6 @@
 import { Timestamp } from "firebase/firestore";
 import { validatePartialPedido, validatePedido } from "../schemas/pedidoSchema.js";
-import { estatusPago, estatusPedido } from "../utils/utils.js";
+import { estatusPago, estatusPedido, formateDate } from "../utils/utils.js";
 import { v4 as uuidv4 } from 'uuid';
 
 
@@ -10,7 +10,13 @@ export class PedidoController {
     }
 
     getAllPublic = async(req, res) => {
-        const {fechaInicio, fechaFin, estatus, cursorFechaCreacion, pageSize} = req.query;
+        const {
+            fechaInicio = formateDate(new Date()),
+            fechaFin = formateDate(new Date()),
+            estatus ='ALL',
+            cursorFechaCreacion= null,
+            pageSize= 100
+        } = req.query;
         const response =  await this.pedidoModel.getAll({fechaInicio, fechaFin, estatus, cursorFechaCreacion, pageSize});
         // Remove sensitive information from pedidos
         const pedidosPublic = response.pedidos.map( (pedido) => {
@@ -26,7 +32,14 @@ export class PedidoController {
     }
 
     getAll = async(req, res) => {
-        const {fechaInicio, fechaFin, estatus, cursorFechaCreacion, pageSize} = req.query;
+        const {
+            fechaInicio = formateDate(new Date()),
+            fechaFin = formateDate(new Date()),
+            estatus ='ALL',
+            cursorFechaCreacion= null,
+            pageSize= 100
+        } = req.query;
+        
         const pedidos =  await this.pedidoModel.getAll({fechaInicio, fechaFin, estatus, cursorFechaCreacion, pageSize});
         return res.json(pedidos);
     }
@@ -76,10 +89,16 @@ export class PedidoController {
                 producto.id = uuidv4();
             }
         });
-        const updatePedido = await this.pedidoModel.update({id, ...dataAux});
-        if(updatePedido == false){
+        let updatedPedido;
+        try{
+            updatePedido = await this.pedidoModel.update({id, ...dataAux});
+            if(updatePedido == false){
+                return res.status(404).send({message:'Product not found'});
+            }
+        }catch(error){
             return res.status(404).send({message:'Product not found'});
         }
+        
         return res.json(updatePedido);
 
     }

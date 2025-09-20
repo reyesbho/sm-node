@@ -59,7 +59,6 @@ describe("Catalogs roles", () => {
     it("should update the created role", async () => {
         // Verificar que tenemos un roleId del test anterior
         expect(roleId).toBeDefined();
-        console.log("Updating role with ID:", roleId);
         
         const updatedRole = {
             descripcion: "UpdatedTestRole",

@@ -35,10 +35,13 @@ export class ProductController {
         if (result.error) {
             return res.status(400).json({error:JSON.parse(result.error.message)});
         }
-
-        const updateProduct = await this.productModel.update({id, ...result.data});
-
-        if (updateProduct === false) {
+        let updateProduct;
+        try{
+            updateProduct = await this.productModel.update({id, ...result.data});
+            if (updateProduct === false) {
+                return res.status(404).send({message: 'Product not found'});
+            }   
+        }catch(error){
             return res.status(404).send({message: 'Product not found'});
         }
 

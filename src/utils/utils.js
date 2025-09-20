@@ -23,3 +23,12 @@ export const timestampSchema = object({
   seconds: number().int().nonnegative(),
   nanoseconds: number().int().min(0).max(999_999_999),
 });
+
+
+export const formateDate = (date) => {
+    return Intl.DateTimeFormat('es-ES',{
+        day: '2-digit',
+        month : '2-digit',
+        year : 'numeric'
+    }).format(date);
+}
