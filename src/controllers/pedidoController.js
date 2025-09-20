@@ -10,38 +10,64 @@ export class PedidoController {
     }
 
     getAllPublic = async(req, res) => {
-        const {
-            fechaInicio = formateDate(new Date()),
-            fechaFin = formateDate(new Date()),
-            estatus ='ALL',
-            cursorFechaCreacion= null,
-            pageSize= 100
-        } = req.query;
-        const response =  await this.pedidoModel.getAll({fechaInicio, fechaFin, estatus, cursorFechaCreacion, pageSize});
-        // Remove sensitive information from pedidos
-        const pedidosPublic = response.pedidos.map( (pedido) => {
-            return {
-                id: pedido.id,
-                fechaEntrega: pedido.fechaEntrega,
-                cliente: pedido.cliente,
-                lugarEntrega: pedido.lugarEntrega
-            }
-        });
-        // Return the sanitized pedidos
-        return res.json(pedidosPublic);
+        try {
+            const {
+                fechaInicio,
+                fechaFin,
+                estatus ='ALL',
+                cursorFechaCreacion= null,
+                pageSize= 100
+            } = req.query;
+            
+            // Si no se proporcionan fechas, no aplicar filtros de fecha
+            const response = await this.pedidoModel.getAll({
+                fechaInicio, 
+                fechaFin, 
+                estatus, 
+                cursorFechaCreacion, 
+                pageSize
+            });
+            
+            // Remove sensitive information from pedidos
+            const pedidosPublic = response.pedidos.map( (pedido) => {
+                return {
+                    id: pedido.id,
+                    fechaEntrega: pedido.fechaEntrega,
+                    cliente: pedido.cliente,
+                    lugarEntrega: pedido.lugarEntrega
+                }
+            });
+            
+            // Return the sanitized pedidos
+            return res.json(pedidosPublic);
+        } catch (error) {
+            console.error('Error in getAllPublic:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
     }
 
     getAll = async(req, res) => {
-        const {
-            fechaInicio = formateDate(new Date()),
-            fechaFin = formateDate(new Date()),
-            estatus ='ALL',
-            cursorFechaCreacion= null,
-            pageSize= 100
-        } = req.query;
-        
-        const pedidos =  await this.pedidoModel.getAll({fechaInicio, fechaFin, estatus, cursorFechaCreacion, pageSize});
-        return res.json(pedidos);
+        try {
+            const {
+                fechaInicio,
+                fechaFin,
+                estatus ='ALL',
+                cursorFechaCreacion= null,
+                pageSize= 100
+            } = req.query;
+            
+            const pedidos = await this.pedidoModel.getAll({
+                fechaInicio, 
+                fechaFin, 
+                estatus, 
+                cursorFechaCreacion, 
+                pageSize
+            });
+            return res.json(pedidos);
+        } catch (error) {
+            console.error('Error in getAll:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
     }
 
     create = async(req, res) => {
@@ -91,15 +117,15 @@ export class PedidoController {
         });
         let updatedPedido;
         try{
-            updatePedido = await this.pedidoModel.update({id, ...dataAux});
-            if(updatePedido == false){
+            updatedPedido = await this.pedidoModel.update({id, ...dataAux});
+            if(updatedPedido == false){
                 return res.status(404).send({message:'Product not found'});
             }
         }catch(error){
             return res.status(404).send({message:'Product not found'});
         }
         
-        return res.json(updatePedido);
+        return res.json(updatedPedido);
 
     }
 }

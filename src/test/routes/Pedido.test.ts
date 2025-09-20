@@ -47,8 +47,16 @@ describe("Pedidos Management", () => {
         fechaInicio.setDate(fechaInicio.getDate() - 30); // 30 días atrás
         const fechaFin = new Date();
         
+        // Formatear fechas en el formato esperado por el modelo (DD-MM-YYYY)
+        const formatDate = (date: Date) => {
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}-${month}-${year}`;
+        };
+        
         const response = await request(app)
-            .get(`/api/pedidos?fechaInicio=${fechaInicio.toISOString()}&fechaFin=${fechaFin.toISOString()}`)
+            .get(`/api/pedidos?fechaInicio=${formatDate(fechaInicio)}&fechaFin=${formatDate(fechaFin)}`)
             .set('Cookie', `access_token=${authCookie}`);
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('pedidos');
