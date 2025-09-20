@@ -1,12 +1,9 @@
 import { Router } from "express"
 import { UserController } from "../controllers/userController.js";
 
-export const createUserRouter = ({userModel}) => {
+export const createUserPrivateRouter = ({userModel}) => {
     const userRouter = Router();
     const userController = new UserController({userModel});
-    userRouter.post('/login', userController.login);
-    userRouter.post('/register', userController.create);
-    userRouter.post('/logout', userController.logout);
-
+    userRouter.delete('/:id', userController.delete);
     return userRouter;
 }

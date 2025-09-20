@@ -55,4 +55,13 @@ export class UserController {
         }
         return res.status(200).json({message: 'Succefull logout'});
     }
+
+    delete = async(req, res) =>{
+        const {id} = req.params;  
+        const userDelete = await this.userModel.delete({uid: id});
+        if(!userDelete){
+            return res.status(401).json({message:"Error al eliminar el usuario"});
+        }
+        return res.status(204).json("Usuario eliminado correctamente");
+    }
 }

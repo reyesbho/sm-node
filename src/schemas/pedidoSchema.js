@@ -1,5 +1,5 @@
 import {object, date, number, string, boolean} from 'zod';
-import { timestampSchema } from '../utils/utils';
+import { timestampSchema } from '../utils/utils.js';
 
 
 export const pedidoSchema = object({

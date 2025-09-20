@@ -7,6 +7,7 @@ import { createUserRouter } from './src/routes/userRouter.js';
 import cookieParser from 'cookie-parser';
 import { createPedidoPublicRouter } from './src/routes/pedidoPublicRouter.js';
 import { createRolRouter } from './src/routes/rolRouter.js';
+import { createUserPrivateRouter } from './src/routes/userPrivateRouter.js';
 
 // Load products from a JSON file
 //let products = JSON.parse(fs.readFileSync('./products.json', 'utf-8') || '[]');
@@ -27,6 +28,8 @@ export function createApp({authenticationModel, productModel, sizeProductModel, 
 
   //user
   app.use('/user', createUserRouter({userModel}));
+  //user
+  app.use('/user',authenticationModel.authenticate, createUserPrivateRouter({userModel}));
 
   // Public routes for pedidos
   app.use('/api/public/pedidos', createPedidoPublicRouter({pedidoModel}));
