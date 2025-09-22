@@ -8,11 +8,12 @@ import cookieParser from 'cookie-parser';
 import { createPedidoPublicRouter } from './src/routes/pedidoPublicRouter.js';
 import { createRolRouter } from './src/routes/rolRouter.js';
 import { createUserPrivateRouter } from './src/routes/userPrivateRouter.js';
+import { createCompanyRouter } from './src/routes/CompanyRouter.js';
 
 // Load products from a JSON file
 //let products = JSON.parse(fs.readFileSync('./products.json', 'utf-8') || '[]');
 
-export function createApp({authenticationModel, productModel, sizeProductModel, pedidoModel, userModel, rolModel}, startServer = true) {
+export function createApp({authenticationModel, productModel, sizeProductModel, pedidoModel, userModel, rolModel, companyModel}, startServer = true) {
   const app = express();
   app.disable('x-powered-by'); // Disable 'X-Powered-By' header for security
   const port = process.env.PORT ?? 3000;
@@ -45,6 +46,9 @@ export function createApp({authenticationModel, productModel, sizeProductModel, 
 
   //router for roles
   app.use('/api/roles', authenticationModel.authenticate, createRolRouter({rolModel}))
+
+  //router for company
+  app.use('/api/companys', authenticationModel.authenticate, createCompanyRouter({companyModel}))
 
   // Solo iniciar el servidor si startServer es true (por defecto)
   if (startServer) {

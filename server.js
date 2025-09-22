@@ -11,6 +11,7 @@ import { PedidoModel } from "./src/models/firebase/Pedido.js";
 import {UserModel} from './src/models/firebase/User.js'
 import { AuthenticationMidlleware } from "./src/middlewares/authentication.js";
 import { RolModel } from "./src/models/firebase/Rol.js";
+import { CompanyModel } from "./src/models/firebase/Company.js";
 // Definir cuál archivo usar según NODE_ENV
 // Cargar archivo .env según el entorno
 const envFile = `.env.${process.env.NODE_ENV || "development"}`;
@@ -55,6 +56,7 @@ const pedidoModel = new PedidoModel({firestoreDb});
 const userModel = new UserModel({auth, firestoreDb, authAdmin});
 const rolModel = new RolModel({firestoreDb});
 const authenticationModel = new AuthenticationMidlleware(authAdmin);
+const companyModel = new CompanyModel({firestoreDb});
 
  const app = createApp({
   authenticationModel ,
@@ -62,6 +64,8 @@ const authenticationModel = new AuthenticationMidlleware(authAdmin);
   sizeProductModel, 
   pedidoModel, 
   userModel, 
-  rolModel}, true);
+  rolModel,
+  companyModel
+}, true);
 
  export default app;
