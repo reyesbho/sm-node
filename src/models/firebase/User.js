@@ -1,6 +1,7 @@
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { ErrorCodeFirebase } from "../../utils/utils.js";
 import { collection, deleteDoc, doc, getDoc, setDoc } from "firebase/firestore";
+import { email } from "zod/v4";
 
 export class UserModel{
     constructor({auth, firestoreDb, authAdmin}){
@@ -23,7 +24,12 @@ export class UserModel{
     }
 
     async createUserCatalog({user, rol}){
-        await setDoc(doc(this.firestoreDb, this.collection, user.id), {email:user.email, rol: rol});
+        const userNew = {
+            email:user.email,
+            fechaRegistro: new Date(),
+            ...rol
+        }
+        await setDoc(doc(this.firestoreDb, this.collection, user.id), userNew);
         const newUserCatalog = await this.getById({id: user.id});
         return newUserCatalog;
     }
