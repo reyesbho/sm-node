@@ -14,7 +14,7 @@ export class UserController {
         }
         try{
             const rol = await this.rolModel.getByClave({clave: ROL_CONSTANT.USUARIO});
-            const newUser = await this.userModel.create({inputUser: result.data, rol});
+            const newUser = await this.userModel.create({inputUser: result.data, rol:{rol}});
             return res.json(newUser);
         }catch(error){
             console.log(error)

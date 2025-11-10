@@ -11,6 +11,7 @@ import { PedidoModel } from "../models/firebase/Pedido.js";
 import { UserModel } from '../models/firebase/User.js';
 import { AuthenticationMidlleware } from "../middlewares/authentication.js";
 import { RolModel } from "../models/firebase/Rol.js";
+import { CompanyModel } from "../models/firebase/Company.js";
 
 // Cargar variables de entorno para testing
 config({ path: '.env.development' });
@@ -64,6 +65,7 @@ const sizeProductModel = new SizeProductModel({ firestoreDb });
 const pedidoModel = new PedidoModel({ firestoreDb });
 const userModel = new UserModel({ auth, firestoreDb, authAdmin });
 const rolModel = new RolModel({ firestoreDb });
+const companyModel = new CompanyModel({ firestoreDb });
 const authenticationModel = new AuthenticationMidlleware(authAdmin);
 
 // Crear la app sin iniciar el servidor
@@ -73,7 +75,8 @@ const app = createApp({
   sizeProductModel, 
   pedidoModel, 
   userModel, 
-  rolModel 
+  rolModel,
+  companyModel
 }, false); // false = no iniciar el servidor
 
 console.log('✅ Setup de testing completado');
