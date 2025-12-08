@@ -1,6 +1,5 @@
 import { createApp } from "../../app.js";
 import { ProductModel } from "../models/firebase/Product.js";
-import { SizeProductModel } from "../models/firebase/SizeProduct.js";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
@@ -61,7 +60,6 @@ const authAdmin = getAuthAdmin(firebaseAdmin);
 
 // Crear instancias de modelos
 const productModel = new ProductModel({ firestoreDb });
-const sizeProductModel = new SizeProductModel({ firestoreDb });
 const pedidoModel = new PedidoModel({ firestoreDb });
 const userModel = new UserModel({ auth, firestoreDb, authAdmin });
 const rolModel = new RolModel({ firestoreDb });
@@ -72,7 +70,6 @@ const authenticationModel = new AuthenticationMidlleware(authAdmin);
 const app = createApp({ 
   authenticationModel, 
   productModel, 
-  sizeProductModel, 
   pedidoModel, 
   userModel, 
   rolModel,

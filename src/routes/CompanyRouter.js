@@ -1,10 +1,9 @@
 import { Router } from "express"
 import { CompanyController } from "../controllers/companyController.js";
 import { createProductRouter } from "./productRouter.js";
-import { createSizeProductRouter } from "./sizeProductRouter.js";
 import { createPedidoRouter } from "./pedidoRouter.js";
 
-export const createCompanyRouter = ({companyModel, productModel, sizeProductModel, pedidoModel}) => {
+export const createCompanyRouter = ({companyModel, productModel, pedidoModel}) => {
     const companyRouter = Router({mergeParams: true});
     const companyController = new CompanyController({companyModel});
 
@@ -16,7 +15,6 @@ export const createCompanyRouter = ({companyModel, productModel, sizeProductMode
     companyRouter.delete('/:idCompany', companyController.delete);
 
     companyRouter.use('/:idCompany/productos', createProductRouter({productModel}));
-    companyRouter.use('/:idCompany/sizesProducts', createSizeProductRouter({sizeProductModel}));
     companyRouter.use('/:idCompany/pedidos', createPedidoRouter({pedidoModel}));
 
     return companyRouter;

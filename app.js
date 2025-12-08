@@ -1,8 +1,5 @@
 import express from 'express';
 import { corsMiddleware } from './src/middlewares/cors.js';
-import { createProductRouter } from './src/routes/productRouter.js';
-import { createSizeProductRouter } from './src/routes/sizeProductRouter.js';
-import { createPedidoRouter } from './src/routes/pedidoRouter.js';
 import { createUserRouter } from './src/routes/userRouter.js';
 import cookieParser from 'cookie-parser';
 import { createPedidoPublicRouter } from './src/routes/pedidoPublicRouter.js';
@@ -13,7 +10,7 @@ import { createCompanyRouter } from './src/routes/CompanyRouter.js';
 // Load products from a JSON file
 //let products = JSON.parse(fs.readFileSync('./products.json', 'utf-8') || '[]');
 
-export function createApp({authenticationModel, productModel, sizeProductModel, pedidoModel, userModel, rolModel, companyModel}, startServer = true) {
+export function createApp({authenticationModel, productModel, pedidoModel, userModel, rolModel, companyModel}, startServer = true) {
   const app = express();
   app.disable('x-powered-by'); // Disable 'X-Powered-By' header for security
   const port = process.env.PORT ?? 3000;
@@ -39,7 +36,7 @@ export function createApp({authenticationModel, productModel, sizeProductModel, 
   app.use('/api/roles', authenticationModel.authenticate, createRolRouter({rolModel}))
 
   //router for company
-  app.use('/api/companys', authenticationModel.authenticate, createCompanyRouter({companyModel, productModel, sizeProductModel, pedidoModel}));
+  app.use('/api/companys', authenticationModel.authenticate, createCompanyRouter({companyModel, productModel, pedidoModel}));
 
   // Solo iniciar el servidor si startServer es true (por defecto)
   if (startServer) {
