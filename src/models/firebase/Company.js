@@ -3,7 +3,7 @@ import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, 
 export class CompanyModel {
     constructor({firestoreDb}){
         this.firestoreDb = firestoreDb;
-        this.collectionName = 'company';
+        this.collectionName = 'companias';
         this.refCollection = collection(this.firestoreDb, this.collectionName);
     }
 

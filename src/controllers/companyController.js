@@ -1,5 +1,6 @@
 import { email } from "zod/v4";
 import { validateCompany, validatePartialCompany } from "../schemas/companySchema.js";
+import { id } from "zod/v4/locales";
 
 export class CompanyController{
     constructor({companyModel}){
@@ -13,8 +14,8 @@ export class CompanyController{
     }
 
     getById = async(req, res) => {
-        const {id} = req.params;
-        const company = await this.companyModel.getById({id});
+        const {idCompany} = req.params;
+        const company = await this.companyModel.getById({id: idCompany});
         if(company == false){
             res.status(400).send({message:'Company not found'});
         }
@@ -36,7 +37,7 @@ export class CompanyController{
     }
 
     update = async(req, res) => {
-        const {id} = req.params;
+        const {idCompany} = req.params;
         //validamos schema partial 
         const result = validatePartialCompany(req.body);
         if(result.error){
@@ -46,7 +47,7 @@ export class CompanyController{
         dataAux.fechaActualizacion = new Date();
         let updateCompany;
         try{
-            updateCompany = await this.companyModel.update({id, ...dataAux});
+            updateCompany = await this.companyModel.update({id:idCompany, ...dataAux});
         }catch(error){
             return res.status(404).send({message: "Company not found"});
         }
@@ -54,8 +55,8 @@ export class CompanyController{
     }
 
     updateStatus = async(req, res) => {
-        const {id} = req.params;
-        const company = await this.companyModel.updateStatus({id});
+        const {idCompany} = req.params;
+        const company = await this.companyModel.updateStatus({id: idCompany});
         if(!company){
             return res.status(404).send({message: 'Company not found'});
         }
@@ -64,8 +65,8 @@ export class CompanyController{
 
 
      delete = async(req, res) => {
-        const {id} = req.params;
-        const result = await this.companyModel.delete({id});
+        const {idCompany} = req.params;
+        const result = await this.companyModel.delete({id: idCompany});
         if (result === false){
             return res.status(404).send({message: 'Company not found'});
         }

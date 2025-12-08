@@ -35,20 +35,11 @@ export function createApp({authenticationModel, productModel, sizeProductModel, 
   // Public routes for pedidos
   app.use('/api/public/pedidos', createPedidoPublicRouter({pedidoModel}));
 
-  // roter for product
-  app.use('/api/products',authenticationModel.authenticate, createProductRouter({productModel}));
-
-  //router for sizes
-  app.use('/api/sizes', authenticationModel.authenticate, createSizeProductRouter({ sizeProductModel }));
-
-  //router fro pedidos
-  app.use('/api/pedidos', authenticationModel.authenticate, createPedidoRouter({pedidoModel}))
-
   //router for roles
   app.use('/api/roles', authenticationModel.authenticate, createRolRouter({rolModel}))
 
   //router for company
-  app.use('/api/companys', authenticationModel.authenticate, createCompanyRouter({companyModel}))
+  app.use('/api/companys', authenticationModel.authenticate, createCompanyRouter({companyModel, productModel, sizeProductModel, pedidoModel}));
 
   // Solo iniciar el servidor si startServer es true (por defecto)
   if (startServer) {

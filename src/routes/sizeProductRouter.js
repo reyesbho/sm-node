@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { SizeProductController } from "../controllers/sizeProductController.js";
 export const createSizeProductRouter = ({ sizeProductModel }) => {
-    const sizeProductRouter = Router();
+    const sizeProductRouter = Router({mergeParams: true});
     const sizeProductController = new SizeProductController({ sizeProductModel });
 
     sizeProductRouter.get("/", sizeProductController.getAll);

@@ -26,10 +26,10 @@ describe("Catalogs roles", () => {
     });
 
     it("should return a role by ID", async () => {
-        const response = await request(app).get("/api/roles/Guf0mQWS0gkaHByWogZO")
+        const response = await request(app).get("/api/roles/rol_admin")
         .set('Cookie', `access_token=${authCookie}`);
         expect(response.status).toBe(200);
-        expect(response.body).toHaveProperty('id', 'Guf0mQWS0gkaHByWogZO');
+        expect(response.body).toHaveProperty('id', 'rol_admin');
     });
 
     it("should return 404 for non-existing role", async () => {

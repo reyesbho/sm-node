@@ -8,7 +8,7 @@ export class UserModel{
         this.auth = auth;
         this.firestoreDb = firestoreDb;
         this.authAdmin = authAdmin;
-        this.collection = 'usuario';
+        this.collection = 'usuarios';
         this.refCollection = collection(firestoreDb, this.collection);
     }
 

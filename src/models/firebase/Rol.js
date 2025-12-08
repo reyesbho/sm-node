@@ -4,7 +4,7 @@ export class RolModel {
 
     constructor({ firestoreDb }) {
         this.firestoreDb = firestoreDb;
-        this.nameCatalog = 'rol';
+        this.nameCatalog = 'roles';
         this.refCollection = collection(this.firestoreDb, this.nameCatalog);
         
     }

@@ -31,7 +31,7 @@ describe("User Authentication", () => {
 
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('email', newUser.email);
-        expect(response.body).toHaveProperty('rol.clave','USUARIO' );
+        expect(response.body).toHaveProperty('rol.clave','USER' );
         userId = response.body.id;
     });
 

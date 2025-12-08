@@ -1,16 +1,17 @@
+import e from "express";
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { GeneralCompanyModel } from "./GeneralCompany.js";
 
 
-export class ProductModel {
+export class ProductModel extends GeneralCompanyModel {
 
-    constructor({firestoreDb}){
+    constructor({ firestoreDb }) {
+        super();
         this.firestoreDb = firestoreDb;
-        this.refCollection = collection(this.firestoreDb, 'products');
+        this.catalogName = 'productos';
     }
 
-
-     async getAll ({tag, estatus}) {
-        
+     async getAll ({tag, estatus, idCompany}) {
         const products = [];
         const filters = []
         if (tag) {
@@ -19,7 +20,7 @@ export class ProductModel {
         if(estatus !== undefined && estatus !== null) {
             filters.push(where('estatus', '==', (estatus ? true : false)));
         }
-        const q = query(this.refCollection, ...filters);
+        const q = query(this.getRefCollection(idCompany), ...filters);
         const querySnapshot = await getDocs(q);    
         querySnapshot.forEach(doc => {
                 products.push({ id: doc.id, ...doc.data() });
@@ -27,8 +28,8 @@ export class ProductModel {
         return products;
     }
 
-     async getById ({id}) {
-        const ref = doc(this.firestoreDb, 'products', id);
+     async getById ({id, idCompany}) {
+        const ref = this.getRefDoc(idCompany, id);
         const docSnap = await getDoc(ref);
         if (!docSnap.exists()) {
             return false;
@@ -37,29 +38,29 @@ export class ProductModel {
         return { id: docSnap.id, ...data };
     }
 
-     async create (inputProduct) {
-        const doc = await addDoc(this.refCollection, inputProduct);
-        return this.getById({id: doc.id}); 
+     async create ({inputProduct, idCompany}) {
+        const doc = await addDoc(this.getRefCollection(idCompany), inputProduct);
+        return this.getById({id: doc.id, idCompany}); 
     }   
 
-     async delete ({id}) {
-        const product = await this.getById({id});
+     async delete ({id, idCompany}) {
+        const product = await this.getById({id, idCompany});
         if (!product) {
             return false;
         }
-        await deleteDoc(doc(this.firestoreDb, 'products', id));
+        await deleteDoc(this.getRefDoc(idCompany, id));
         return true; 
     }
 
-     async update ({id, ...inputProduct}) {
-        const ref = doc(this.firestoreDb, 'products', id);
+     async update ({id, idCompany, ...inputProduct}) {
+        const ref = this.getRefDoc(idCompany, id);
         await updateDoc(ref, inputProduct);
-        const updatedProduct = await this.getById({id});
+        const updatedProduct = await this.getById({id, idCompany});
         return updatedProduct; 
     }
 
      async updateState({id}) {
-        const producto = await this.getById({id});
+        const producto = await this.getById({id, idCompany});
         if (!producto) {
             return false; 
         }
