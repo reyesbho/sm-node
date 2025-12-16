@@ -1,10 +1,13 @@
 import { addDoc, collection, doc, getDoc, getDocs, limit, orderBy, query, startAfter, updateDoc, where } from "firebase/firestore";
 import { estatusPedido } from "../../utils/utils.js";
+import { GeneralCompanyModel } from "./GeneralCompany.js";
+import { id } from "zod/v4/locales";
 
-export class PedidoModel{
+export class PedidoModel extends GeneralCompanyModel{
     constructor({firestoreDb}){
+        super();
         this.firestoreDb = firestoreDb;
-        this.refCollection = collection(firestoreDb, 'pedidos');
+        this.catalogName = 'pedidos';
     }
 
     /**busqueda de pedidos por
@@ -14,7 +17,7 @@ export class PedidoModel{
      * pagina
      * tamañoPagina
      *  **/
-    async getAll({fechaInicio, fechaFin, estatus, cursorFechaCreacion, pageSize}){
+    async getAll({fechaInicio, fechaFin, estatus, cursorFechaCreacion, pageSize, idCompany}){
         const filters = [];
         const realLimit = pageSize + 1;
         const offsetMillis = 6 * 60 * 60 * 1000; // para UTC-6
@@ -39,7 +42,7 @@ export class PedidoModel{
             filters.push(where('fechaEntrega', '<=', fechaFinDate));
         }
         
-        let q = query(this.refCollection,
+        let q = query(this.getRefCollection(idCompany),
                       ...filters,
                       orderBy('fechaCreacion'),
                       ...(cursorFechaCreacion ? [startAfter(new Date(cursorFechaCreacion))] : []),
@@ -64,8 +67,8 @@ export class PedidoModel{
         };
     }
 
-    async getById({id}){
-        const ref = doc(this.firestoreDb, 'pedidos', id);
+    async getById({id, idCompany}){
+        const ref = this.getRefDoc(idCompany,id);
         const docSnap = await getDoc(ref);
         if(!docSnap.exists()){
             return false;
@@ -75,27 +78,27 @@ export class PedidoModel{
     }
 
 
-    async create({inputPedido}){
+    async create({inputPedido, idCompany}){
         const pedido = {...inputPedido};
-        const doc = await addDoc(this.refCollection, pedido);
-        return this.getById({id : doc.id});        
+        const doc = await addDoc(this.getRefCollection(idCompany), pedido);
+        return this.getById({id : doc.id, idCompany});        
     }
 
-    async update({id, ...inputPedido}){
-        const ref = doc(this.firestoreDb, 'pedidos', id);
+    async update({id,idCompany, ...inputPedido}){
+        const ref = this.getRefDoc(idCompany, id);
         const pedidoAux= {...inputPedido};
         pedidoAux.fechaActualizacion = new Date();
         await updateDoc(ref, pedidoAux);
-        const updatedPedido = await this.getById({id});
+        const updatedPedido = await this.getById({id, idCompany});
         return updatedPedido;
     }
 
-    async delete({id}){
-        const pedido = await this.getById({id});
+    async delete({id, idCompany}){
+        const pedido = await this.getById({id, idCompany});
         if(!pedido){
             return false;
         }
-        await this.update({id, estatus: estatusPedido.DELETE});
+        await this.update({id, idCompany, estatus: estatusPedido.DELETE});
         return true;
     }
 }

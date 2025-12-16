@@ -19,7 +19,7 @@ describe("Pedidos Management", () => {
     });
 
     it("should return a list of pedidos", async () => {
-        const response = await request(app).get("/api/pedidos")
+        const response = await request(app).get("/api/companys/compania_001/pedidos")
         .set('Cookie', `access_token=${authCookie}`);
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('pedidos');
@@ -27,7 +27,7 @@ describe("Pedidos Management", () => {
     });
 
     it("should return pedidos with pagination", async () => {
-        const response = await request(app).get("/api/pedidos?pageSize=5")
+        const response = await request(app).get("/api/companys/compania_001/pedidos?pageSize=5")
         .set('Cookie', `access_token=${authCookie}`);
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('pedidos');
@@ -35,7 +35,7 @@ describe("Pedidos Management", () => {
     });
 
     it("should return pedidos filtered by status", async () => {
-        const response = await request(app).get("/api/pedidos?estatus=BACKLOG")
+        const response = await request(app).get("/api/companys/compania_001/pedidos?estatus=BACKLOG")
         .set('Cookie', `access_token=${authCookie}`);
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('pedidos');
@@ -56,7 +56,7 @@ describe("Pedidos Management", () => {
         };
         
         const response = await request(app)
-            .get(`/api/pedidos?fechaInicio=${formatDate(fechaInicio)}&fechaFin=${formatDate(fechaFin)}`)
+            .get(`/api/companys/compania_001/pedidos?fechaInicio=${formatDate(fechaInicio)}&fechaFin=${formatDate(fechaFin)}`)
             .set('Cookie', `access_token=${authCookie}`);
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('pedidos');
@@ -65,7 +65,7 @@ describe("Pedidos Management", () => {
 
     it("should return a pedido by ID", async () => {
         // Usar un ID que probablemente exista (ajustar según tu base de datos)
-        const response = await request(app).get("/api/pedidos/test_pedido_id")
+        const response = await request(app).get("/api/companys/compania_001/pedidos/test_pedido_id")
         .set('Cookie', `access_token=${authCookie}`);
         // Este test puede fallar si el ID no existe, pero es normal
         if (response.status === 404) {
@@ -77,7 +77,7 @@ describe("Pedidos Management", () => {
     });
 
     it("should return 404 for non-existing pedido", async () => {
-        const response = await request(app).get("/api/pedidos/999999")
+        const response = await request(app).get("/api/companys/compania_001/pedidos/999999")
         .set('Cookie', `access_token=${authCookie}`);
         expect(response.status).toBe(404);
         expect(response.body).toHaveProperty('message', 'Product not found');
@@ -112,7 +112,7 @@ describe("Pedidos Management", () => {
             ]
         };
         
-        const response = await request(app).post("/api/pedidos")
+        const response = await request(app).post("/api/companys/compania_001/pedidos")
         .set('Cookie', `access_token=${authCookie}`)
         .send(newPedido);
         
@@ -139,7 +139,7 @@ describe("Pedidos Management", () => {
             cliente: "AB" // Muy corto
         };
         
-        const response = await request(app).post("/api/pedidos")
+        const response = await request(app).post("/api/companys/compania_001/pedidos")
         .set('Cookie', `access_token=${authCookie}`)
         .send(invalidPedido);
         
@@ -156,7 +156,7 @@ describe("Pedidos Management", () => {
             cliente: "Valid Client Name"
         };
         
-        const response = await request(app).post("/api/pedidos")
+        const response = await request(app).post("/api/companys/compania_001/pedidos")
         .set('Cookie', `access_token=${authCookie}`)
         .send(invalidPedido);
         
@@ -190,7 +190,7 @@ describe("Pedidos Management", () => {
             ]
         };
         
-        const response = await request(app).post("/api/pedidos")
+        const response = await request(app).post("/api/companys/compania_001/pedidos")
         .set('Cookie', `access_token=${authCookie}`)
         .send(invalidPedido);
         
@@ -206,7 +206,7 @@ describe("Pedidos Management", () => {
             lugarEntrega: "Updated Location"
         };
         
-        const response = await request(app).patch(`/api/pedidos/${pedidoId}`)
+        const response = await request(app).patch(`/api/companys/compania_001/pedidos/${pedidoId}`)
         .set('Cookie', `access_token=${authCookie}`)
         .send(updatedPedido);
         
@@ -236,7 +236,7 @@ describe("Pedidos Management", () => {
             ]
         };
         
-        const response = await request(app).patch(`/api/pedidos/${pedidoId}`)
+        const response = await request(app).patch(`/api/companys/compania_001/pedidos/${pedidoId}`)
         .set('Cookie', `access_token=${authCookie}`)
         .send(updatedPedido);
         
@@ -246,7 +246,7 @@ describe("Pedidos Management", () => {
     });
 
     it("should return 404 when updating non-existing pedido", async () => {
-        const response = await request(app).patch("/api/pedidos/999999")
+        const response = await request(app).patch("/api/companys/compania_001/pedidos/999999")
         .set('Cookie', `access_token=${authCookie}`)
         .send({ cliente: "Updated" });
         
@@ -255,7 +255,7 @@ describe("Pedidos Management", () => {
     });
 
     it("should return 401 when accessing pedidos without authentication", async () => {
-        const response = await request(app).get("/api/pedidos");
+        const response = await request(app).get("/api/companys/compania_001/pedidos");
         expect(response.status).toBe(401);
     });
 
@@ -271,7 +271,7 @@ describe("Pedidos Management", () => {
             cliente: "Unauthorized Client"
         };
         
-        const response = await request(app).post("/api/pedidos")
+        const response = await request(app).post("/api/companys/compania_001/pedidos")
         .send(newPedido);
         
         expect(response.status).toBe(401);

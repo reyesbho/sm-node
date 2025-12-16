@@ -14,8 +14,6 @@ export class ProductController {
 
     getById = async(req, res) => {
         const {idCompany, idProducto} = req.params;  
-        console.log("ID COMPANY IN CONTROLLER:", idCompany);
-        console.log("ID PRODUCT IN CONTROLLER:", idProducto);
         const product = await this.productModel.getById({id: idProducto, idCompany});
         if (product == false) {
             return res.status(404).send({message: 'Product not found'});

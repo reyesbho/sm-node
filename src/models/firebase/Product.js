@@ -1,4 +1,3 @@
-import e from "express";
 import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { GeneralCompanyModel } from "./GeneralCompany.js";
 
@@ -59,12 +58,12 @@ export class ProductModel extends GeneralCompanyModel {
         return updatedProduct; 
     }
 
-     async updateState({id}) {
+     async updateState({id, idCompany}) {
         const producto = await this.getById({id, idCompany});
         if (!producto) {
             return false; 
         }
-        await this.update({id, estatus: !producto.estatus}); 
+        await this.update({id, idCompany, estatus: !producto.estatus}); 
         return true; 
     }
 }

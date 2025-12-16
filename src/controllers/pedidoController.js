@@ -2,6 +2,7 @@ import { Timestamp } from "firebase/firestore";
 import { validatePartialPedido, validatePedido } from "../schemas/pedidoSchema.js";
 import { estatusPago, estatusPedido, formateDate } from "../utils/utils.js";
 import { v4 as uuidv4 } from 'uuid';
+import { id } from "zod/v4/locales";
 
 
 export class PedidoController {
@@ -47,6 +48,7 @@ export class PedidoController {
     }
 
     getAll = async(req, res) => {
+        const {idCompany} = req.params;
         try {
             const {
                 fechaInicio,
@@ -61,7 +63,8 @@ export class PedidoController {
                 fechaFin, 
                 estatus, 
                 cursorFechaCreacion, 
-                pageSize
+                pageSize,
+                idCompany
             });
             return res.json(pedidos);
         } catch (error) {
@@ -71,6 +74,7 @@ export class PedidoController {
     }
 
     create = async(req, res) => {
+        const {idCompany} = req.params;
         const result = validatePedido(req.body);
         if(result.error){
             return res.status(400).json({error: JSON.parse(result.error)})
@@ -85,13 +89,13 @@ export class PedidoController {
         dataAux.productos?.forEach(producto => {
            producto.id = uuidv4();
         });
-        const newPedido = await this.pedidoModel.create({inputPedido: dataAux});
+        const newPedido = await this.pedidoModel.create({inputPedido: dataAux, idCompany});
         return res.status(201).json(newPedido);
     }
 
     getById = async (req, res) => {
-        const {id} = req.params;
-        const pedido = await this.pedidoModel.getById({id});
+        const {idPedido, idCompany} = req.params;
+        const pedido = await this.pedidoModel.getById({id:idPedido, idCompany});
         if(pedido == false){
             return res.status(404).send({message: 'Product not found'});
         }
@@ -99,7 +103,7 @@ export class PedidoController {
     }
 
     update = async(req, res) => {
-        const {id} = req.params;
+        const {idPedido, idCompany} = req.params;
         const result = validatePartialPedido(req.body);
         if(result.error){
             return res.status(400).json({message: JSON.parse(result.error.message)});
@@ -117,7 +121,7 @@ export class PedidoController {
         });
         let updatedPedido;
         try{
-            updatedPedido = await this.pedidoModel.update({id, ...dataAux});
+            updatedPedido = await this.pedidoModel.update({id: idPedido, idCompany, ...dataAux});
             if(updatedPedido == false){
                 return res.status(404).send({message:'Product not found'});
             }

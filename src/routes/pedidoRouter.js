@@ -6,9 +6,9 @@ export const createPedidoRouter = ({pedidoModel}) => {
     const pedidoContoller = new PedidoController({pedidoModel});
 
     pedidosRouter.get('/', pedidoContoller.getAll);
-    pedidosRouter.get('/:id', pedidoContoller.getById);
+    pedidosRouter.get('/:idPedido', pedidoContoller.getById);
     pedidosRouter.post('/', pedidoContoller.create);
-    pedidosRouter.patch('/:id', pedidoContoller.update);
+    pedidosRouter.patch('/:idPedido', pedidoContoller.update);
     
     return pedidosRouter;
 }

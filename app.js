@@ -6,11 +6,12 @@ import { createPedidoPublicRouter } from './src/routes/pedidoPublicRouter.js';
 import { createRolRouter } from './src/routes/rolRouter.js';
 import { createUserPrivateRouter } from './src/routes/userPrivateRouter.js';
 import { createCompanyRouter } from './src/routes/CompanyRouter.js';
+import { createCatalogRouter } from './src/routes/CatalogRouter.js';
 
 // Load products from a JSON file
 //let products = JSON.parse(fs.readFileSync('./products.json', 'utf-8') || '[]');
 
-export function createApp({authenticationModel, productModel, pedidoModel, userModel, rolModel, companyModel}, startServer = true) {
+export function createApp({authenticationModel, productModel, pedidoModel,catalogModel, userModel, rolModel, companyModel}, startServer = true) {
   const app = express();
   app.disable('x-powered-by'); // Disable 'X-Powered-By' header for security
   const port = process.env.PORT ?? 3000;
@@ -34,6 +35,9 @@ export function createApp({authenticationModel, productModel, pedidoModel, userM
 
   //router for roles
   app.use('/api/roles', authenticationModel.authenticate, createRolRouter({rolModel}))
+
+    //router for catalogos
+  app.use('/api/catalogos', authenticationModel.authenticate, createCatalogRouter({catalogModel}));
 
   //router for company
   app.use('/api/companys', authenticationModel.authenticate, createCompanyRouter({companyModel, productModel, pedidoModel}));

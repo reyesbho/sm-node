@@ -6,6 +6,7 @@
 import admin from "firebase-admin";
 import { readFileSync } from "fs";
 import { config } from "dotenv";
+import { addDoc } from "firebase/firestore";
 
 // Cargar credenciales del servicio
 const envFile = `.env.${process.env.NODE_ENV || "development"}`;
@@ -179,8 +180,8 @@ async function seedFirestore() {
   // =========================
   // 3️⃣ Colección: catalogos
   // =========================
-  const catalogosRef = db.collection("catalogos").doc("valores");
-  batch.set(catalogosRef, {
+  const catalogosRef = db.collection("catalogos");
+  addDoc(catalogosRef, {
     estatus_pedido: {
       pendiente: { descripcion: "Pendiente" },
       pagado: { descripcion: "Pagado" },
@@ -191,10 +192,6 @@ async function seedFirestore() {
       pendiente: { descripcion: "Pendiente" },
       pagado: { descripcion: "Pagado" },
       rechazado: { descripcion: "Rechazado" },
-    },
-    roles: {
-      rol_admin: { clave: "ADMIN", descripcion: "Administrador general" },
-      rol_vendedor: { clave: "USER", descripcion: "Vendedor de punto de venta" },
     },
   });
 

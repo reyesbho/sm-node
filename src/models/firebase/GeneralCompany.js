@@ -1,11 +1,7 @@
-import { collection } from "firebase/firestore";
+import { collection, doc } from "firebase/firestore";
+import { GeneralModel } from "./General.js";
 
-export class GeneralCompanyModel {
-
-    constructor() {
-        this.firestoreDb = null;        
-        this.catalogName = '';
-    }
+export class GeneralCompanyModel extends GeneralModel {
 
     getRefCollection(idCompany) {
         const collectionName = `companias/${idCompany}/${this.catalogName}`;
@@ -13,6 +9,6 @@ export class GeneralCompanyModel {
     }
 
     getRefDoc(idCompany, id) {
-    return doc(this.firestoreDb, `companias/${idCompany}/${this.catalogName}/${id}`);
-}
+        return doc(this.firestoreDb, `companias/${idCompany}/${this.catalogName}/${id}`);
+    }
 }
