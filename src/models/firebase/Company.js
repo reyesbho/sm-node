@@ -7,11 +7,14 @@ export class CompanyModel {
         this.refCollection = collection(this.firestoreDb, this.collectionName);
     }
 
-    async getAll({estatus}){
+    async getAll({estatus, user}){
         const companys = [];
         const filters = [];
         if(estatus != undefined){
             filters.push(where('estatus', '==', estatus));
+        }
+        if(user != undefined){
+            filters.push(where('user.email', '==', user));
         }
         const q = query(this.refCollection, ...filters);
         const querySnapshot = await getDocs(q);

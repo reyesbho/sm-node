@@ -1,3 +1,4 @@
+import { validateLogin } from "../schemas/loginSchema.js";
 import { validateUser } from "../schemas/userSchema.js";
 import { ROL_CONSTANT } from "../utils/Rol.utils.js";
 
@@ -24,7 +25,7 @@ export class UserController {
     }
 
     login = async (req, res) => {
-        const result = validateUser(req.body);
+        const result = validateLogin(req.body);
         if(result.error){
             return res.status(400).json({message: JSON.parse(result.error.message)});
         }
@@ -34,6 +35,8 @@ export class UserController {
         }
         const access_token = await user.getIdToken();
         const refresh_token = await user.refreshToken;
+
+        const userInformation = await this.userModel.getById({id: user.uid });
         return res.status(200)
                 .cookie('access_token', access_token,{
                     httpOnly:true,
@@ -47,7 +50,7 @@ export class UserController {
                     sameSite:(process.env.NODE_ENV == 'production' ? 'None' : 'lax'),
                     maxAge: 1000 * 60 * 60 * 12
                 } )
-                .json({token: access_token});
+                .json({token: access_token, user: userInformation});
     }
 
     logout = async(req, res) => {

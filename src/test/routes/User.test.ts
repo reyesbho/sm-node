@@ -4,25 +4,11 @@ import app from "../setup.js";
 let userId: string;
 let authCookie: string;
 describe("User Authentication", () => {
-    let authCookie: string;
-
-    // Ejecutar autenticación antes de todos los tests
-    beforeAll(async () => {
-        const response = await request(app).post("/user/login")
-        .send({
-            "email": "test@test.com",
-            "password": "HolaMundo123*"
-        });
-        expect(response.status).toBe(200);
-        expect(response.body).toHaveProperty('token');
-        expect(response.body.token).toBeDefined();
-        authCookie = response.body.token;
-    });
-
     it("should register a new user", async () => {
         const newUser = {
-            email: "newuser1@test.com",
-            password: "NewPassword123*"
+            "email":"test1@test.com",
+            "password":"HolaMundo123*",
+            "fullName":"Test user1"
         };
         
         const response = await request(app)
@@ -32,12 +18,13 @@ describe("User Authentication", () => {
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('email', newUser.email);
         expect(response.body).toHaveProperty('rol.clave','USER' );
+        expect(response.body).toHaveProperty('fullName',newUser.fullName);
         userId = response.body.id;
     });
 
     it("should login with valid credentials", async () => {
         const loginData = {
-            email: "test@test.com",
+            email: "test1@test.com",
             password: "HolaMundo123*"
         };
         
@@ -48,6 +35,7 @@ describe("User Authentication", () => {
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('token');
         expect(response.body.token).toBeDefined();
+        expect(response.body.user).toBeDefined();
         expect(response.headers['set-cookie']).toBeDefined();
         
         // Guardar el token para otros tests
@@ -56,7 +44,7 @@ describe("User Authentication", () => {
 
     it("should fail login with invalid credentials", async () => {
         const invalidLoginData = {
-            email: "test@test.com",
+            email: "test1@test.com",
             password: "WrongPassword123*"
         };
         
@@ -84,7 +72,7 @@ describe("User Authentication", () => {
 
     it("should fail login with missing password", async () => {
         const missingPasswordData = {
-            email: "test@test.com"
+            email: "test1@test.com"
         };
         
         const response = await request(app)
@@ -100,7 +88,7 @@ describe("User Authentication", () => {
         const loginResponse = await request(app)
             .post("/user/login")
             .send({
-                email: "test@test.com",
+                email: "test1@test.com",
                 password: "HolaMundo123*"
             });
             

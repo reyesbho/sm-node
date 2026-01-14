@@ -26,6 +26,7 @@ export class UserModel{
     async createUserCatalog({user, rol}){
         const userNew = {
             email:user.email,
+            fullName:  user.fullName,
             fechaRegistro: new Date(),
             ...rol
         }
@@ -35,15 +36,14 @@ export class UserModel{
     }
 
     async create({inputUser, rol}){
-        console.log("UserModel", rol);
-        const {email, password} = inputUser;
+        const {email, password, fullName} = inputUser;
         try {
             const userCredentials = await createUserWithEmailAndPassword(this.auth, email, password);
             if(!userCredentials){
                 return false;
             }
             const {uid} = userCredentials.user;
-            const newUser = await this.createUserCatalog({user: {id: uid, email}, rol});
+            const newUser = await this.createUserCatalog({user: {id: uid, email, fullName}, rol});
             return newUser;
         } catch (error) {
             if(error.code === ErrorCodeFirebase.EMAIL_EXIST)

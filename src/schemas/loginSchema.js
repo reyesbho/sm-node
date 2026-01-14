@@ -1,7 +1,6 @@
 import { object, string } from "zod";
 
-export const userSchema = object({
-    fullName: string().max(50),
+export const loginSchema = object({
     email: string()
         .email("El usuario debe ser un correo electrónico válido")
         .regex(
@@ -16,10 +15,10 @@ export const userSchema = object({
         )
 });
 
-export function validateUser(user){
-    return userSchema.safeParse(user);
+export function validateLogin(user){
+    return loginSchema.safeParse(user);
 }
 
-export function validatePartialUser(user){
-    return userSchema.partial().safeParse(user);
+export function validatePartialLogin(user){
+    return loginSchema.partial().safeParse(user);
 }
