@@ -30,7 +30,7 @@ const auth = getAuth(firebase);
 const productModel = new ProductModel({firestoreDb});
 const sizeProductModel = new SizeProductModel({firestoreDb});
 const pedidoModel = new PedidoModel({firestoreDb});
-const userModel = new UserModel({auth});
+const userModel = new UserModel({firestoreDb});
 const authenticationModel = new AuthenticationMidlleware();
 
  const app = createApp({authenticationModel ,productModel, sizeProductModel, pedidoModel, userModel});

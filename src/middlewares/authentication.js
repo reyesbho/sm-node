@@ -1,86 +1,54 @@
-import { cert, initializeApp } from "firebase-admin/app";
+import { cert, initializeApp, getApps } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
-import { ErrorCodeFirebase } from "../utils/utils.js";
 
-export class AuthenticationMidlleware{
-    constructor(){
-        const firebaseConfig = {
-          type: process.env.TYPE,
-          project_id: process.env.PROJECT_ID,
-          private_key_id: process.env.PRIVATE_KEY_ID,
-          private_key: process.env.PRIVATE_KEY,
-          client_email: process.env.CLIENT_EMAIL,
-          client_id: process.env.CLIENT_ID,
-          auth_uri: process.env.AUTH_URI,
-          token_uri: process.env.TOKEN_URI,
-          auth_provider_x509_cert_url: process.env.AUTH_PROVIDER_X509_CERT_URL,
-          client_x509_cert_url: process.env.CLIENT_X509_CERT_URL,
-          universe_domain: process.env.UNIVERSE_DOMAIN
-        };
-        
-        const app = initializeApp({
-          credential: cert(firebaseConfig),
-          databaseURL: process.env.DATABASE_URL
-        });
-
-        this.auth = getAuth(app);
-        
+export class AuthenticationMidlleware {
+  constructor() {
+    if (!getApps().length) {
+      initializeApp({
+        credential: cert({
+          projectId: process.env.PROJECT_ID,
+          clientEmail: process.env.CLIENT_EMAIL,
+          privateKey: process.env.PRIVATE_KEY?.replace(/\\n/g, '\n'),
+        }),
+      });
     }
 
+    this.auth = getAuth();
+  }
 
-    authenticate = async(req, res, next) => {
-        let token = req.cookies.access_token;
-        req.session = {user: null};
-        if(!token){
-            const tokenBearer = req.headers.authorization;
-            if(tokenBearer && tokenBearer.startsWith('Bearer ')){
-                token = tokenBearer.split(' ')[1];
-            }else{  
-                return res.status(401).json({message:'Acess not authorized'})
-            }
-        }
+  authenticate = async (req, res, next) => {
+    try {
+      let token;
 
-        try{
-            const decodedToken = await this.auth.verifyIdToken(token);
-            req.session.user = decodedToken.email;
-            return next();
-        }catch(error){
-            if(error.code !== ErrorCodeFirebase.EXPIRED_TOKEN){
-                return res.status(401).json({message:'Invalid token'})    
-            }
-        }
-        const refreshToken = req.cookies.refresh_token;
-        if(!refreshToken){
-            return res.status(401).json({message:'Acess not authorized'})
-        }
-        try {
-            const apiKey = process.env.APIKEY;
-            const tokenResponse = await fetch(`https://securetoken.googleapis.com/v1/token?key=${apiKey}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: new URLSearchParams({
-                    grant_type: 'refresh_token',
-                    refresh_token: refreshToken,
-                }),
-            });
+      // 1️⃣ Cookie
+      if (req.cookies?.access_token) {
+        token = req.cookies.access_token;
+      }
 
-            const data = await tokenResponse.json();
+      // 2️⃣ Authorization header
+      if (!token && req.headers.authorization?.startsWith("Bearer ")) {
+        token = req.headers.authorization.split(" ")[1];
+      }
 
-            if (!tokenResponse.ok) throw new Error(data.error?.message);
+      if (!token) {
+        return res.status(401).json({ message: "Access not authorized" });
+      }
 
-            req.user = await auth.verifyIdToken(data.id_token);
+      const decodedToken = await this.auth.verifyIdToken(token);
 
-            // Podrías devolver el nuevo token para que el cliente lo actualice
-            res.cookie('access_token', data.id_token,{
-                    httpOnly:true,
-                    secure:process.env.NODE_ENV == 'production',
-                    sameSite:'lax',
-                    maxAge: 1000 * 60 * 60
-                });
-            
-            return next();
-        } catch (error) {
-            return res.status(401).json({ message: 'Session close' });
-        }
+      req.session = {
+        uid: decodedToken.uid,
+        email: decodedToken.email,
+        role: decodedToken.role, // si usas custom claims
+      };
+
+      next();
+    } catch (error) {
+      return res.status(401).json({
+        message: "Token expired or invalid",
+      });
     }
+  };
 }
+
+
