@@ -1,45 +1,23 @@
-import {createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
-import { ErrorCodeFirebase } from "../../utils/utils.js";
-export class UserModel{
-    constructor({auth}){
-        this.auth = auth;
-    }
+import { getAuth } from "firebase-admin/auth";
 
-    async create({inputUser}){
-        const {email, password} = inputUser;
-        try {
-            const user = await createUserWithEmailAndPassword(this.auth, email, password);
-            if(!user){
-                return false;
-            }
-            return user;    
-        } catch (error) {
-            if(error.code === ErrorCodeFirebase.EMAIL_EXIST)
-                throw new Error('User already exists');
-        }
-        
-    }
+export class UserModel {
+  constructor() {
+    this.auth = getAuth();
+  }
 
-    async login ({inputUser}){
-        const {email, password} = inputUser;
-        try{
-            const login = await signInWithEmailAndPassword(this.auth, email, password);
-            if(!login){
-                return false;
-            }
-            return login.user;
-        }catch(error){
-            return false;
-        }
-        
+  async create({ inputUser }) {
+    try {
+      return await this.auth.createUser(inputUser);
+    } catch (error) {
+      if (error.code === 'auth/email-already-exists') {
+        throw new Error('User already exists');
+      }
+      throw error;
     }
+  }
 
-    async logout (){
-        await signOut(this.auth).then(() => {
-            return true;
-        }).catch((error) => {
-            return false;
-        });
-    }
-
+  async logout() {
+    // Opcional: revocar tokens
+    await this.auth.revokeRefreshTokens(uid);
+  }
 }
