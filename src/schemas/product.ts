@@ -6,7 +6,7 @@ const productSchema = object({
         descripcion: string().min(3, 'Min caracter length is 3'),
         imagen: string().optional(),
         estatus: boolean().default(true),
-        tag: string()
+        category: string()
             .max(20, 'Max character length is 20')
             .regex(/^[a-z_]+$/, 'Only lowercase letters without spaces or numbers allowed')
             .optional()
@@ -19,7 +19,7 @@ export interface Producto{
     descripcion: string,
     imagen: string | null,
     estatus: boolean,
-    tag: string | null,
+    category: string | null,
     sizes:SizeTag[]
 }
 

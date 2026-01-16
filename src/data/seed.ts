@@ -7,21 +7,21 @@ export const seedProducts:Partial<Producto>[] = [
     descripcion: "Pizza",
     imagen: null,
     estatus: true,
-    tag: null,
+    category: null,
     sizes:["Chica","Mediana","Grande","Familiar"],
   },
   {
     descripcion: "Pastel",
     imagen: null,
     estatus: true,
-    tag: null,
+    category: null,
     sizes:["Chica","Mediana","Grande","Familiar",'Mini']
   },
   {
     descripcion: "Rosca de Reyes",
     imagen: null,
     estatus: true,
-    tag: null,
+    category: null,
     sizes:["Chica","Mediana","Grande","Familiar",'Mini']
   },
 ]
@@ -41,7 +41,7 @@ export const seedPedido:Partial<Pedido>[] = [
           descripcion: "Pizza",
           imagen: null,
           estatus: true,
-          tag: null,
+          category: null,
           sizes: []
         },
         caracteristicas: ['Con mucho queso'],
@@ -68,7 +68,7 @@ export const seedPedido:Partial<Pedido>[] = [
           descripcion: "Pastel",
           imagen: null,
           estatus: true,
-          tag: null,
+          category: null,
           sizes: []
         },
         caracteristicas: ['Relleno de fresas'],
