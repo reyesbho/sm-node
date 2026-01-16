@@ -11,10 +11,10 @@
   "type": "module",
   "main": "app.js",
   "scripts": {
-    "test": "jest --detectOpenHandles --forceExit",
-    "start:dev": "cross-env  NODE_ENV=development node --watch server.js",
-    "start:prod": "cross-env  NODE_ENV=production  node --watch server.js",
-    "start": "cross-env  NODE_ENV=production  node --watch server.js"
+    "dev": "cross-env NODE_ENV=development nodemon --watch src --ext ts --exec tsx src/server.ts",
+    "build": "tsc",
+    "start": "cross-env NODE_ENV=production node dist/server.js",
+    "test": "jest --detectOpenHandles --forceExit"
   },
   "dependencies": {
     "cookie-parser": "1.4.7",
@@ -31,15 +31,21 @@
     "@babel/preset-env": "7.28.0",
     "@babel/preset-typescript": "7.27.1",
     "@jest/globals": "30.0.5",
+    "@types/cookie-parser": "^1.4.10",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
     "@types/jest": "30.0.0",
+    "@types/node": "^25.0.9",
     "@types/supertest": "6.0.3",
     "babel-jest": "30.0.5",
     "cross-env": "10.0.0",
     "jest": "30.0.5",
+    "nodemon": "^3.1.11",
     "standard": "17.1.2",
     "supertest": "7.1.4",
     "ts-jest": "29.4.0",
-    "ts-node": "10.9.2"
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   },
   "eslintConfig": {
     "extends": "standard"

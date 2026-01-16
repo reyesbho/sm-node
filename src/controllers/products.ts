@@ -1,65 +1,58 @@
-import { validateProduct, validatePartialProduct } from '../schemas/product.js';
+import { Request, Response } from 'express';
+import { ProductModel } from '../models/firebase/Product.js';
+import { validateProduct, validatePartialProduct, Producto } from '../schemas/product.js';
 
 export class ProductController {
-    constructor ({productModel}) {
+    private productModel:ProductModel;
+    constructor ({productModel}:{productModel:ProductModel}) {
         this.productModel = productModel;
     }
 
-    getAll = async(req, res) => {
+    getAll = async(req:Request, res:Response) => {
         const { tag, estatus } = req.query;
-        const products = await this.productModel.getAll({tag, estatus });
+        const products = await this.productModel.getAll({tag: tag as string, estatus: estatus as string });
         return res.json(products);
     }
 
-    getById = async(req, res) => {
+    getById = async(req:Request, res:Response) => {
         const {id} = req.params;  
-        const product = await this.productModel.getById({id});
-        if (product == false) {
+        const product = await this.productModel.getById({id: id as string});
+        if (!product) {
             return res.status(404).send({message: 'Product not found'});
         }
          return res.json(product);
     }
 
-    create = async(req, res) => {
+    create = async(req:Request, res:Response) => {
         const result = validateProduct(req.body);
         if (result.error) {
             return res.status(400).json({error:JSON.parse(result.error.message)});
         }
-        const newProduct = await this.productModel.create(result.data);
+        const newProduct = await this.productModel.create({...result.data} as Producto);
         return res.status(201).json(newProduct);
     }
 
-    update = async(req, res) => {
-        const {id} = req.params;
+    update = async(req:Request, res:Response) => {
         const result = validatePartialProduct(req.body);
         if (result.error) {
             return res.status(400).json({error:JSON.parse(result.error.message)});
         }
 
-        const updateProduct = await this.productModel.update({id, ...result.data});
+        const updateProduct = await this.productModel.update({...result.data});
 
-        if (updateProduct === false) {
+        if (!updateProduct) {
             return res.status(404).send({message: 'Product not found'});
         }
 
         return res.json(updateProduct);
     }   
 
-    delete = async(req, res) => {
+    delete = async(req:Request, res:Response) => {
         const {id} = req.params;
-        const result = await this.productModel.delete({id});
+        const result = await this.productModel.delete({id: id as string});
         if (result === false) {
             return res.status(404).send({message: 'Product not found'});
         }
         return res.status(204).send('Product deleted successfully');
-    }
-    
-    updateState = async(req, res) => {
-        const {id} = req.params;
-        const result = await this.productModel.updateState({id});
-        if (result === false) {
-            return res.status(404).send({message: 'Product not found'});
-        }
-        return res.status(204).send('Product updated successfully');
     }
 }

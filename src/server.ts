@@ -1,13 +1,12 @@
 import { createApp } from "./app.js";
-import { ProductModel } from "./src/models/firebase/Product.js";
-import { SizeProductModel } from "./src/models/firebase/SizeProduct.js";
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { config } from "dotenv";
-import { PedidoModel } from "./src/models/firebase/Pedido.js";
-import {UserModel} from './src/models/firebase/User.js'
-import { AuthenticationMidlleware } from "./src/middlewares/authentication.js";
+import {UserModel} from './models/firebase/User.js'
+import { ProductModel } from "./models/firebase/Product.js";
+import { PedidoModel } from "./models/firebase/Pedido.js";
+import { AuthenticationMidlleware } from "./middlewares/authentication.js";
 // Definir cuál archivo usar según NODE_ENV
 // Cargar archivo .env según el entorno
 const envFile = `.env.${process.env.NODE_ENV || "development"}`;
@@ -28,11 +27,10 @@ const firestoreDb = getFirestore(firebase);
 const auth = getAuth(firebase);
 
 const productModel = new ProductModel({firestoreDb});
-const sizeProductModel = new SizeProductModel({firestoreDb});
 const pedidoModel = new PedidoModel({firestoreDb});
 const userModel = new UserModel({firestoreDb});
 const authenticationModel = new AuthenticationMidlleware();
 
- const app = createApp({authenticationModel ,productModel, sizeProductModel, pedidoModel, userModel});
+ const app = createApp({authenticationModel ,productModel, pedidoModel, userModel});
 
  export default app;
