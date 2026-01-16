@@ -1,13 +1,11 @@
 import { object, string, z } from "zod";
 
 export const loginSchema = object({
-    idToken: string(),
-    refreshToken: string()
+    idToken: string()
 });
 
 export interface Login{
-    idToken: string,
-    refreshToken: string,
+    idToken: string
 }
 
 export function validateLogin(login:Login) {

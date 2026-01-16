@@ -31,7 +31,6 @@ export class PedidoController {
                 lugarEntrega: pedido.lugarEntrega
             }
         });
-        console.log(pedidosPublic)
         // Return the sanitized pedidos
         return res.json(pedidosPublic);
     }
@@ -47,8 +46,6 @@ export class PedidoController {
                 ? Number(pageSize)
                 : undefined
         });
-
-        console.log(response)
         return res.json(response);
     }
 

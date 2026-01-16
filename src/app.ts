@@ -34,7 +34,7 @@ export function createApp({authenticationModel, productModel, pedidoModel, userM
   });
 
   //user
-  app.use('/user', createUserRouter({userModel}));
+  app.use('/api/user', createUserRouter({userModel}));
 
   // Public routes for pedidos
   app.use('/api/public/pedidos', createPedidoPublicRouter({pedidoModel}));

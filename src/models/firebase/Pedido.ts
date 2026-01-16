@@ -40,11 +40,6 @@ export class PedidoModel {
         pageSize = 10
     }: PedidosSearch): Promise<PedidosResponse> {
 
-        console.log(
-        fechaInicio,
-        fechaFin,
-        estatus,
-        cursorFechaCreacion,pageSize)
         const filters: QueryConstraint[] = [];
         const realLimit = pageSize + 1;
 
@@ -86,9 +81,6 @@ export class PedidoModel {
             const snap = await getDocs(cursorQuery);
             cursorSnap = snap.docs[0] ?? null;
         }
-
-        console.log('ANTES getDocs');
-
         const q = query(
             this.refCollection,
             ...filters,
@@ -99,8 +91,6 @@ export class PedidoModel {
         );
 
         const querySnapshot = await getDocs(q);
-
-        console.log('DESPUÉS getDocs');
 
         // 🔒 RESULTADOS
         const sliceDocs = querySnapshot.docs.slice(0, pageSize);

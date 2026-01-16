@@ -1,21 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import { cert, initializeApp, getApps } from "firebase-admin/app";
-import { Auth, getAuth } from "firebase-admin/auth";
+import { Auth } from "firebase-admin/auth";
+import { authAdmin } from "../server.js";
 
 export class AuthenticationMidlleware {
   private auth: Auth;
   constructor() {
-    if (!getApps().length) {
-      initializeApp({
-        credential: cert({
-          projectId: process.env.PROJECT_ID,
-          clientEmail: process.env.CLIENT_EMAIL,
-          privateKey: process.env.PRIVATE_KEY?.replace(/\\n/g, '\n'),
-        }),
-      });
-    }
-
-    this.auth = getAuth();
+    this.auth = authAdmin;
   }
 
   authenticate = async (req: Request, res: Response, next: NextFunction) => {
@@ -35,7 +25,7 @@ export class AuthenticationMidlleware {
         return res.status(401).json({ message: "Access not authorized" });
       }
 
-      const decodedToken = await this.auth.verifyIdToken(token);
+       const decodedToken = await this.auth.verifySessionCookie(token, true);
 
       req.session = {
         uid: decodedToken.uid,
