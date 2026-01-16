@@ -1,4 +1,4 @@
-import { object, string } from "zod";
+import { object, string, z } from "zod";
 
 export const userSchema = object({
     fullName: string().max(50),
@@ -10,10 +10,15 @@ export const userSchema = object({
         )
 });
 
-export function validateUser(user) {
+export interface User{
+    email: string,
+    fullName: string,
+}
+
+export function validateUser(user:User) {
     return userSchema.safeParse(user);
 }
 
-export function validatePartialUser(user) {
+export function validatePartialUser(user:User) {
     return userSchema.partial().safeParse(user);
 }

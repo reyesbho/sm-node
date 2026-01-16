@@ -1,7 +1,9 @@
+import { NextFunction, Request, Response } from "express";
 import { cert, initializeApp, getApps } from "firebase-admin/app";
-import { getAuth } from "firebase-admin/auth";
+import { Auth, getAuth } from "firebase-admin/auth";
 
 export class AuthenticationMidlleware {
+  private auth: Auth;
   constructor() {
     if (!getApps().length) {
       initializeApp({
@@ -16,10 +18,9 @@ export class AuthenticationMidlleware {
     this.auth = getAuth();
   }
 
-  authenticate = async (req, res, next) => {
+  authenticate = async (req: Request, res: Response, next: NextFunction) => {
     try {
       let token;
-
       // 1️⃣ Cookie
       if (req.cookies?.access_token) {
         token = req.cookies.access_token;

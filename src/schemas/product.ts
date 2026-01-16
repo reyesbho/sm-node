@@ -1,5 +1,6 @@
 
-import { object, string, boolean } from 'zod';
+import { object, string, boolean} from 'zod';
+import {z} from 'zod';
 
 const productSchema = object({
         descripcion: string().min(3, 'Min caracter length is 3'),
@@ -12,10 +13,20 @@ const productSchema = object({
     });
 
 
-export  function validateProduct(product) {
+export type SizeTag = 'Chica' | 'Mediana' | 'Grande' | 'Familiar' | 'Mini' | 'Default'
+export interface Producto{
+    id: string,
+    descripcion: string,
+    imagen: string | null,
+    estatus: boolean,
+    tag: string | null,
+    sizes:SizeTag[]
+}
+
+export  function validateProduct(product: Producto) {
     return productSchema.safeParse(product);
 }
 
-export function validatePartialProduct(product) {
+export function validatePartialProduct(product: Producto) {
     return productSchema.partial().safeParse(product);
 }   
