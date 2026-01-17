@@ -3,7 +3,8 @@ import { object, string, boolean} from 'zod';
 import {z} from 'zod';
 
 const productSchema = object({
-        descripcion: string().min(3, 'Min caracter length is 3'),
+        name: string().min(3, 'Min caracter length is 3'),
+        descripcion: string().max(200, 'Maximo 200 caracteres'),
         imagen: string().optional(),
         estatus: boolean().default(true),
         category: string()
@@ -16,6 +17,7 @@ const productSchema = object({
 export type SizeTag = 'Chica' | 'Mediana' | 'Grande' | 'Familiar' | 'Mini' | 'Default'
 export interface Producto{
     id: string,
+    name: string,
     descripcion: string,
     imagen: string | null,
     estatus: boolean,

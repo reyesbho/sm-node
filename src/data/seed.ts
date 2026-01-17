@@ -4,6 +4,7 @@ import { Producto } from "../schemas/product.js";
 
 export const seedProducts:Partial<Producto>[] = [
   {
+    name: 'Pizza',
     descripcion: "Pizza",
     imagen: null,
     estatus: true,
@@ -37,6 +38,7 @@ export const seedPedido:Partial<Pedido>[] = [
         cantidad: 1,
         size: "Chica",
         producto: {
+          name:'Pizza',
           id: "producto1",
           descripcion: "Pizza",
           imagen: null,
@@ -65,6 +67,7 @@ export const seedPedido:Partial<Pedido>[] = [
         size: "Grande",
         producto: {
           id: "producto2",
+          name:'Pastel',
           descripcion: "Pastel",
           imagen: null,
           estatus: true,

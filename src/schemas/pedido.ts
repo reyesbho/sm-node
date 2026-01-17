@@ -28,7 +28,7 @@ export interface DateTimeFirestore{
     nanoseconds: number
 }
 
-export type EstatusPedido = 'BACKLOG' | 'DONE' | 'TODO' | 'CANCELED' | 'DELETE';
+export type EstatusPedido = 'DONE' | 'TODO' | 'CANCELED' | 'DELETE';
 export type EstatusPago = 'PENDIENTE' | 'PAGADO' | 'ABONADO';
 
 export interface Pedido{
