@@ -18,7 +18,7 @@ export class PedidoController {
             fechaFin: fechaFin as string ?? undefined,
             estatus: estatus as EstatusPedido ?? undefined,
             cursorFechaCreacion: cursorFechaCreacion as string ?? undefined,
-            pageSize: pageSize as string  && !isNaN(Number(pageSize))
+            pageSize: pageSize as string && !isNaN(Number(pageSize))
                 ? Number(pageSize)
                 : undefined
         });
@@ -42,12 +42,21 @@ export class PedidoController {
             fechaFin: fechaFin as string ?? undefined,
             estatus: estatus as EstatusPedido ?? undefined,
             cursorFechaCreacion: cursorFechaCreacion as string ?? undefined,
-            pageSize: pageSize as string  && !isNaN(Number(pageSize))
+            pageSize: pageSize as string && !isNaN(Number(pageSize))
                 ? Number(pageSize)
                 : undefined
         });
         return res.json(response);
     }
+
+    resume = async (req: Request, res: Response) => {
+        const { fechaInicio, fechaFin } = req.query;
+        const response = await this.pedidoModel.resume(fechaInicio as string ?? undefined,
+            fechaFin as string ?? undefined);
+        return res.json(response);
+    }
+
+
 
     create = async (req: Request, res: Response) => {
         const result = validatePedido(req.body);
@@ -57,7 +66,7 @@ export class PedidoController {
         const pedido: Pedido = { ...result.data } as unknown as Pedido;
         pedido.registradoPor = req?.session?.email || 'SYSTEM';
         pedido.fechaCreacion = Timestamp.fromDate(new Date());
-        pedido.estatus = "BACKLOG";
+        pedido.estatus = "TODO";
         pedido.estatusPago = "PENDIENTE";
         pedido.total = (pedido.productos ? pedido.productos.reduce((sum, producto) => sum + (producto.precio * producto.cantidad), 0) : 0);
         pedido.fechaEntrega = Timestamp.fromDate(new Date(pedido.fechaEntrega.seconds * 1000 + pedido.fechaEntrega.nanoseconds / 1e6));
