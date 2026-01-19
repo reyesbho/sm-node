@@ -8,6 +8,7 @@ import { PedidoModel } from "./models/firebase/Pedido.js";
 import { AuthenticationMidlleware } from "./middlewares/authentication.js";
 import { cert, initializeApp as initializeAppAdmin } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
+import { CategoryModel } from "./models/firebase/Category.js";
 // Definir cuál archivo usar según NODE_ENV
 // Cargar archivo .env según el entorno
 const envFile = `.env.${process.env.NODE_ENV || "development"}`;
@@ -39,8 +40,9 @@ export const authAdmin = getAuth(firebaseAdmin);
 const productModel = new ProductModel({ firestoreDb });
 const pedidoModel = new PedidoModel({ firestoreDb });
 const userModel = new UserModel({ firestoreDb});
+const categoryModel = new CategoryModel({firestoreDb});
 const authenticationModel = new AuthenticationMidlleware();
 
-const app = createApp({ authenticationModel, productModel, pedidoModel, userModel });
+const app = createApp({ authenticationModel, productModel, pedidoModel, userModel, categoryModel });
 
 export default app;

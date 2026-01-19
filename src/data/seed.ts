@@ -1,6 +1,16 @@
 import { Timestamp } from "firebase/firestore";
 import { Pedido } from "../schemas/pedido.js";
 import { Producto } from "../schemas/product.js";
+import { Category } from "../schemas/category.js";
+
+export const seedCategories:Category[] = [
+  {id:'pizza',descripcion:'pizza'},
+  {id:'pastel',descripcion:'pastel'},
+  {id:'rosca_reyes',descripcion:'rosca_reyes'},
+  {id:'frappe',descripcion:'frappe'},
+  {id:'vela',descripcion:'vela'},
+  {id:'pan',descripcion:'pan'}
+]
 
 export const seedProducts:Partial<Producto>[] = [
   {
@@ -8,22 +18,24 @@ export const seedProducts:Partial<Producto>[] = [
     descripcion: "Pizza",
     imagen: null,
     estatus: true,
-    category: null,
-    sizes:["Chica","Mediana","Grande","Familiar"],
+    category: 'pizza',
+    sizes:[{size:"Chica", price:100},{size:"Mediana", price:150},{size:"Grande", price:200},{size:"Familiar", price:250}],
   },
   {
+    name:'Pastel tres leches',
     descripcion: "Pastel",
     imagen: null,
     estatus: true,
-    category: null,
-    sizes:["Chica","Mediana","Grande","Familiar",'Mini']
+    category: 'pastel',
+    sizes:[{size:"Chica", price:100},{size:"Mediana", price:150},{size:"Grande", price:200},{size:"Familiar", price:250}]
   },
   {
+    name:'Rosca de Reyes',
     descripcion: "Rosca de Reyes",
     imagen: null,
     estatus: true,
-    category: null,
-    sizes:["Chica","Mediana","Grande","Familiar",'Mini']
+    category: 'rosca',
+    sizes:[{size:"Chica", price:100},{size:"Mediana", price:150},{size:"Grande", price:200},{size:"Familiar", price:250}]
   },
 ]
 
@@ -35,19 +47,21 @@ export const seedPedido:Partial<Pedido>[] = [
     productos: [
       {
         id: "productoPedido1",
-        cantidad: 1,
-        size: "Chica",
+        cantidad: 2,
+        size: {
+          size:'Chica', price:100
+        },
         producto: {
           name:'Pizza',
           id: "producto1",
           descripcion: "Pizza",
           imagen: null,
           estatus: true,
-          category: null,
+          category: 'pizza',
           sizes: []
         },
-        caracteristicas: ['Con mucho queso'],
-        precio: 200
+        caracteristicas: 'Con mucho queso',
+        subtotal: 200
       }
     ],
     estatus: "TODO",
@@ -64,18 +78,18 @@ export const seedPedido:Partial<Pedido>[] = [
       {
         id: "productoPedido1",
         cantidad: 1,
-        size: "Grande",
+        size: {size:"Grande",price:250},
         producto: {
           id: "producto2",
           name:'Pastel',
           descripcion: "Pastel",
           imagen: null,
           estatus: true,
-          category: null,
+          category: 'pastel',
           sizes: []
         },
-        caracteristicas: ['Relleno de fresas'],
-        precio: 500
+        caracteristicas: 'Relleno de fresas',
+        subtotal: 250
       }
     ],
     estatus: "TODO",
