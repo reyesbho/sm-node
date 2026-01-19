@@ -1,10 +1,10 @@
-import {object, date, number, string, boolean, z} from 'zod';
+import { object, date, number, string, boolean, z } from 'zod';
 import { optional } from 'zod/v4';
-import { Producto, SizeTag } from './product.js';
+import { Producto, Size, SizeTag } from './product.js';
 
 const timestampSchema = object({
-  seconds: number().int().nonnegative(),
-  nanoseconds: number().int().min(0).max(999_999_999),
+    seconds: number().int().nonnegative(),
+    nanoseconds: number().int().min(0).max(999_999_999),
 });
 
 export const pedidoSchema = object({
@@ -13,46 +13,46 @@ export const pedidoSchema = object({
     cliente: string().min(5, 'Min character length is 5'),
     productos: object({
         cantidad: number().int().positive('Quantity must be a positive integer'),
-        size:string().optional(),
+        size: string().optional(),
         producto: object({
             descripcion: string().min(3, 'Min caracter length is 3'),
             imagen: string().optional()
         }),
-        caracteristicas: string().array().optional(),
+        caracteristicas: string().optional(),
         precio: number().positive('Price must be a positive number').default(0),
     }).array().optional(),
 }).passthrough();
 
-export interface DateTimeFirestore{
-    seconds:number,
+export interface DateTimeFirestore {
+    seconds: number,
     nanoseconds: number
 }
 
 export type EstatusPedido = 'DONE' | 'TODO' | 'CANCELED' | 'DELETE';
 export type EstatusPago = 'PENDIENTE' | 'PAGADO' | 'ABONADO';
 
-export interface Pedido{
-    id:string,
+export interface Pedido {
+    id: string,
     fechaEntrega: DateTimeFirestore,
-    lugarEntrega:string | null,
-    cliente:string,
-    productos:ProductoPedido[] | null,
+    lugarEntrega: string | null,
+    cliente: string,
+    productos: ProductoPedido[] | null,
     fechaActualizacion: DateTimeFirestore,
     estatus: EstatusPedido,
     registradoPor: string,
     fechaCreacion: DateTimeFirestore,
-    estatusPago:EstatusPago,
+    estatusPago: EstatusPago,
     total: number,
-    abonado?:number
+    abonado?: number
 }
 
-export interface ProductoPedido{
-    id:string,
+export interface ProductoPedido {
+    id: string,
     cantidad: number,
-    size: SizeTag,
+    size: Size,
     producto: Producto,
-    caracteristicas: string[]
-    precio:number
+    caracteristicas: string,
+    subtotal: number;
 }
 
 export function validatePedido(pedido: Pedido) {

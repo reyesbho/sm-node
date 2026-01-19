@@ -10,6 +10,8 @@ import { createPedidoPublicRouter } from './routes/pedidoPublic.js';
 import { createProductRouter } from './routes/product.js';
 import { createPedidoRouter } from './routes/pedido.js';
 import { createSeedRouter } from './routes/seed.js';
+import { createCategoryRouter } from './routes/category.js';
+import { CategoryModel } from './models/firebase/Category.js';
 
 // Load products from a JSON file
 //let products = JSON.parse(fs.readFileSync('./products.json', 'utf-8') || '[]');
@@ -17,9 +19,10 @@ interface CreateApp {
     authenticationModel:AuthenticationMidlleware, 
     productModel:ProductModel, 
     pedidoModel:PedidoModel, 
-    userModel:UserModel
+    userModel:UserModel,
+    categoryModel: CategoryModel
   }
-export function createApp({authenticationModel, productModel, pedidoModel, userModel}:CreateApp) {
+export function createApp({authenticationModel, productModel, pedidoModel, userModel, categoryModel}:CreateApp) {
   const app = express();
   app.disable('x-powered-by'); // Disable 'X-Powered-By' header for security
   const port = process.env.PORT ?? 3000;
@@ -47,6 +50,9 @@ export function createApp({authenticationModel, productModel, pedidoModel, userM
 
   //router fro pedidos
   app.use('/api/pedidos', authenticationModel.authenticate, createPedidoRouter({pedidoModel}))
+
+  //router category
+  app.use('/api/categories', authenticationModel.authenticate, createCategoryRouter({categoryModel}))
 
   app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);

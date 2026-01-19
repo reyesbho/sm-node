@@ -68,7 +68,7 @@ export class PedidoController {
         pedido.fechaCreacion = Timestamp.fromDate(new Date());
         pedido.estatus = "TODO";
         pedido.estatusPago = "PENDIENTE";
-        pedido.total = (pedido.productos ? pedido.productos.reduce((sum, producto) => sum + (producto.precio * producto.cantidad), 0) : 0);
+        pedido.total = (pedido.productos ? pedido.productos.reduce((sum, producto) => sum + (producto.size.price * producto.cantidad), 0) : 0);
         pedido.fechaEntrega = Timestamp.fromDate(new Date(pedido.fechaEntrega.seconds * 1000 + pedido.fechaEntrega.nanoseconds / 1e6));
         pedido.productos?.forEach(producto => {
             producto.id = uuidv4();
@@ -95,7 +95,7 @@ export class PedidoController {
         if (pedido.fechaEntrega !== undefined)
             pedido.fechaEntrega = Timestamp.fromDate(new Date(pedido.fechaEntrega.seconds * 1000 + pedido.fechaEntrega.nanoseconds / 1e6));
         if (pedido.productos !== undefined)
-            pedido.total = pedido.productos?.reduce((sum, producto) => sum + (producto.precio * producto.cantidad), 0) || 0;
+            pedido.total = pedido.productos?.reduce((sum, producto) => sum + (producto.size.price * producto.cantidad), 0) || 0;
         pedido.registradoPor = req.session?.email || 'system';
         pedido.productos?.forEach(producto => {
             if (producto.id === undefined || producto.id === null) {

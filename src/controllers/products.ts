@@ -9,8 +9,8 @@ export class ProductController {
     }
 
     getAll = async(req:Request, res:Response) => {
-        const { tag, estatus } = req.query;
-        const products = await this.productModel.getAll({tag: tag as string, estatus: estatus as string });
+        const { tag, estatus, category } = req.query;
+        const products = await this.productModel.getAll({tag: tag as string, estatus: estatus as string, category: category as string});
         return res.json(products);
     }
 
@@ -37,8 +37,10 @@ export class ProductController {
         if (result.error) {
             return res.status(400).json({error:JSON.parse(result.error.message)});
         }
+        const productoLike = result.data as Producto;
+        if( !productoLike.id) return res.status(400).json({message:'Producto no valido'});
 
-        const updateProduct = await this.productModel.update({...result.data});
+        const updateProduct = await this.productModel.update({...productoLike});
 
         if (!updateProduct) {
             return res.status(404).send({message: 'Product not found'});

@@ -1,4 +1,4 @@
-import { addDoc, collection, CollectionReference, doc, Firestore, getCountFromServer, getDoc, getDocs, limit, orderBy, query, QueryConstraint, startAfter, Timestamp, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, CollectionReference, deleteDoc, doc, Firestore, getCountFromServer, getDoc, getDocs, limit, orderBy, query, QueryConstraint, startAfter, Timestamp, updateDoc, where } from "firebase/firestore";
 import { EstatusPedido, Pedido } from "../../schemas/pedido.js";
 import { Resume } from "../../types/resume.js";
 
@@ -23,9 +23,10 @@ export interface PedidosResponse {
 export class PedidoModel {
     private firestoreDb: Firestore;
     private refCollection: CollectionReference;
+    private catalog = 'pedidos';
     constructor({ firestoreDb }: { firestoreDb: Firestore }) {
         this.firestoreDb = firestoreDb;
-        this.refCollection = collection(firestoreDb, 'pedidos');
+        this.refCollection = collection(firestoreDb, this.catalog);
     }
 
     /**busqueda de pedidos por
@@ -209,7 +210,7 @@ export class PedidoModel {
     }
 
     async getById({ id }: { id: string }): Promise<Pedido | null> {
-        const ref = doc(this.firestoreDb, 'pedidos', id);
+        const ref = doc(this.firestoreDb, this.catalog, id);
         const docSnap = await getDoc(ref);
         if (!docSnap.exists()) {
             return null;
@@ -222,11 +223,11 @@ export class PedidoModel {
     async create(inputPedido: Partial<Pedido>) {
         const pedido = { ...inputPedido };
         const doc = await addDoc(this.refCollection, pedido);
-        return this.getById({ id: doc.id });
+        return { id: doc.id, ...pedido }
     }
 
     async update(inputPedido: Pedido) {
-        const ref = doc(this.firestoreDb, 'pedidos', inputPedido.id);
+        const ref = doc(this.firestoreDb, this.catalog, inputPedido.id);
         const pedidoAux: Pedido = { ...inputPedido };
         const today = new Date();
         pedidoAux.fechaActualizacion = { seconds: today.getSeconds(), nanoseconds: today.getTime() }
@@ -236,11 +237,11 @@ export class PedidoModel {
     }
 
     async delete({ id }: { id: string }) {
-        const pedido = await this.getById({ id });
-        if (!pedido) {
+        try {
+            await deleteDoc(doc(this.firestoreDb, this.catalog, id));
+            return true;
+        } catch (error) {
             return false;
         }
-        await this.update({ ...pedido, estatus: 'DELETE' });
-        return true;
     }
 }

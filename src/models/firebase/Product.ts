@@ -5,20 +5,24 @@ import { Producto } from "../../schemas/product.js";
 export class ProductModel {
     private firestoreDb: Firestore;
     private refCollection: CollectionReference;
+    private catalog = 'productos';
     constructor({ firestoreDb }: { firestoreDb: Firestore }) {
         this.firestoreDb = firestoreDb;
-        this.refCollection = collection(this.firestoreDb, 'products');
+        this.refCollection = collection(this.firestoreDb, this.catalog);
     }
 
-    async getAll({ tag, estatus }: { tag: string | undefined, estatus: string | undefined }): Promise<Producto[]> {
+    async getAll({ tag, estatus, category }: { tag: string | undefined, estatus: string | undefined, category: string | undefined }): Promise<Producto[]> {
 
         const products: Producto[] = [];
-        const filters:QueryConstraint[] = []
+        const filters: QueryConstraint[] = []
         if (tag) {
             filters.push(where('tag', '==', tag));
         }
         if (estatus !== undefined && estatus !== null) {
             filters.push(where('estatus', '==', (estatus ? true : false)));
+        }
+        if (category !== undefined && category !== null) {
+            filters.push(where('category', '==', category));
         }
         const q = query(this.refCollection, ...filters);
         const querySnapshot = await getDocs(q);
@@ -30,7 +34,7 @@ export class ProductModel {
     }
 
     async getById({ id }: { id: string }): Promise<Producto | null> {
-        const ref = doc(this.firestoreDb, 'products', id);
+        const ref = doc(this.firestoreDb, this.catalog, id);
         const docSnap = await getDoc(ref);
         if (!docSnap.exists()) {
             return null;
@@ -41,22 +45,23 @@ export class ProductModel {
 
     async create(inputProduct: Partial<Producto>): Promise<Producto | null> {
         const doc = await addDoc(this.refCollection, inputProduct);
-        return this.getById({ id: doc.id });
+        return { id: doc.id, ...inputProduct } as Producto;
     }
 
     async delete({ id }: { id: string }): Promise<boolean> {
-        const product = await this.getById({ id });
-        if (!product) {
+        try {
+            await deleteDoc(doc(this.firestoreDb, this.catalog, id));
+            return true;
+        } catch (error) {
             return false;
         }
-        await deleteDoc(doc(this.firestoreDb, 'products', id));
-        return true;
     }
 
-    async update({id = '', ...producto}: Partial<Producto>): Promise<Producto | null> {
-        const ref = doc(this.firestoreDb, 'products', id);
+    async update(producto: Partial<Producto>): Promise<Producto | null> {
+        if (!producto.id) return null;
+        const ref = doc(this.firestoreDb, this.catalog, producto.id);
         await updateDoc(ref, { ...producto });
-        const updatedProduct = await this.getById({ id });
+        const updatedProduct = await this.getById({ id: producto.id });
         return updatedProduct;
     }
 
