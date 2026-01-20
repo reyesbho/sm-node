@@ -1,42 +1,73 @@
+import { z } from 'zod';
 
-import { object, string, boolean, number} from 'zod';
+/* ---------------------------------------------
+   Enums
+---------------------------------------------- */
+export const sizeTagEnum = z.enum([
+  'Chica',
+  'Mediana',
+  'Grande',
+  'Familiar',
+  'Mini',
+  'Default',
+]);
 
-const productSchema = object({
-        name: string().min(3, 'Min caracter length is 3'),
-        descripcion: string().max(200, 'Maximo 200 caracteres'),
-        imagen: string().optional(),
-        estatus: boolean().default(true),
-        sizes:object({
-            size: string().max(20),
-            price: number().positive().default(0),
-        }).array().min(1),
-        category: string()
-            .max(20, 'Max character length is 20')
-            .regex(/^[a-z_]+$/, 'Only lowercase letters without spaces or numbers allowed')
-            .optional()
-    });
+/* ---------------------------------------------
+   Size
+---------------------------------------------- */
+export const sizeSchema = z.object({
+  size: sizeTagEnum,
+  price: z.number().nonnegative(),
+});
 
+/* ---------------------------------------------
+   Producto CREATE
+---------------------------------------------- */
+export const productCreateSchema = z.object({
+  name: z.string().min(3, 'Min character length is 3'),
 
-export type SizeTag = 'Chica' | 'Mediana' | 'Grande' | 'Familiar' | 'Mini' | 'Default'
-export interface Size{
-    size: SizeTag,
-    price: number
-}
+  descripcion: z.string().max(200, 'Max 200 characters'),
 
-export interface Producto{
-    id: string,
-    name: string,
-    descripcion: string,
-    imagen: string | null,
-    estatus: boolean,
-    category: string | null,
-    sizes:Size[]
-}
+  imagen: z.string().optional(),
 
-export  function validateProduct(product: Producto) {
-    return productSchema.safeParse(product);
-}
+  estatus: z.boolean().default(true),
 
-export function validatePartialProduct(product: Producto) {
-    return productSchema.partial().safeParse(product);
-}   
+  sizes: z.array(sizeSchema).min(1),
+
+  category: z
+    .string()
+    .max(20)
+    .regex(/^[a-z_]+$/, 'Only lowercase letters and underscores allowed')
+    .optional(),
+});
+
+/* ---------------------------------------------
+   Producto UPDATE
+---------------------------------------------- */
+export const productUpdateSchema = productCreateSchema.partial();
+
+/* ---------------------------------------------
+   Producto DB
+---------------------------------------------- */
+export const productDbSchema = productCreateSchema.extend({
+  id: z.string().min(1),
+});
+
+/* ---------------------------------------------
+   Types
+---------------------------------------------- */
+export type SizeTag = z.infer<typeof sizeTagEnum>;
+export type Size = z.infer<typeof sizeSchema>;
+export type ProductCreateInput = z.infer<typeof productCreateSchema>;
+export type ProductUpdateInput = z.infer<typeof productUpdateSchema>;
+export type ProductoDB = z.infer<typeof productDbSchema>;
+
+/* ---------------------------------------------
+   Validators
+---------------------------------------------- */
+export const validateProductCreate = (data: unknown) =>
+  productCreateSchema.safeParse(data);
+
+export const validateProductUpdate = (data: unknown) =>
+  productUpdateSchema.safeParse(data);
+

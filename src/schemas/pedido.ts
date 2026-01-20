@@ -1,64 +1,105 @@
-import { object, date, number, string, boolean, z } from 'zod';
-import { optional } from 'zod/v4';
-import { Producto, Size, SizeTag } from './product.js';
+import { z } from 'zod';
+import { Timestamp } from 'firebase/firestore';
 
-const timestampSchema = object({
-    seconds: number().int().nonnegative(),
-    nanoseconds: number().int().min(0).max(999_999_999),
+/* ---------------------------------------------
+   Firestore Timestamp
+---------------------------------------------- */
+export const firestoreTimestampSchema = z
+  .union([
+    z.object({
+      type: z.literal('firestore/timestamp/1.0'),
+      seconds: z.number(),
+      nanoseconds: z.number(),
+    }),
+    z.object({
+      seconds: z.number(),
+      nanoseconds: z.number(),
+    }),
+    z.instanceof(Timestamp),
+  ])
+  .transform((value) => {
+    if (value instanceof Timestamp) return value;
+    return new Timestamp(value.seconds, value.nanoseconds);
+  });
+
+/* ---------------------------------------------
+   ProductoPedido
+---------------------------------------------- */
+export const productoPedidoSchema = z.object({
+  id: z.string().min(1),
+
+  cantidad: z.number().int().positive(),
+
+  size: z.object({
+    size: z.string(),
+    price: z.number().positive(),
+  }),
+
+  producto: z.object({
+    id: z.string().min(1),
+    name: z.string(),
+    imagen: z.string().nullable().optional(),
+  }),
+
+  caracteristicas: z.string().optional(),
+  subtotal: z.number().positive(),
 });
 
-export const pedidoSchema = object({
-    fechaEntrega: timestampSchema,
-    lugarEntrega: string().optional(),
-    cliente: string().min(5, 'Min character length is 5'),
-    productos: object({
-        cantidad: number().int().positive('Quantity must be a positive integer'),
-        size: string().optional(),
-        producto: object({
-            descripcion: string().min(3, 'Min caracter length is 3'),
-            imagen: string().optional()
-        }),
-        caracteristicas: string().optional(),
-        precio: number().positive('Price must be a positive number').default(0),
-    }).array().optional(),
-}).passthrough();
+/* ---------------------------------------------
+   Pedido CREATE (POST)
+---------------------------------------------- */
+export const pedidoCreateSchema = z.object({
+  fechaEntrega: firestoreTimestampSchema,
+  lugarEntrega: z.string().optional(),
+  cliente: z.string().min(5),
 
-export interface DateTimeFirestore {
-    seconds: number,
-    nanoseconds: number
-}
+  productos: z.array(productoPedidoSchema).min(1),
+
+  estatus: z.enum(['TODO', 'DONE', 'CANCELED','DELETE']),
+  estatusPago: z.enum(['PENDIENTE', 'PAGADO', 'ABONADO']),
+
+  total: z.number().positive(),
+  detalles: z.string().optional(),
+});
+
+/* ---------------------------------------------
+   Pedido UPDATE (PATCH)
+---------------------------------------------- */
+export const pedidoUpdateSchema = pedidoCreateSchema.partial().extend({
+  productos: z.array(productoPedidoSchema).optional(),
+});
+
+/* ---------------------------------------------
+   Pedido DB (Firestore)
+---------------------------------------------- */
+export const pedidoDbSchema = pedidoCreateSchema.extend({
+  id: z.string().min(1),
+
+  fechaCreacion: firestoreTimestampSchema,
+  fechaActualizacion: firestoreTimestampSchema,
+
+  registradoPor: z.string(),
+  actualizadoPor: z.string(),
+});
+
+/* ---------------------------------------------
+   Types
+---------------------------------------------- */
+export type PedidoCreateInput = z.infer<typeof pedidoCreateSchema>;
+export type PedidoUpdateInput = z.infer<typeof pedidoUpdateSchema>;
+export type PedidoDB = z.infer<typeof pedidoDbSchema>;
+export type ProductoPedido = z.infer<typeof productoPedidoSchema>;
+
+/* ---------------------------------------------
+   Validators
+---------------------------------------------- */
+export const validatePedidoCreate = (data: unknown) =>
+  pedidoCreateSchema.safeParse(data);
+
+export const validatePedidoUpdate = (data: unknown) =>
+  pedidoUpdateSchema.safeParse(data);
+
+
 
 export type EstatusPedido = 'DONE' | 'TODO' | 'CANCELED' | 'DELETE';
 export type EstatusPago = 'PENDIENTE' | 'PAGADO' | 'ABONADO';
-
-export interface Pedido {
-    id: string,
-    fechaEntrega: DateTimeFirestore,
-    lugarEntrega: string | null,
-    cliente: string,
-    productos: ProductoPedido[] | null,
-    fechaActualizacion: DateTimeFirestore,
-    estatus: EstatusPedido,
-    registradoPor: string,
-    fechaCreacion: DateTimeFirestore,
-    estatusPago: EstatusPago,
-    total: number,
-    abonado?: number
-}
-
-export interface ProductoPedido {
-    id: string,
-    cantidad: number,
-    size: Size,
-    producto: Producto,
-    caracteristicas: string,
-    subtotal: number;
-}
-
-export function validatePedido(pedido: Pedido) {
-    return pedidoSchema.safeParse(pedido);
-}
-
-export function validatePartialPedido(pedido: Pedido) {
-    return pedidoSchema.partial().safeParse(pedido);
-}

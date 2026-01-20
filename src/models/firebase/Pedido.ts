@@ -1,5 +1,5 @@
 import { addDoc, collection, CollectionReference, deleteDoc, doc, Firestore, getCountFromServer, getDoc, getDocs, limit, orderBy, query, QueryConstraint, startAfter, Timestamp, updateDoc, where } from "firebase/firestore";
-import { EstatusPedido, Pedido } from "../../schemas/pedido.js";
+import { EstatusPedido, PedidoDB } from "../../schemas/pedido.js";
 import { Resume } from "../../types/resume.js";
 
 
@@ -12,7 +12,7 @@ interface PedidosSearch {
 }
 
 export interface PedidosResponse {
-    pedidos: Pedido[],
+    pedidos: PedidoDB[],
     nextCursor: string,
     hasMore: boolean,
     totalDocs: number,
@@ -113,11 +113,12 @@ export class PedidoModel {
 
         const pedidos = sliceDocs.map(doc => ({
             id: doc.id,
-            ...(doc.data() as Omit<Pedido, "id">)
+            ...(doc.data() as Omit<PedidoDB, "id">)
         }));
 
         // 🔒 NUEVO CURSOR
         const lastDoc = sliceDocs[sliceDocs.length - 1];
+        console.log(await lastDoc.data())
         const nextCursor = lastDoc
             ? lastDoc.data().fechaCreacion.toDate().toISOString()
             : null;
@@ -173,7 +174,7 @@ export class PedidoModel {
         const querySnapshot = await getDocs(q);
         const pedidos = querySnapshot.docs.map(doc => ({
             id: doc.id,
-            ...(doc.data() as Omit<Pedido, 'id'>)
+            ...(doc.data() as Omit<PedidoDB, 'id'>)
         }));
         const resume: Resume = {
             cancelados: 0,
@@ -209,30 +210,27 @@ export class PedidoModel {
 
     }
 
-    async getById({ id }: { id: string }): Promise<Pedido | null> {
+    async getById({ id }: { id: string }): Promise<PedidoDB | null> {
         const ref = doc(this.firestoreDb, this.catalog, id);
         const docSnap = await getDoc(ref);
         if (!docSnap.exists()) {
             return null;
         }
-        const data = docSnap.data() as Omit<Pedido, 'id'>;
+        const data = docSnap.data() as Omit<PedidoDB, 'id'>;
         return { id: docSnap.id, ...data };
     }
 
 
-    async create(inputPedido: Partial<Pedido>) {
+    async create(inputPedido: Partial<PedidoDB>) {
         const pedido = { ...inputPedido };
         const doc = await addDoc(this.refCollection, pedido);
         return { id: doc.id, ...pedido }
     }
 
-    async update(inputPedido: Pedido) {
-        const ref = doc(this.firestoreDb, this.catalog, inputPedido.id);
-        const pedidoAux: Pedido = { ...inputPedido };
-        const today = new Date();
-        pedidoAux.fechaActualizacion = { seconds: today.getSeconds(), nanoseconds: today.getTime() }
-        await updateDoc(ref, { ...pedidoAux });
-        const updatedPedido = await this.getById({ id: pedidoAux.id });
+    async update(id: string, inputPedido: Partial<PedidoDB>) {
+        const ref = doc(this.firestoreDb, this.catalog, id);
+        await updateDoc(ref, { ...inputPedido });
+        const updatedPedido = await this.getById({ id });
         return updatedPedido;
     }
 

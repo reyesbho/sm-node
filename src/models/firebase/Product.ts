@@ -1,5 +1,5 @@
 import { addDoc, collection, CollectionReference, deleteDoc, doc, Firestore, getDoc, getDocs, query, QueryConstraint, updateDoc, where } from "firebase/firestore";
-import { Producto } from "../../schemas/product.js";
+import { ProductoDB } from "../../schemas/product.js";
 
 
 export class ProductModel {
@@ -11,9 +11,9 @@ export class ProductModel {
         this.refCollection = collection(this.firestoreDb, this.catalog);
     }
 
-    async getAll({ tag, estatus, category }: { tag: string | undefined, estatus: string | undefined, category: string | undefined }): Promise<Producto[]> {
+    async getAll({ tag, estatus, category }: { tag: string | undefined, estatus: string | undefined, category: string | undefined }): Promise<ProductoDB[]> {
 
-        const products: Producto[] = [];
+        const products: ProductoDB[] = [];
         const filters: QueryConstraint[] = []
         if (tag) {
             filters.push(where('tag', '==', tag));
@@ -27,25 +27,25 @@ export class ProductModel {
         const q = query(this.refCollection, ...filters);
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach(doc => {
-            const data = doc.data() as Omit<Producto, 'id'>;
+            const data = doc.data() as Omit<ProductoDB, 'id'>;
             products.push({ id: doc.id, ...data });
         });
         return products;
     }
 
-    async getById({ id }: { id: string }): Promise<Producto | null> {
+    async getById({ id }: { id: string }): Promise<ProductoDB | null> {
         const ref = doc(this.firestoreDb, this.catalog, id);
         const docSnap = await getDoc(ref);
         if (!docSnap.exists()) {
             return null;
         }
-        const data = docSnap.data() as Omit<Producto, 'id'>;
+        const data = docSnap.data() as Omit<ProductoDB, 'id'>;
         return { id: docSnap.id, ...data };
     }
 
-    async create(inputProduct: Partial<Producto>): Promise<Producto | null> {
+    async create(inputProduct: Partial<ProductoDB>): Promise<ProductoDB | null> {
         const doc = await addDoc(this.refCollection, inputProduct);
-        return { id: doc.id, ...inputProduct } as Producto;
+        return { id: doc.id, ...inputProduct } as ProductoDB;
     }
 
     async delete({ id }: { id: string }): Promise<boolean> {
@@ -57,7 +57,7 @@ export class ProductModel {
         }
     }
 
-    async update(producto: Partial<Producto>): Promise<Producto | null> {
+    async update(producto: Partial<ProductoDB>): Promise<ProductoDB | null> {
         if (!producto.id) return null;
         const ref = doc(this.firestoreDb, this.catalog, producto.id);
         await updateDoc(ref, { ...producto });
