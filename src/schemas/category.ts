@@ -1,20 +1,36 @@
+import { z } from 'zod';
 
-import { object, string, boolean, number} from 'zod';
+/* ---------------------------------------------
+   Category CREATE
+---------------------------------------------- */
+export const categoryCreateSchema = z.object({
+  descripcion: z.string().max(200, 'Máximo 200 caracteres'),
+});
 
-const categorySchema = object({
-        descripcion: string().max(200, 'Maximo 200 caracteres')
-    });
+/* ---------------------------------------------
+   Category UPDATE
+---------------------------------------------- */
+export const categoryUpdateSchema = categoryCreateSchema.partial();
 
+/* ---------------------------------------------
+   Category DB
+---------------------------------------------- */
+export const categoryDbSchema = categoryCreateSchema.extend({
+  id: z.string().min(1),
+});
 
-export interface Category{
-    id: string,
-    descripcion: string
-}
+/* ---------------------------------------------
+   Types
+---------------------------------------------- */
+export type CategoryCreateInput = z.infer<typeof categoryCreateSchema>;
+export type CategoryUpdateInput = z.infer<typeof categoryUpdateSchema>;
+export type Category = z.infer<typeof categoryDbSchema>;
 
-export  function validateCategory(product: Category) {
-    return categorySchema.safeParse(product);
-}
+/* ---------------------------------------------
+   Validators
+---------------------------------------------- */
+export const validateCategoryCreate = (data: unknown) =>
+  categoryCreateSchema.safeParse(data);
 
-export function validatePartialProduct(product: Category) {
-    return categorySchema.partial().safeParse(product);
-}   
+export const validateCategoryUpdate = (data: unknown) =>
+  categoryUpdateSchema.safeParse(data);

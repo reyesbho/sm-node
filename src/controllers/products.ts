@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { ProductModel } from '../models/firebase/Product.js';
-import { validateProduct, validatePartialProduct, Producto } from '../schemas/product.js';
+import { ProductoDB, validateProductCreate, validateProductUpdate } from '../schemas/product.js';
 
 export class ProductController {
     private productModel:ProductModel;
@@ -24,20 +24,20 @@ export class ProductController {
     }
 
     create = async(req:Request, res:Response) => {
-        const result = validateProduct(req.body);
+        const result = validateProductCreate(req.body);
         if (result.error) {
             return res.status(400).json({error:JSON.parse(result.error.message)});
         }
-        const newProduct = await this.productModel.create({...result.data} as Producto);
+        const newProduct = await this.productModel.create({...result.data} as ProductoDB);
         return res.status(201).json(newProduct);
     }
 
     update = async(req:Request, res:Response) => {
-        const result = validatePartialProduct(req.body);
+        const result = validateProductUpdate(req.body);
         if (result.error) {
             return res.status(400).json({error:JSON.parse(result.error.message)});
         }
-        const productoLike = result.data as Producto;
+        const productoLike = result.data as ProductoDB;
         if( !productoLike.id) return res.status(400).json({message:'Producto no valido'});
 
         const updateProduct = await this.productModel.update({...productoLike});

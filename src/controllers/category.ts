@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { CategoryModel } from "../models/firebase/Category.js";
-import { Category, validateCategory } from "../schemas/category.js";
+import { Category, validateCategoryCreate } from "../schemas/category.js";
 
 export class CategoryController {
     private categoryModel: CategoryModel;
@@ -14,7 +14,7 @@ export class CategoryController {
     }
 
     create = async(req: Request, res:Response) => {
-        const resultValidation = validateCategory(req.body);
+        const resultValidation = validateCategoryCreate(req.body);
         if(resultValidation.error){
             return res.status(400).json({error: JSON.parse(resultValidation.error.message)});
         }

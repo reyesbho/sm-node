@@ -10,7 +10,7 @@ export const createPedidoRouter = ({pedidoModel}:{pedidoModel:PedidoModel}) => {
     pedidosRouter.get('/resume', pedidoContoller.resume);
     pedidosRouter.get('/:id', pedidoContoller.getById);
     pedidosRouter.post('/', pedidoContoller.create);
-    pedidosRouter.patch('/', pedidoContoller.update);
+    pedidosRouter.patch('/:id', pedidoContoller.update);
     
     return pedidosRouter;
 }

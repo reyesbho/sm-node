@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import { EstatusPedido, Pedido, validatePartialPedido, validatePedido } from "../schemas/pedido.js";
+import { EstatusPedido, PedidoCreateInput, PedidoDB, PedidoUpdateInput, validatePedidoCreate, validatePedidoUpdate } from "../schemas/pedido.js";
 import { v4 as uuidv4 } from 'uuid';
 import { PedidoModel } from "../models/firebase/Pedido.js";
 import { Request, Response } from "express";
@@ -59,20 +59,18 @@ export class PedidoController {
 
 
     create = async (req: Request, res: Response) => {
-        const result = validatePedido(req.body);
+        const result = validatePedidoCreate(req.body);
         if (result.error) {
             return res.status(400).json({ error: JSON.parse(result.error.message) })
         }
-        const pedido: Pedido = { ...result.data } as unknown as Pedido;
-        pedido.registradoPor = req?.session?.email || 'SYSTEM';
-        pedido.fechaCreacion = Timestamp.fromDate(new Date());
+        const pedido: PedidoCreateInput = { 
+            ...result.data,
+            registradoPor: req?.session?.email || 'SYSTEM',
+            fechaCreacion: Timestamp.fromDate(new Date())
+         } as PedidoDB ;
+
         pedido.estatus = "TODO";
         pedido.estatusPago = "PENDIENTE";
-        pedido.total = (pedido.productos ? pedido.productos.reduce((sum, producto) => sum + (producto.size.price * producto.cantidad), 0) : 0);
-        pedido.fechaEntrega = Timestamp.fromDate(new Date(pedido.fechaEntrega.seconds * 1000 + pedido.fechaEntrega.nanoseconds / 1e6));
-        pedido.productos?.forEach(producto => {
-            producto.id = uuidv4();
-        });
         const newPedido = await this.pedidoModel.create({ ...pedido });
         return res.status(200).json(newPedido);
     }
@@ -87,22 +85,17 @@ export class PedidoController {
     }
 
     update = async (req: Request, res: Response) => {
-        const result = validatePartialPedido(req.body);
+        const result = validatePedidoUpdate(req.body);
+        const {id} = req.params;
         if (result.error) {
             return res.status(400).json({ message: JSON.parse(result.error.message) });
         }
-        const pedido: Pedido = { ...result.data } as unknown as Pedido;
-        if (pedido.fechaEntrega !== undefined)
-            pedido.fechaEntrega = Timestamp.fromDate(new Date(pedido.fechaEntrega.seconds * 1000 + pedido.fechaEntrega.nanoseconds / 1e6));
-        if (pedido.productos !== undefined)
-            pedido.total = pedido.productos?.reduce((sum, producto) => sum + (producto.size.price * producto.cantidad), 0) || 0;
-        pedido.registradoPor = req.session?.email || 'system';
-        pedido.productos?.forEach(producto => {
-            if (producto.id === undefined || producto.id === null) {
-                producto.id = uuidv4();
-            }
-        });
-        const updatePedido = await this.pedidoModel.update({ ...pedido });
+        const pedido: PedidoUpdateInput = { 
+            ...result.data,
+            actualizadoPor: req?.session?.email || 'SYSTEM',
+            fechaActualizacion: Timestamp.fromDate(new Date()),
+         } as PedidoDB;
+        const updatePedido = await this.pedidoModel.update(id as string, { ...pedido });
         if (!updatePedido) {
             return res.status(404).send({ message: 'Product not found' });
         }
