@@ -4,7 +4,9 @@ import { z } from 'zod';
    Category CREATE
 ---------------------------------------------- */
 export const categoryCreateSchema = z.object({
-  descripcion: z.string().max(200, 'Máximo 200 caracteres'),
+  descripcion: z.string().max(200, 'Máximo 200 caracteres').regex(/^[a-z_]+$/, {
+      message: "Solo letras minúsculas y guion bajo (_)" 
+    }),
 });
 
 /* ---------------------------------------------

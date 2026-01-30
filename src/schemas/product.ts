@@ -9,7 +9,7 @@ export const sizeTagEnum = z.enum([
   'Grande',
   'Familiar',
   'Mini',
-  'Default',
+  'Por defecto',
 ]);
 
 /* ---------------------------------------------
@@ -28,7 +28,7 @@ export const productCreateSchema = z.object({
 
   descripcion: z.string().max(200, 'Max 200 characters'),
 
-  imagen: z.string().optional(),
+  imagen: z.string().nullable().optional(),
 
   estatus: z.boolean().default(true),
 

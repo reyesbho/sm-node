@@ -57,11 +57,10 @@ export class ProductModel {
         }
     }
 
-    async update(producto: Partial<ProductoDB>): Promise<ProductoDB | null> {
-        if (!producto.id) return null;
-        const ref = doc(this.firestoreDb, this.catalog, producto.id);
+    async update(id: string,producto: Partial<ProductoDB>): Promise<ProductoDB | null> {
+        const ref = doc(this.firestoreDb, this.catalog, id);
         await updateDoc(ref, { ...producto });
-        const updatedProduct = await this.getById({ id: producto.id });
+        const updatedProduct = await this.getById({id});
         return updatedProduct;
     }
 
