@@ -34,13 +34,12 @@ export class ProductController {
 
     update = async(req:Request, res:Response) => {
         const result = validateProductUpdate(req.body);
+        const {id} = req.params;
         if (result.error) {
             return res.status(400).json({error:JSON.parse(result.error.message)});
         }
-        const productoLike = result.data as ProductoDB;
-        if( !productoLike.id) return res.status(400).json({message:'Producto no valido'});
-
-        const updateProduct = await this.productModel.update({...productoLike});
+        const productoLike = {...result.data} as ProductoDB;
+        const updateProduct = await this.productModel.update(id as string, {...productoLike});
 
         if (!updateProduct) {
             return res.status(404).send({message: 'Product not found'});

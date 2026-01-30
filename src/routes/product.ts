@@ -9,7 +9,7 @@ export const  createProductRouter = ({productModel}:{productModel:ProductModel})
     producsRouter.get('/', productController.getAll);
     producsRouter.get('/:id',productController.getById);
     producsRouter.post('/', productController.create);
-    producsRouter.patch('/', productController.update);
+    producsRouter.patch('/:id', productController.update);
     producsRouter.delete('/:id', productController.delete);
 
     return producsRouter;

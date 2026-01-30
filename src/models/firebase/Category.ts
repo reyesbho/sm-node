@@ -1,4 +1,4 @@
-import { addDoc, collection, CollectionReference, deleteDoc, doc, Firestore, getDoc, getDocs, query } from "firebase/firestore";
+import { addDoc, collection, CollectionReference, deleteDoc, doc, Firestore, getDoc, getDocs, query, setDoc } from "firebase/firestore";
 import { Category } from "../../schemas/category.js";
 
 export class CategoryModel {
@@ -32,8 +32,9 @@ export class CategoryModel {
     }
 
     async create(inputCategory: Partial<Category>): Promise<Category | null> {
-        const doc = await addDoc(this.refCollection, inputCategory);
-        return { ...inputCategory, id: doc.id } as Category;
+        const docRef = doc(this.refCollection, inputCategory.id);
+        await setDoc(docRef, inputCategory);
+        return { ...inputCategory} as Category;
     }
 
     async delete({id}:{id:string}){

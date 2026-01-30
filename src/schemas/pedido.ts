@@ -60,6 +60,7 @@ export const pedidoCreateSchema = z.object({
 
   total: z.number().positive(),
   detalles: z.string().optional(),
+  clienteLower: z.string(),
 });
 
 /* ---------------------------------------------
@@ -79,7 +80,7 @@ export const pedidoDbSchema = pedidoCreateSchema.extend({
   fechaActualizacion: firestoreTimestampSchema,
 
   registradoPor: z.string(),
-  actualizadoPor: z.string(),
+  actualizadoPor: z.string()
 });
 
 /* ---------------------------------------------

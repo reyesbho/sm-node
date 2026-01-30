@@ -8,7 +8,8 @@ interface PedidosSearch {
     fechaFin?: string,
     estatus?: EstatusPedido,
     cursorFechaCreacion?: string,
-    pageSize?: number
+    pageSize?: number,
+    cliente?: string
 }
 
 export interface PedidosResponse {
@@ -41,6 +42,7 @@ export class PedidoModel {
         fechaFin,
         estatus,
         cursorFechaCreacion,
+        cliente,
         pageSize = 10
     }: PedidosSearch): Promise<PedidosResponse> {
 
@@ -68,6 +70,13 @@ export class PedidoModel {
             const date = new Date(+year, +month - 1, +day);
             date.setHours(23, 59, 59, 999);
             filters.push(where("fechaEntrega", "<=", date));
+        }
+
+        // 🔒 CLIENTE (búsqueda parcial)
+        if (typeof cliente === "string" && cliente.trim() !== "") {
+            const search = cliente.trim().toLowerCase();
+            filters.push(where("clienteLower", ">=", search));
+            filters.push(where("clienteLower", "<=", search + "\uf8ff"));
         }
 
         // 🔒 CURSOR
@@ -118,7 +127,7 @@ export class PedidoModel {
 
         // 🔒 NUEVO CURSOR
         const lastDoc = sliceDocs[sliceDocs.length - 1];
-        console.log(await lastDoc.data())
+        
         const nextCursor = lastDoc
             ? lastDoc.data().fechaCreacion.toDate().toISOString()
             : null;

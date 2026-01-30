@@ -18,7 +18,7 @@ export class CategoryController {
         if(resultValidation.error){
             return res.status(400).json({error: JSON.parse(resultValidation.error.message)});
         }
-        const category: Category ={...resultValidation.data} as Category;
+        const category: Category ={...resultValidation.data, id: resultValidation.data.descripcion} as Category;
         const newPedido = await this.categoryModel.create(category);
         return res.status(200).json(newPedido);
     }

@@ -12,12 +12,13 @@ export class PedidoController {
     }
 
     getAllPublic = async (req: Request, res: Response) => {
-        const { fechaInicio, fechaFin, estatus, cursorFechaCreacion, pageSize } = req.query;
+        const { fechaInicio, fechaFin, estatus, cursorFechaCreacion, pageSize, cliente } = req.query;
         const response = await this.pedidoModel.getAll({
             fechaInicio: fechaInicio as string ?? undefined,
             fechaFin: fechaFin as string ?? undefined,
             estatus: estatus as EstatusPedido ?? undefined,
             cursorFechaCreacion: cursorFechaCreacion as string ?? undefined,
+            cliente: cliente as string?? undefined,
             pageSize: pageSize as string && !isNaN(Number(pageSize))
                 ? Number(pageSize)
                 : undefined
@@ -36,12 +37,13 @@ export class PedidoController {
     }
 
     getAll = async (req: Request, res: Response) => {
-        const { fechaInicio, fechaFin, estatus, cursorFechaCreacion, pageSize } = req.query;
+        const { fechaInicio, fechaFin, estatus, cursorFechaCreacion, pageSize, cliente } = req.query;
         const response = await this.pedidoModel.getAll({
             fechaInicio: fechaInicio as string ?? undefined,
             fechaFin: fechaFin as string ?? undefined,
             estatus: estatus as EstatusPedido ?? undefined,
             cursorFechaCreacion: cursorFechaCreacion as string ?? undefined,
+            cliente: cliente as string?? undefined,
             pageSize: pageSize as string && !isNaN(Number(pageSize))
                 ? Number(pageSize)
                 : undefined
@@ -66,7 +68,8 @@ export class PedidoController {
         const pedido: PedidoCreateInput = { 
             ...result.data,
             registradoPor: req?.session?.email || 'SYSTEM',
-            fechaCreacion: Timestamp.fromDate(new Date())
+            fechaCreacion: Timestamp.fromDate(new Date()),
+            clienteLower: result.data.cliente.toLocaleLowerCase()
          } as PedidoDB ;
 
         pedido.estatus = "TODO";
@@ -94,6 +97,7 @@ export class PedidoController {
             ...result.data,
             actualizadoPor: req?.session?.email || 'SYSTEM',
             fechaActualizacion: Timestamp.fromDate(new Date()),
+            clienteLower: result?.data?.cliente?.toLocaleLowerCase()
          } as PedidoDB;
         const updatePedido = await this.pedidoModel.update(id as string, { ...pedido });
         if (!updatePedido) {
