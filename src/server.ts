@@ -9,10 +9,21 @@ import { AuthenticationMidlleware } from "./middlewares/authentication.js";
 import { cert, initializeApp as initializeAppAdmin } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { CategoryModel } from "./models/firebase/Category.js";
+import { S3Client } from '@aws-sdk/client-s3';
+import { FileImagesModel } from "./models/aws/FileImages.js";
 // Definir cuál archivo usar según NODE_ENV
 // Cargar archivo .env según el entorno
 const envFile = `.env.${process.env.NODE_ENV || "development"}`;
 config({ path: envFile });
+
+//config for s3 client AWS
+export const s3 = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+  },
+});
 
 const firebaseConfig = {
   apiKey: process.env.APIKEY,
@@ -42,7 +53,8 @@ const pedidoModel = new PedidoModel({ firestoreDb });
 const userModel = new UserModel({ firestoreDb});
 const categoryModel = new CategoryModel({firestoreDb});
 const authenticationModel = new AuthenticationMidlleware();
+const fileImagesModel = new FileImagesModel();
 
-const app = createApp({ authenticationModel, productModel, pedidoModel, userModel, categoryModel });
+const app = createApp({ authenticationModel, productModel, pedidoModel, userModel, categoryModel, fileImagesModel, s3 });
 
 export default app;

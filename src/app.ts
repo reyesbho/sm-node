@@ -12,6 +12,10 @@ import { createPedidoRouter } from './routes/pedido.js';
 import { createSeedRouter } from './routes/seed.js';
 import { createCategoryRouter } from './routes/category.js';
 import { CategoryModel } from './models/firebase/Category.js';
+import { FileImagesModel } from './models/aws/FileImages.js';
+import { S3Client } from '@aws-sdk/client-s3';
+import { auth } from 'firebase-admin';
+import { createFileImageRouter } from './routes/fileImage.js';
 
 // Load products from a JSON file
 //let products = JSON.parse(fs.readFileSync('./products.json', 'utf-8') || '[]');
@@ -20,9 +24,11 @@ interface CreateApp {
     productModel:ProductModel, 
     pedidoModel:PedidoModel, 
     userModel:UserModel,
-    categoryModel: CategoryModel
+    categoryModel: CategoryModel,
+    fileImagesModel: FileImagesModel,
+    s3: S3Client
   }
-export function createApp({authenticationModel, productModel, pedidoModel, userModel, categoryModel}:CreateApp) {
+export function createApp({authenticationModel, productModel, pedidoModel, userModel, categoryModel, s3, fileImagesModel}:CreateApp) {
   const app = express();
   app.disable('x-powered-by'); // Disable 'X-Powered-By' header for security
   const port = process.env.PORT ?? 3000;
@@ -53,6 +59,9 @@ export function createApp({authenticationModel, productModel, pedidoModel, userM
 
   //router category
   app.use('/api/categories', authenticationModel.authenticate, createCategoryRouter({categoryModel}))
+
+  //royter files
+  app.use('/api/files', authenticationModel.authenticate, createFileImageRouter(fileImagesModel, s3))
 
   app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
