@@ -1,12 +1,24 @@
 # API Documentation - Sweet Moments
 
+## Descripción del Proyecto
+
+API RESTful backend para la plataforma Sweet Moments, desarrollada con:
+- **Lenguaje:** TypeScript
+- **Framework:** Express.js
+- **Base de Datos:** Firebase Firestore
+- **Almacenamiento:** AWS S3 para imágenes
+- **Autenticación:** Firebase Authentication + Session Cookies
+- **Validación:** Zod
+
 ## Base URL
 ```
 http://localhost:3000/api
 ```
 
-## Descripción General
-API RESTful desarrollada con Node.js, Express y TypeScript para gestionar productos, pedidos, categorías, usuarios e imágenes de Sweet Moments.
+### Estructura de Base URL
+Todos los endpoints están bajo la ruta `/api`:
+- Rutas públicas: `/api/user`, `/api/public/pedidos`, `/api/seed`
+- Rutas protegidas: `/api/productos`, `/api/pedidos`, `/api/categories`, `/api/files`
 
 ## Autenticación
 La mayoría de los endpoints requieren autenticación. Después del login, el servidor establece cookies HTTP-only con tokens de acceso. Incluye estas cookies en las siguientes solicitudes.
@@ -107,16 +119,29 @@ Autenticar usuario y recibir token de acceso.
 #### 2.1 Get All Products
 **GET** `/productos`
 
-Obtener todos los productos.
+Obtener todos los productos. Soporta filtrado por tag, estatus y categoría.
+
+**Query Parameters (opcionales):**
+- `tag`: Filtrar por tamaño (Chica, Mediana, Grande, Familiar, Mini, Por defecto)
+- `estatus`: Filtrar por estatus (true/false)
+- `category`: Filtrar por categoría
 
 **Response (200):**
 ```json
 [
   {
     "id": "product_id",
+    "name": "Nombre del producto",
     "descripcion": "Descripción del producto",
     "imagen": "image_url",
-    "estatus": true
+    "estatus": true,
+    "sizes": [
+      {
+        "size": "Mediana",
+        "price": 25.99
+      }
+    ],
+    "category": "category_name"
   }
 ]
 ```
@@ -135,9 +160,21 @@ Obtener un producto específico por ID.
 ```json
 {
   "id": "product_id",
+  "name": "Nombre del producto",
   "descripcion": "Descripción del producto",
   "imagen": "image_url",
-  "estatus": true
+  "estatus": true,
+  "sizes": [
+    {
+      "size": "Mediana",
+      "price": 25.99
+    },
+    {
+      "size": "Grande",
+      "price": 35.99
+    }
+  ],
+  "category": "category_name"
 }
 ```
 
@@ -158,19 +195,47 @@ Crear un nuevo producto.
 **Request Body:**
 ```json
 {
-  "descripcion": "Descripción del producto",
+  "name": "Nombre del producto",
+  "descripcion": "Descripción del producto (máx 200 caracteres)",
   "imagen": "image_url",
-  "estatus": true
+  "estatus": true,
+  "sizes": [
+    {
+      "size": "Mediana",
+      "price": 25.99
+    },
+    {
+      "size": "Grande",
+      "price": 35.99
+    }
+  ],
+  "category": "category_name"
 }
 ```
+
+**Validación:**
+- `name`: Mínimo 3 caracteres
+- `descripcion`: Máximo 200 caracteres
+- `imagen`: URL de imagen (opcional)
+- `estatus`: Boolean (por defecto true)
+- `sizes`: Array de tamaños con precio (mínimo 1), opciones: Chica, Mediana, Grande, Familiar, Mini, Por defecto
+- `category`: Letras minúsculas y guiones bajos solamente (opcional)
 
 **Response (201):**
 ```json
 {
   "id": "new_product_id",
+  "name": "Nombre del producto",
   "descripcion": "Descripción del producto",
   "imagen": "image_url",
-  "estatus": true
+  "estatus": true,
+  "sizes": [
+    {
+      "size": "Mediana",
+      "price": 25.99
+    }
+  ],
+  "category": "category_name"
 }
 ```
 
@@ -184,12 +249,20 @@ Actualizar un producto existente.
 **Parameters:**
 - `id`: Product ID
 
-**Request Body:**
+**Request Body (todos los campos son opcionales):**
 ```json
 {
+  "name": "Nombre actualizado",
   "descripcion": "Descripción actualizada",
   "imagen": "new_image_url",
-  "estatus": false
+  "estatus": false,
+  "sizes": [
+    {
+      "size": "Grande",
+      "price": 40.99
+    }
+  ],
+  "category": "new_category"
 }
 ```
 
@@ -197,9 +270,17 @@ Actualizar un producto existente.
 ```json
 {
   "id": "product_id",
+  "name": "Nombre actualizado",
   "descripcion": "Descripción actualizada",
   "imagen": "new_image_url",
-  "estatus": false
+  "estatus": false,
+  "sizes": [
+    {
+      "size": "Grande",
+      "price": 40.99
+    }
+  ],
+  "category": "new_category"
 }
 ```
 
@@ -231,27 +312,64 @@ Eliminar un producto.
 #### 3.1 Get All Orders
 **GET** `/pedidos`
 
-Obtener todos los pedidos.
+Obtener todos los pedidos. Soporta filtrado por fecha, estatus, cliente y paginación.
+
+**Query Parameters (opcionales):**
+- `fechaInicio`: Fecha de inicio (formato DD-MM-YYYY)
+- `fechaFin`: Fecha de fin (formato DD-MM-YYYY)
+- `estatus`: Estatus del pedido (TODO, DONE, CANCELED, DELETE)
+- `cliente`: Nombre del cliente a buscar
+- `pageSize`: Cantidad de resultados por página
+- `cursorFechaCreacion`: Cursor para paginación
 
 **Response (200):**
 ```json
-[
-  {
-    "id": "order_id",
-    "cliente": "Nombre del cliente",
-    "fechaEntrega": "2026-02-04",
-    "lugarEntrega": "Dirección de entrega",
-    "productos": [
-      {
-        "producto": "ID o nombre del producto",
-        "cantidad": 2,
-        "precio": 25.99,
-        "tamaño": "M",
-        "caracteristicas": ["feature1", "feature2"]
-      }
-    ]
-  }
-]
+{
+  "pedidos": [
+    {
+      "id": "order_id",
+      "cliente": "Nombre del cliente",
+      "clienteLower": "nombre del cliente",
+      "fechaEntrega": {
+        "seconds": 1234567890,
+        "nanoseconds": 123456789
+      },
+      "lugarEntrega": "Dirección de entrega",
+      "productos": [
+        {
+          "id": "item_id",
+          "cantidad": 2,
+          "size": {
+            "size": "Mediana",
+            "price": 25.99
+          },
+          "producto": {
+            "id": "product_id",
+            "name": "Nombre del producto",
+            "imagen": "image_url"
+          },
+          "caracteristicas": "característica especial",
+          "subtotal": 51.98
+        }
+      ],
+      "estatus": "TODO",
+      "estatusPago": "PENDIENTE",
+      "total": 51.98,
+      "detalles": "Notas adicionales",
+      "fechaCreacion": {
+        "seconds": 1234567890,
+        "nanoseconds": 123456789
+      },
+      "fechaActualizacion": {
+        "seconds": 1234567890,
+        "nanoseconds": 123456789
+      },
+      "registradoPor": "user@example.com",
+      "actualizadoPor": "user@example.com"
+    }
+  ],
+  "nextCursor": "cursor_value"
+}
 ```
 
 ---
@@ -269,9 +387,43 @@ Obtener un pedido específico por ID.
 {
   "id": "order_id",
   "cliente": "Nombre del cliente",
-  "fechaEntrega": "2026-02-04",
+  "clienteLower": "nombre del cliente",
+  "fechaEntrega": {
+    "seconds": 1234567890,
+    "nanoseconds": 123456789
+  },
   "lugarEntrega": "Dirección de entrega",
-  "productos": [...]
+  "productos": [
+    {
+      "id": "item_id",
+      "cantidad": 2,
+      "size": {
+        "size": "Mediana",
+        "price": 25.99
+      },
+      "producto": {
+        "id": "product_id",
+        "name": "Nombre del producto",
+        "imagen": "image_url"
+      },
+      "caracteristicas": "característica especial",
+      "subtotal": 51.98
+    }
+  ],
+  "estatus": "TODO",
+  "estatusPago": "PENDIENTE",
+  "total": 51.98,
+  "detalles": "Notas adicionales",
+  "fechaCreacion": {
+    "seconds": 1234567890,
+    "nanoseconds": 123456789
+  },
+  "fechaActualizacion": {
+    "seconds": 1234567890,
+    "nanoseconds": 123456789
+  },
+  "registradoPor": "user@example.com",
+  "actualizadoPor": "user@example.com"
 }
 ```
 
@@ -282,12 +434,27 @@ Obtener un pedido específico por ID.
 
 Obtener resumen de pedidos.
 
+**Query Parameters (opcionales):**
+- `fechaInicio`: Fecha de inicio (formato DD-MM-YYYY)
+- `fechaFin`: Fecha de fin (formato DD-MM-YYYY)
+
 **Response (200):**
 ```json
 {
-  "total": 10,
-  "pendientes": 5,
-  "completados": 5
+  "total": 100,
+  "por_estatus": {
+    "TODO": 30,
+    "DONE": 60,
+    "CANCELED": 5,
+    "DELETE": 5
+  },
+  "total_monto": 5000.00,
+  "monto_por_estatus": {
+    "TODO": 1500.00,
+    "DONE": 3000.00,
+    "CANCELED": 400.00,
+    "DELETE": 100.00
+  }
 }
 ```
 
@@ -302,28 +469,77 @@ Crear un nuevo pedido.
 ```json
 {
   "cliente": "Nombre del cliente",
-  "fechaEntrega": "2026-02-04",
+  "fechaEntrega": {
+    "seconds": 1234567890,
+    "nanoseconds": 123456789
+  },
   "lugarEntrega": "Dirección de entrega",
   "productos": [
     {
-      "producto": "product_id",
+      "id": "item_id_unique",
       "cantidad": 2,
-      "precio": 25.99,
-      "tamaño": "M",
-      "caracteristicas": ["feature1"]
+      "size": {
+        "size": "Mediana",
+        "price": 25.99
+      },
+      "producto": {
+        "id": "product_id",
+        "name": "Nombre del producto",
+        "imagen": "image_url"
+      },
+      "caracteristicas": "característica especial",
+      "subtotal": 51.98
     }
-  ]
+  ],
+  "estatus": "TODO",
+  "estatusPago": "PENDIENTE",
+  "total": 51.98,
+  "detalles": "Notas o instrucciones especiales"
 }
 ```
 
-**Response (201):**
+**Validación:**
+- `cliente`: Mínimo 5 caracteres
+- `fechaEntrega`: Objeto Timestamp de Firebase con `seconds` (entero no negativo) y `nanoseconds` (0-999,999,999)
+- `lugarEntrega`: String (opcional)
+- `productos`: Array de productos (mínimo 1)
+  - `id`: ID único del item
+  - `cantidad`: Entero positivo
+  - `size`: Objeto con `size` (string) y `price` (número positivo)
+  - `producto`: Objeto con `id` (requerido), `name` (mínimo 3 caracteres) e `imagen` (opcional)
+  - `caracteristicas`: String (opcional)
+  - `subtotal`: Número positivo
+- `estatus`: TODO, DONE, CANCELED o DELETE
+- `estatusPago`: PENDIENTE, PAGADO o ABONADO
+- `total`: Número positivo
+- `detalles`: String (opcional)
+
+**Response (200):**
 ```json
 {
   "id": "new_order_id",
   "cliente": "Nombre del cliente",
-  "fechaEntrega": "2026-02-04",
+  "clienteLower": "nombre del cliente",
+  "fechaEntrega": {
+    "seconds": 1234567890,
+    "nanoseconds": 123456789
+  },
   "lugarEntrega": "Dirección de entrega",
-  "productos": [...]
+  "productos": [...],
+  "estatus": "TODO",
+  "estatusPago": "PENDIENTE",
+  "total": 51.98,
+  "detalles": "Notas o instrucciones especiales",
+  "fechaCreacion": {
+    "seconds": 1234567890,
+    "nanoseconds": 123456789
+  },
+  "fechaActualizacion": {
+    "seconds": 1234567890,
+    "nanoseconds": 123456789
+  },
+  "registradoPor": "user@example.com",
+  "actualizadoPor": "user@example.com"
 }
 ```
 
@@ -337,12 +553,32 @@ Actualizar un pedido existente.
 **Parameters:**
 - `id`: Order ID
 
-**Request Body:**
+**Request Body (todos los campos son opcionales):**
 ```json
 {
   "cliente": "Nombre actualizado",
   "lugarEntrega": "Nueva dirección",
-  "productos": [...]
+  "productos": [
+    {
+      "id": "item_id",
+      "cantidad": 3,
+      "size": {
+        "size": "Grande",
+        "price": 35.99
+      },
+      "producto": {
+        "id": "product_id",
+        "name": "Nombre del producto",
+        "imagen": "image_url"
+      },
+      "caracteristicas": "nueva característica",
+      "subtotal": 107.97
+    }
+  ],
+  "estatus": "DONE",
+  "estatusPago": "PAGADO",
+  "total": 107.97,
+  "detalles": "Detalles actualizados"
 }
 ```
 
@@ -351,8 +587,27 @@ Actualizar un pedido existente.
 {
   "id": "order_id",
   "cliente": "Nombre actualizado",
+  "clienteLower": "nombre actualizado",
+  "fechaEntrega": {
+    "seconds": 1234567890,
+    "nanoseconds": 123456789
+  },
   "lugarEntrega": "Nueva dirección",
-  "productos": [...]
+  "productos": [...],
+  "estatus": "DONE",
+  "estatusPago": "PAGADO",
+  "total": 107.97,
+  "detalles": "Detalles actualizados",
+  "fechaCreacion": {
+    "seconds": 1234567890,
+    "nanoseconds": 123456789
+  },
+  "fechaActualizacion": {
+    "seconds": 1234567890,
+    "nanoseconds": 123456789
+  },
+  "registradoPor": "user@example.com",
+  "actualizadoPor": "user@example.com"
 }
 ```
 
@@ -374,9 +629,7 @@ Obtener todas las categorías.
 [
   {
     "id": "category_id",
-    "nombre": "Nombre de la categoría",
-    "descripcion": "Descripción",
-    "estatus": true
+    "descripcion": "nombre_categoria"
   }
 ]
 ```
@@ -391,19 +644,18 @@ Crear una nueva categoría.
 **Request Body:**
 ```json
 {
-  "nombre": "Nombre de la categoría",
-  "descripcion": "Descripción",
-  "estatus": true
+  "descripcion": "nombre_categoria"
 }
 ```
+
+**Validación:**
+- `descripcion`: Letras minúsculas y guiones bajos (_) únicamente (máximo 200 caracteres)
 
 **Response (201):**
 ```json
 {
   "id": "new_category_id",
-  "nombre": "Nombre de la categoría",
-  "descripcion": "Descripción",
-  "estatus": true
+  "descripcion": "nombre_categoria"
 }
 ```
 
@@ -417,12 +669,8 @@ Eliminar una categoría.
 **Parameters:**
 - `id`: Category ID
 
-**Response (200):**
-```json
-{
-  "message": "Category deleted successfully"
-}
-```
+**Response (204):**
+Sin contenido (No Content)
 
 ---
 
@@ -457,18 +705,32 @@ Cargar una imagen a AWS S3.
 #### 6.1 Get Public Orders
 **GET** `/public/pedidos`
 
-Obtener pedidos públicos (sin autenticación requerida).
+Obtener pedidos públicos (sin autenticación requerida). Retorna versión sanitizada sin información sensible.
+
+**Query Parameters (opcionales):**
+- `fechaInicio`: Fecha de inicio (formato DD-MM-YYYY)
+- `fechaFin`: Fecha de fin (formato DD-MM-YYYY)
+- `estatus`: Estatus del pedido (TODO, DONE, CANCELED, DELETE)
+- `cliente`: Nombre del cliente a buscar
+- `pageSize`: Cantidad de resultados por página
+- `cursorFechaCreacion`: Cursor para paginación
 
 **Response (200):**
 ```json
-[
-  {
-    "id": "order_id",
-    "cliente": "Nombre del cliente",
-    "fechaEntrega": "2026-02-04",
-    "productos": [...]
-  }
-]
+{
+  "pedidos": [
+    {
+      "id": "order_id",
+      "cliente": "Nombre del cliente",
+      "fechaEntrega": {
+        "seconds": 1234567890,
+        "nanoseconds": 123456789
+      },
+      "lugarEntrega": "Dirección de entrega"
+    }
+  ],
+  "nextCursor": "cursor_value"
+}
 ```
 
 ---
@@ -496,8 +758,11 @@ Cargar datos iniciales en la base de datos (sin autenticación requerida).
 
 ## Error Responses
 
-### Códigos de Error Comunes
+### Códigos de Estado HTTP
 
+- **200 OK**: Solicitud exitosa
+- **201 Created**: Recurso creado exitosamente
+- **204 No Content**: Operación exitosa sin contenido en respuesta (DELETE)
 - **400 Bad Request**: Errores de validación o entrada inválida
 - **401 Unauthorized**: Autenticación requerida o fallida
 - **404 Not Found**: Recurso no encontrado
@@ -506,7 +771,47 @@ Cargar datos iniciales en la base de datos (sin autenticación requerida).
 ### Formato de Respuesta de Error
 ```json
 {
-  "message": "Descripción del error"
+  "message": "Descripción del error",
+  "error": {
+    "field": ["Error message"]
+  }
+}
+```
+
+### Errores Comunes
+
+**Validación de Email**
+```json
+{
+  "message": "Invalid email format"
+}
+```
+
+**Password Débil**
+```json
+{
+  "message": "Password must contain uppercase, lowercase, numbers and special characters"
+}
+```
+
+**Credenciales Inválidas**
+```json
+{
+  "message": "Invalid email or password"
+}
+```
+
+**Recurso No Encontrado**
+```json
+{
+  "message": "Product not found"
+}
+```
+
+**Sin Autenticación**
+```json
+{
+  "message": "Authentication required"
 }
 ```
 
@@ -516,8 +821,62 @@ Cargar datos iniciales en la base de datos (sin autenticación requerida).
 
 1. **Registrarse** en `/user/register`
 2. **Iniciar sesión** en `/user/auth` para recibir cookies de autenticación
-3. **Incluir cookies** en solicitudes posteriores a endpoints protegidos
-4. **Cerrar sesión** si es necesario
+3. **Incluir cookies** automáticamente en solicitudes posteriores a endpoints protegidos
+4. Las cookies son HTTP-only y se envían automáticamente por el navegador/cliente HTTP
+
+## Ejemplos de Uso con cURL
+
+### Registrarse
+```bash
+curl -X POST http://localhost:3000/api/user/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "SecurePass123!"
+  }'
+```
+
+### Iniciar Sesión
+```bash
+curl -X POST http://localhost:3000/api/user/auth \
+  -H "Content-Type: application/json" \
+  -c cookies.txt \
+  -d '{
+    "email": "user@example.com",
+    "password": "SecurePass123!"
+  }'
+```
+
+### Obtener Productos (con autenticación)
+```bash
+curl -X GET http://localhost:3000/api/productos \
+  -b cookies.txt
+```
+
+### Crear Producto
+```bash
+curl -X POST http://localhost:3000/api/productos \
+  -H "Content-Type: application/json" \
+  -b cookies.txt \
+  -d '{
+    "name": "Pastel de Chocolate",
+    "descripcion": "Delicioso pastel casero",
+    "imagen": "https://example.com/image.jpg",
+    "estatus": true,
+    "sizes": [
+      {"size": "Mediana", "price": 25.99},
+      {"size": "Grande", "price": 35.99}
+    ],
+    "category": "pasteles"
+  }'
+```
+
+### Cargar Imagen
+```bash
+curl -X POST http://localhost:3000/api/files \
+  -b cookies.txt \
+  -F "file=@/path/to/image.jpg"
+```
 
 ---
 
@@ -529,4 +888,9 @@ Cargar datos iniciales en la base de datos (sin autenticación requerida).
 - Las imágenes se almacenan en AWS S3
 - Todos los endpoints devuelven respuestas en JSON
 - El servidor corre en el puerto 3000 por defecto
-- La documentación se basa en la versión actual del proyecto 
+- Las timestamps de Firebase usan formato de objetos con `seconds` y `nanoseconds`
+- Los tamaños disponibles son: Chica, Mediana, Grande, Familiar, Mini, Por defecto
+- Los estatus de pedido son: TODO, DONE, CANCELED, DELETE
+- Los estatus de pago son: PENDIENTE, PAGADO, ABONADO
+- La paginación se implementa con cursores para mejor rendimiento
+- Los campos de búsqueda en pedidos son case-insensitive (se usa `clienteLower`) 

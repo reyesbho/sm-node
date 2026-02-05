@@ -7,7 +7,7 @@ export const uploadImageMulter = (s3: S3Client) => {
     return  multer({
         storage: multerS3({
             s3: s3,
-            bucket: process.env.AWS_BUCKET_NAME!,
+            bucket: process.env.AWSBUCKETNAME!,
             contentType: multerS3.AUTO_CONTENT_TYPE,
             key: (_req, file, cb) => {
             cb(null, `images/${file.originalname}`);
