@@ -9,7 +9,9 @@ const ACCEPTED_ORIGIN = [
             'http://localhost:3000',
             'http://localhost:8081',
             'https://sweet-moments-alternative.vercel.app',
-            'https://sm-node-git-dev-reyes-projects-aff0f296.vercel.app'
+            'https://sm-node-git-dev-reyes-projects-aff0f296.vercel.app',
+            'https://sweet-moments-alternative-git-dev-reyes-projects-aff0f296.vercel.app',
+            'https://sweet-moments-alternative-e2vp4ieo6-reyes-projects-aff0f296.vercel.app'
         ]; 
 
 
