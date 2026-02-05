@@ -8,7 +8,7 @@ const ACCEPTED_ORIGIN = [
             'http://localhost:5173',
             'http://localhost:3000',
             'http://localhost:8081',
-            'https://sm-node-git-dev-reyes-projects-aff0f296.vercel.app'
+            'https://sweet-moments-alternative.vercel.app'
         ]; 
 
 export const corsMiddleware = () => cors({
