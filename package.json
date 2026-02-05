@@ -17,12 +17,15 @@
     "test": "jest --detectOpenHandles --forceExit"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.981.0",
     "cookie-parser": "1.4.7",
     "cors": "2.8.5",
     "dotenv": "16.5.0",
     "express": "5.1.0",
     "firebase": "11.9.1",
     "firebase-admin": "^13.6.0",
+    "multer": "^2.0.2",
+    "multer-s3": "^3.0.1",
     "uuid": "11.1.0",
     "zod": "3.25.65"
   },
@@ -35,6 +38,8 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jest": "30.0.0",
+    "@types/multer": "^2.0.0",
+    "@types/multer-s3": "^3.0.3",
     "@types/node": "^25.0.9",
     "@types/supertest": "6.0.3",
     "babel-jest": "30.0.5",
