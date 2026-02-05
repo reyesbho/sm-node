@@ -1,31 +1,30 @@
 import cors from 'cors';
 
-const ACCEPTED_ORIGIN = [
-            'https://sweetmoments.mx',
-            'https://www.sweetmoments.mx',
-            'https://services.sweetmoments.mx',
-            'https://www.services.sweetmoments.mx',
-            'http://localhost:5173',
-            'http://localhost:3000',
-            'http://localhost:8081',
-            'https://sweet-moments-alternative.vercel.app',
-            'https://sm-node-git-dev-reyes-projects-aff0f296.vercel.app',
-            'https://sweet-moments-alternative-git-dev-reyes-projects-aff0f296.vercel.app',
-            'https://sweet-moments-alternative-e2vp4ieo6-reyes-projects-aff0f296.vercel.app'
-        ]; 
+const ACCEPTED_ORIGINS = [
+  'https://sweetmoments.mx',
+  'https://www.sweetmoments.mx',
+  'https://services.sweetmoments.mx',
+  'https://www.services.sweetmoments.mx',
+  'http://localhost:5173',
+];
 
-
+// acepta *.vercel.app
+const VERCEL_REGEX = /^https:\/\/.*\.vercel\.app$/;
 
 export const corsMiddleware = () =>
   cors({
     origin: (origin, callback) => {
+      // requests internas (postman, server-to-server, etc)
       if (!origin) return callback(null, true);
 
-      if (ACCEPTED_ORIGIN.includes(origin)) {
+      if (
+        ACCEPTED_ORIGINS.includes(origin) ||
+        VERCEL_REGEX.test(origin)
+      ) {
         return callback(null, true);
       }
 
-      return callback(null, false); // ⬅️ clave
+      return callback(new Error('Not allowed by CORS'));
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
