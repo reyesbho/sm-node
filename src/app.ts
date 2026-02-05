@@ -49,7 +49,7 @@ export function createApp({authenticationModel, productModel, pedidoModel, userM
   app.use('/api/public/pedidos', createPedidoPublicRouter({pedidoModel}));
 
   // Public seed
-  app.use('/api/seed', createSeedRouter(pedidoModel, productModel));
+  app.use('/api/seed', createSeedRouter(pedidoModel, productModel, categoryModel));
 
   // roter for product
   app.use('/api/productos',authenticationModel.authenticate, createProductRouter({productModel}));
