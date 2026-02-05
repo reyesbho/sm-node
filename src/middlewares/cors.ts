@@ -12,14 +12,20 @@ const ACCEPTED_ORIGIN = [
             'https://sm-node-git-dev-reyes-projects-aff0f296.vercel.app'
         ]; 
 
-export const corsMiddleware = () => cors({
+
+
+export const corsMiddleware = () =>
+  cors({
     origin: (origin, callback) => {
-        if (!origin || ACCEPTED_ORIGIN.includes(origin)) {
-            return callback(null, true);
-        } 
-        
-        
-        return callback(new Error('CORS policy violation: Origin not allowed'));
+      if (!origin) return callback(null, true);
+
+      if (ACCEPTED_ORIGIN.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(null, false); // ⬅️ clave
     },
-    credentials: true
-})
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
