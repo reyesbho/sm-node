@@ -14,6 +14,7 @@ const VERCEL_REGEX = /^https:\/\/.*\.vercel\.app$/;
 export const corsMiddleware = () =>
   cors({
     origin: (origin, callback) => {
+      console.log(origin)
       // requests internas (postman, server-to-server, etc)
       if (!origin) return callback(null, true);
 
