@@ -18,10 +18,10 @@ config({ path: envFile });
 
 //config for s3 client AWS
 export const s3 = new S3Client({
-  region: process.env.AWS_REGION,
+  region: process.env.AWSREGION,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    accessKeyId: process.env.AWSACCESSKEYID!,
+    secretAccessKey: process.env.AWSSECRETACCESSKEY!,
   },
 });
 
@@ -37,9 +37,9 @@ const firebaseConfig = {
 
 const firebaseAdmin = initializeAppAdmin({
   credential: cert({
-    projectId: process.env.PROJECT_ID,
-    clientEmail: process.env.CLIENT_EMAIL,
-    privateKey: process.env.PRIVATE_KEY?.replace(/\\n/g, '\n'),
+    projectId: process.env.PROJECTID,
+    clientEmail: process.env.CLIENTEMAIL,
+    privateKey: process.env.PRIVATEKEY?.replace(/\\n/g, '\n'),
   }),
 });
 
