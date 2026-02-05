@@ -1,21 +1,38 @@
-# API Documentation
+# API Documentation - Sweet Moments
 
 ## Base URL
 ```
-http://localhost:3000
+http://localhost:3000/api
 ```
 
-## Authentication
-Most endpoints require authentication. After login, the server sets HTTP-only cookies with access and refresh tokens. Include these cookies in subsequent requests.
+## Descripción General
+API RESTful desarrollada con Node.js, Express y TypeScript para gestionar productos, pedidos, categorías, usuarios e imágenes de Sweet Moments.
+
+## Autenticación
+La mayoría de los endpoints requieren autenticación. Después del login, el servidor establece cookies HTTP-only con tokens de acceso. Incluye estas cookies en las siguientes solicitudes.
+
+**Rutas Públicas (sin autenticación requerida):**
+- `POST /user/register` - Registrar usuario
+- `POST /user/auth` - Login
+- `GET /public/pedidos` - Ver pedidos públicos
+- `POST /seed` - Cargar datos iniciales
+
+**Rutas Protegidas (requieren autenticación):**
+- `/productos` - Gestión de productos
+- `/pedidos` - Gestión de pedidos
+- `/categories` - Gestión de categorías
+- `/files` - Gestión de archivos
+
+---
 
 ## Endpoints
 
-### User Management
+### 1. User Management
 
-#### 1. User Registration
+#### 1.1 User Registration
 **POST** `/user/register`
 
-Register a new user account.
+Registrar una nueva cuenta de usuario.
 
 **Request Body:**
 ```json
@@ -25,11 +42,11 @@ Register a new user account.
 }
 ```
 
-**Validation Rules:**
-- `email`: Must be a valid email format
-- `password`: Minimum 8 characters, must contain uppercase, lowercase, numbers, and special characters
+**Validación:**
+- `email`: Formato válido de email
+- `password`: Mínimo 8 caracteres, debe contener mayúsculas, minúsculas, números y caracteres especiales
 
-**Response:**
+**Response (201):**
 ```json
 {
   "uid": "user_id",
@@ -46,10 +63,10 @@ Register a new user account.
 
 ---
 
-#### 2. User Login
-**POST** `/user/login`
+#### 1.2 User Login
+**POST** `/user/auth`
 
-Authenticate user and receive access token.
+Autenticar usuario y recibir token de acceso.
 
 **Request Body:**
 ```json
@@ -59,132 +76,110 @@ Authenticate user and receive access token.
 }
 ```
 
-**Response:**
+**Response (200):**
 ```json
 {
-  "token": "access_token_string"
+  "token": "access_token_string",
+  "uid": "user_id"
 }
 ```
 
-**Cookies Set:**
-- `access_token`: HTTP-only cookie (1 hour expiration)
-- `refresh_token`: HTTP-only cookie (12 hours expiration)
+**Cookies Establecidas:**
+- `access_token`: HTTP-only cookie
 
 **Error Response (401):**
 ```json
 {
-  "message": "Authentication failed"
+  "message": "Invalid credentials"
 }
 ```
+
+
 
 ---
 
-#### 3. User Logout
-**POST** `/user/logout`
+### 2. Products Management
 
-Logout user and clear authentication cookies.
+**Base URL:** `/productos`
 
-**Response:**
-```json
-{
-  "message": "Succefull logout"
-}
-```
+*Todos los endpoints requieren autenticación*
 
-**Error Response (401):**
-```json
-{
-  "message": "Error al deslogearse"
-}
-```
+#### 2.1 Get All Products
+**GET** `/productos`
 
----
+Obtener todos los productos.
 
-### Products Management
-
-**Base URL:** `/api/products`
-
-*All product endpoints require authentication*
-
-#### 1. Get All Products
-**GET** `/api/products`
-
-Retrieve all products.
-
-**Response:**
+**Response (200):**
 ```json
 [
   {
     "id": "product_id",
-    "descripcion": "Product description",
+    "descripcion": "Descripción del producto",
     "imagen": "image_url",
-    "estatus": true,
-    "tag": "product_tag"
+    "estatus": true
   }
 ]
 ```
 
 ---
 
-#### 2. Get Product by ID
-**GET** `/api/products/:id`
+#### 2.2 Get Product by ID
+**GET** `/productos/:id`
 
-Retrieve a specific product by ID.
+Obtener un producto específico por ID.
 
 **Parameters:**
 - `id`: Product ID
 
-**Response:**
+**Response (200):**
 ```json
 {
   "id": "product_id",
-  "descripcion": "Product description",
+  "descripcion": "Descripción del producto",
   "imagen": "image_url",
-  "estatus": true,
-  "tag": "product_tag"
+  "estatus": true
+}
+```
+
+**Error (404):**
+```json
+{
+  "message": "Product not found"
 }
 ```
 
 ---
 
-#### 3. Create Product
-**POST** `/api/products`
+#### 2.3 Create Product
+**POST** `/productos`
 
-Create a new product.
+Crear un nuevo producto.
 
 **Request Body:**
 ```json
 {
-  "descripcion": "Product description",
+  "descripcion": "Descripción del producto",
   "imagen": "image_url",
-  "estatus": true,
-  "tag": "product_tag"
+  "estatus": true
 }
 ```
 
-**Validation Rules:**
-- `descripcion`: Minimum 3 characters
-- `imagen`: Optional string
-- `estatus`: Boolean (default: true)
-- `tag`: Optional, maximum 20 characters, lowercase letters only, no spaces or numbers
-
-**Response:**
+**Response (201):**
 ```json
 {
   "id": "new_product_id",
-  "descripcion": "Product description",
+  "descripcion": "Descripción del producto",
   "imagen": "image_url",
-  "estatus": true,
-  "tag": "product_tag"
+  "estatus": true
 }
 ```
 
 ---
 
-#### 4. Update Product
-**PATCH** `/api/products/:id`
+#### 2.4 Update Product
+**PATCH** `/productos/:id`
 
-Update an existing product.
+Actualizar un producto existente.
 
 **Parameters:**
 - `id`: Product ID
@@ -192,60 +187,33 @@ Update an existing product.
 **Request Body:**
 ```json
 {
-  "descripcion": "Updated description",
+  "descripcion": "Descripción actualizada",
   "imagen": "new_image_url",
-  "estatus": false,
-  "tag": "new_tag"
-}
-```
-
-**Response:**
-```json
-{
-  "id": "product_id",
-  "descripcion": "Updated description",
-  "imagen": "new_image_url",
-  "estatus": false,
-  "tag": "new_tag"
-}
-```
-
----
-
-#### 5. Update Product State
-**PUT** `/api/products/:id`
-
-Update product status.
-
-**Parameters:**
-- `id`: Product ID
-
-**Request Body:**
-```json
-{
   "estatus": false
 }
 ```
 
-**Response:**
+**Response (200):**
 ```json
 {
   "id": "product_id",
+  "descripcion": "Descripción actualizada",
+  "imagen": "new_image_url",
   "estatus": false
 }
 ```
 
 ---
 
-#### 6. Delete Product
-**DELETE** `/api/products/:id`
+#### 2.5 Delete Product
+**DELETE** `/productos/:id`
 
-Delete a product.
+Eliminar un producto.
 
 **Parameters:**
 - `id`: Product ID
 
-**Response:**
+**Response (200):**
 ```json
 {
   "message": "Product deleted successfully"
@@ -254,172 +222,32 @@ Delete a product.
 
 ---
 
-### Size Products Management
+### 3. Orders Management
 
-**Base URL:** `/api/sizes`
+**Base URL:** `/pedidos`
 
-*All size product endpoints require authentication*
+*Requiere autenticación*
 
-#### 1. Get All Size Products
-**GET** `/api/sizes`
+#### 3.1 Get All Orders
+**GET** `/pedidos`
 
-Retrieve all size products.
+Obtener todos los pedidos.
 
-**Response:**
-```json
-[
-  {
-    "id": "size_id",
-    "descripcion": "Size description",
-    "estatus": true,
-    "tags": ["tag1", "tag2"]
-  }
-]
-```
-
----
-
-#### 2. Get Size Product by ID
-**GET** `/api/sizes/:id`
-
-Retrieve a specific size product by ID.
-
-**Parameters:**
-- `id`: Size Product ID
-
-**Response:**
-```json
-{
-  "id": "size_id",
-  "descripcion": "Size description",
-  "estatus": true,
-  "tags": ["tag1", "tag2"]
-}
-```
-
----
-
-#### 3. Create Size Product
-**POST** `/api/sizes`
-
-Create a new size product.
-
-**Request Body:**
-```json
-{
-  "descripcion": "Size description",
-  "estatus": true,
-  "tags": ["tag1", "tag2"]
-}
-```
-
-**Validation Rules:**
-- `descripcion`: Minimum 3 characters
-- `estatus`: Boolean (default: true)
-- `tags`: Optional array of strings
-
-**Response:**
-```json
-{
-  "id": "new_size_id",
-  "descripcion": "Size description",
-  "estatus": true,
-  "tags": ["tag1", "tag2"]
-}
-```
-
----
-
-#### 4. Update Size Product
-**PATCH** `/api/sizes/:id`
-
-Update an existing size product.
-
-**Parameters:**
-- `id`: Size Product ID
-
-**Request Body:**
-```json
-{
-  "descripcion": "Updated size description",
-  "estatus": false,
-  "tags": ["new_tag1", "new_tag2"]
-}
-```
-
-**Response:**
-```json
-{
-  "id": "size_id",
-  "descripcion": "Updated size description",
-  "estatus": false,
-  "tags": ["new_tag1", "new_tag2"]
-}
-```
-
----
-
-#### 5. Update Size Product State
-**PUT** `/api/sizes/:id`
-
-Update size product status.
-
-**Parameters:**
-- `id`: Size Product ID
-
-**Request Body:**
-```json
-{
-  "estatus": false
-}
-```
-
-**Response:**
-```json
-{
-  "id": "size_id",
-  "estatus": false
-}
-```
-
----
-
-### Orders Management
-
-**Base URL:** `/api/pedidos`
-
-*All order endpoints require authentication*
-
-#### 1. Get All Orders
-**GET** `/api/pedidos`
-
-Retrieve all orders.
-
-**Response:**
+**Response (200):**
 ```json
 [
   {
     "id": "order_id",
-    "fechaEntrega": {
-      "seconds": 1234567890,
-      "nanoseconds": 123456789
-    },
-    "lugarEntrega": "Delivery address",
-    "cliente": "Customer name",
+    "cliente": "Nombre del cliente",
+    "fechaEntrega": "2026-02-04",
+    "lugarEntrega": "Dirección de entrega",
     "productos": [
       {
+        "producto": "ID o nombre del producto",
         "cantidad": 2,
-        "size": {
-          "id": "size_id",
-          "descripcion": "Size description"
-        },
-        "producto": {
-          "id": "product_id",
-          "descripcion": "Product description",
-          "imagen": "image_url"
-        },
-        "caracteristicas": ["feature1", "feature2"],
-        "precio": 29.99
+        "precio": 25.99,
+        "tamaño": "M",
+        "caracteristicas": ["feature1", "feature2"]
       }
     ]
   }
@@ -428,109 +256,83 @@ Retrieve all orders.
 
 ---
 
-#### 2. Get Order by ID
-**GET** `/api/pedidos/:id`
+#### 3.2 Get Order by ID
+**GET** `/pedidos/:id`
 
-Retrieve a specific order by ID.
+Obtener un pedido específico por ID.
 
 **Parameters:**
 - `id`: Order ID
 
-**Response:**
+**Response (200):**
 ```json
 {
   "id": "order_id",
-  "fechaEntrega": {
-    "seconds": 1234567890,
-    "nanoseconds": 123456789
-  },
-  "lugarEntrega": "Delivery address",
-  "cliente": "Customer name",
-  "productos": [
-    {
-      "cantidad": 2,
-      "size": {
-        "id": "size_id",
-        "descripcion": "Size description"
-      },
-      "producto": {
-        "id": "product_id",
-        "descripcion": "Product description",
-        "imagen": "image_url"
-      },
-      "caracteristicas": ["feature1", "feature2"],
-      "precio": 29.99
-    }
-  ]
+  "cliente": "Nombre del cliente",
+  "fechaEntrega": "2026-02-04",
+  "lugarEntrega": "Dirección de entrega",
+  "productos": [...]
 }
 ```
 
 ---
 
-#### 3. Create Order
-**POST** `/api/pedidos`
+#### 3.3 Get Orders Resume
+**GET** `/pedidos/resume`
 
-Create a new order.
+Obtener resumen de pedidos.
+
+**Response (200):**
+```json
+{
+  "total": 10,
+  "pendientes": 5,
+  "completados": 5
+}
+```
+
+---
+
+#### 3.4 Create Order
+**POST** `/pedidos`
+
+Crear un nuevo pedido.
 
 **Request Body:**
 ```json
 {
-  "fechaEntrega": {
-    "seconds": 1234567890,
-    "nanoseconds": 123456789
-  },
-  "lugarEntrega": "Delivery address",
-  "cliente": "Customer name",
+  "cliente": "Nombre del cliente",
+  "fechaEntrega": "2026-02-04",
+  "lugarEntrega": "Dirección de entrega",
   "productos": [
     {
+      "producto": "product_id",
       "cantidad": 2,
-      "size": {
-        "id": "size_id",
-        "descripcion": "Size description"
-      },
-      "producto": {
-        "id": "product_id",
-        "descripcion": "Product description",
-        "imagen": "image_url"
-      },
-      "caracteristicas": ["feature1", "feature2"],
-      "precio": 29.99
+      "precio": 25.99,
+      "tamaño": "M",
+      "caracteristicas": ["feature1"]
     }
   ]
 }
 ```
 
-**Validation Rules:**
-- `fechaEntrega`: Timestamp object with seconds (non-negative integer) and nanoseconds (0-999,999,999)
-- `lugarEntrega`: Optional string
-- `cliente`: Minimum 5 characters
-- `productos`: Optional array of product objects
-  - `cantidad`: Positive integer
-  - `size`: Object with id (required) and descripcion (min 3 chars)
-  - `producto`: Object with id (required) and descripcion (min 3 chars), imagen optional
-  - `caracteristicas`: Optional array of strings
-  - `precio`: Positive number (default: 0)
-
-**Response:**
+**Response (201):**
 ```json
 {
   "id": "new_order_id",
-  "fechaEntrega": {
-    "seconds": 1234567890,
-    "nanoseconds": 123456789
-  },
-  "lugarEntrega": "Delivery address",
-  "cliente": "Customer name",
+  "cliente": "Nombre del cliente",
+  "fechaEntrega": "2026-02-04",
+  "lugarEntrega": "Dirección de entrega",
   "productos": [...]
 }
 ```
 
 ---
 
-#### 4. Update Order
-**PATCH** `/api/pedidos/:id`
+#### 3.5 Update Order
+**PATCH** `/pedidos/:id`
 
-Update an existing order.
+Actualizar un pedido existente.
 
 **Parameters:**
 - `id`: Order ID
@@ -538,20 +340,155 @@ Update an existing order.
 **Request Body:**
 ```json
 {
-  "lugarEntrega": "Updated delivery address",
-  "cliente": "Updated customer name",
+  "cliente": "Nombre actualizado",
+  "lugarEntrega": "Nueva dirección",
   "productos": [...]
 }
 ```
 
-**Response:**
+**Response (200):**
 ```json
 {
   "id": "order_id",
-  "fechaEntrega": {...},
-  "lugarEntrega": "Updated delivery address",
-  "cliente": "Updated customer name",
+  "cliente": "Nombre actualizado",
+  "lugarEntrega": "Nueva dirección",
   "productos": [...]
+}
+```
+
+---
+
+### 4. Categories Management
+
+**Base URL:** `/categories`
+
+*Requiere autenticación*
+
+#### 4.1 Get All Categories
+**GET** `/categories`
+
+Obtener todas las categorías.
+
+**Response (200):**
+```json
+[
+  {
+    "id": "category_id",
+    "nombre": "Nombre de la categoría",
+    "descripcion": "Descripción",
+    "estatus": true
+  }
+]
+```
+
+---
+
+#### 4.2 Create Category
+**POST** `/categories`
+
+Crear una nueva categoría.
+
+**Request Body:**
+```json
+{
+  "nombre": "Nombre de la categoría",
+  "descripcion": "Descripción",
+  "estatus": true
+}
+```
+
+**Response (201):**
+```json
+{
+  "id": "new_category_id",
+  "nombre": "Nombre de la categoría",
+  "descripcion": "Descripción",
+  "estatus": true
+}
+```
+
+---
+
+#### 4.3 Delete Category
+**DELETE** `/categories/:id`
+
+Eliminar una categoría.
+
+**Parameters:**
+- `id`: Category ID
+
+**Response (200):**
+```json
+{
+  "message": "Category deleted successfully"
+}
+```
+
+---
+
+### 5. File Management
+
+**Base URL:** `/files`
+
+*Requiere autenticación*
+
+#### 5.1 Upload Image
+**POST** `/files`
+
+Cargar una imagen a AWS S3.
+
+**Content-Type:** `multipart/form-data`
+
+**Request:**
+- `file`: Archivo de imagen (multipart form)
+
+**Response (201):**
+```json
+{
+  "url": "https://s3.amazonaws.com/bucket/image-url",
+  "key": "image-key"
+}
+```
+
+---
+
+### 6. Public Routes (Sin autenticación)
+
+#### 6.1 Get Public Orders
+**GET** `/public/pedidos`
+
+Obtener pedidos públicos (sin autenticación requerida).
+
+**Response (200):**
+```json
+[
+  {
+    "id": "order_id",
+    "cliente": "Nombre del cliente",
+    "fechaEntrega": "2026-02-04",
+    "productos": [...]
+  }
+]
+```
+
+---
+
+#### 6.2 Seed Database
+**POST** `/seed`
+
+Cargar datos iniciales en la base de datos (sin autenticación requerida).
+
+**Request Body:**
+```json
+{}
+```
+
+**Response (200):**
+```json
+{
+  "message": "Database seeded successfully",
+  "productsCount": 10,
+  "categoriesCount": 5
 }
 ```
 
@@ -559,31 +496,37 @@ Update an existing order.
 
 ## Error Responses
 
-### Common Error Codes
+### Códigos de Error Comunes
 
-- **400 Bad Request**: Validation errors or invalid input
-- **401 Unauthorized**: Authentication required or failed
-- **404 Not Found**: Resource not found
-- **500 Internal Server Error**: Server error
+- **400 Bad Request**: Errores de validación o entrada inválida
+- **401 Unauthorized**: Autenticación requerida o fallida
+- **404 Not Found**: Recurso no encontrado
+- **500 Internal Server Error**: Error del servidor
 
-### Error Response Format
+### Formato de Respuesta de Error
 ```json
 {
-  "message": "Error description"
+  "message": "Descripción del error"
 }
 ```
 
-## Authentication Flow
+---
 
-1. **Register** a new user account using `/user/register`
-2. **Login** using `/user/login` to receive authentication cookies
-3. **Include cookies** in subsequent requests to protected endpoints
-4. **Logout** using `/user/logout` to clear authentication
+## Flujo de Autenticación
 
-## Notes
+1. **Registrarse** en `/user/register`
+2. **Iniciar sesión** en `/user/auth` para recibir cookies de autenticación
+3. **Incluir cookies** en solicitudes posteriores a endpoints protegidos
+4. **Cerrar sesión** si es necesario
 
-- All timestamps use Firebase Timestamp format with `seconds` and `nanoseconds`
-- Authentication cookies are HTTP-only for security
-- CORS is enabled for cross-origin requests
-- The API uses Firebase Firestore as the database backend
-- All endpoints return JSON responses 
+---
+
+## Notas Importantes
+
+- Las cookies de autenticación son HTTP-only por seguridad
+- CORS está habilitado para solicitudes entre orígenes
+- La API usa Firebase Firestore como base de datos
+- Las imágenes se almacenan en AWS S3
+- Todos los endpoints devuelven respuestas en JSON
+- El servidor corre en el puerto 3000 por defecto
+- La documentación se basa en la versión actual del proyecto 
