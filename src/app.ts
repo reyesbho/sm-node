@@ -33,8 +33,8 @@ export function createApp({authenticationModel, productModel, pedidoModel, userM
   app.disable('x-powered-by'); // Disable 'X-Powered-By' header for security
   const port = process.env.PORT ?? 3000;
 
-  app.use(express.json()); // Middleware to parse JSON bodies
   app.use(corsMiddleware()); // Use custom CORS middleware
+  app.use(express.json()); // Middleware to parse JSON bodies
   app.use(cookieParser());
   app.use(express.json({ limit: '6mb' })); // Increase JSON body size limit
 
