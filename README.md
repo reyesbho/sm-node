@@ -1,24 +1,25 @@
 # Sweet Moments API
 
-Una API RESTful desarrollada en Node.js para la gestión de productos, pedidos y usuarios de Sweet Moments.
+Una API RESTful desarrollada en Node.js con TypeScript para la gestión de productos, pedidos, categorías e imágenes de Sweet Moments.
 
-## 🚀 Características
+## Características
 
-- **Autenticación**: Sistema de autenticación con Firebase Auth
-- **Base de Datos**: Firebase Firestore como base de datos
-- **Validación**: Esquemas de validación con Zod
-- **CORS**: Configuración de CORS para desarrollo y producción
-- **Cookies**: Autenticación mediante cookies HTTP-only seguras
-- **Paginación**: Sistema de paginación para consultas grandes
+- **Lenguaje**: TypeScript con Express 5
+- **Autenticación**: Firebase Auth con cookies HTTP-only
+- **Base de Datos**: Firebase Firestore
+- **Almacenamiento**: AWS S3 para imágenes
+- **Validación**: Esquemas con Zod
+- **CORS**: Configurado para desarrollo y producción
+- **Testing**: Jest + Supertest
 
-## 📋 Requisitos Previos
+## Requisitos Previos
 
-- Node.js (versión 18 o superior)
-- npm o yarn
+- Node.js 18 o superior
 - Cuenta de Firebase con Firestore habilitado
+- Cuenta de AWS con un bucket S3
 - Variables de entorno configuradas
 
-## 🛠️ Instalación
+## Instalación
 
 1. **Clona el repositorio**
 ```bash
@@ -32,10 +33,11 @@ npm install
 ```
 
 3. **Configura las variables de entorno**
-Crea un archivo `.env` en la raíz del proyecto con las siguientes variables:
+
+Crea los archivos `.env.development` y `.env.production` en la raíz del proyecto:
 
 ```env
-# Firebase Config
+# Firebase Client SDK
 APIKEY=your_firebase_api_key
 AUTHDOMAIN=your_project.firebaseapp.com
 DATABASEURL=https://your_project.firebaseio.com
@@ -45,182 +47,170 @@ MESSAGINGSENDERID=your_sender_id
 APPID=your_app_id
 
 # Firebase Admin SDK
-TYPE=service_account
-PROJECT_ID=your_project_id
-PRIVATE_KEY_ID=your_private_key_id
-PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
-CLIENT_EMAIL=your_service_account_email
-CLIENT_ID=your_client_id
-AUTH_URI=https://accounts.google.com/o/oauth2/auth
-TOKEN_URI=https://oauth2.googleapis.com/token
-AUTH_PROVIDER_X509_CERT_URL=https://www.googleapis.com/oauth2/v1/certs
-CLIENT_X509_CERT_URL=https://www.googleapis.com/robot/v1/metadata/x509/your_service_account_email
-UNIVERSE_DOMAIN=googleapis.com
+PRIVATEKEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+CLIENTEMAIL=your_service_account@your_project.iam.gserviceaccount.com
 
-# Server Config
+# AWS S3
+AWSACCESSKEYID=your_access_key_id
+AWSSECRETACCESSKEY=your_secret_access_key
+AWSREGION=us-east-2
+AWSBUCKETNAME=your_bucket_name
+
+# Servidor
 PORT=3000
 NODE_ENV=development
 ```
 
 4. **Ejecuta el servidor**
 ```bash
-npm start
+npm run dev      # Desarrollo
+npm start        # Producción (requiere build previo)
 ```
 
 El servidor estará disponible en `http://localhost:3000`
 
-## 📚 Endpoints de la API
-
-### Autenticación
-
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| POST | `/user/register` | Registrar nuevo usuario |
-| POST | `/user/login` | Iniciar sesión |
-| POST | `/user/logout` | Cerrar sesión |
-
-### Productos
-
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| GET | `/api/products` | Obtener todos los productos |
-| GET | `/api/products/:id` | Obtener producto por ID |
-| POST | `/api/products` | Crear nuevo producto |
-| PATCH | `/api/products/:id` | Actualizar producto |
-| PUT | `/api/products/:id` | Actualizar estado del producto |
-| DELETE | `/api/products/:id` | Eliminar producto |
-
-### Tamaños
-
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| GET | `/api/sizes` | Obtener todos los tamaños |
-| GET | `/api/sizes/:id` | Obtener tamaño por ID |
-| POST | `/api/sizes` | Crear nuevo tamaño |
-| PATCH | `/api/sizes/:id` | Actualizar tamaño |
-| PUT | `/api/sizes/:id` | Actualizar estado del tamaño |
-
-### Pedidos
-
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| GET | `/api/pedidos` | Obtener todos los pedidos |
-| GET | `/api/pedidos/:id` | Obtener pedido por ID |
-| POST | `/api/pedidos` | Crear nuevo pedido |
-| PATCH | `/api/pedidos/:id` | Actualizar pedido |
-
-## 🔧 Scripts Disponibles
+## Scripts Disponibles
 
 ```bash
-# Desarrollo
-npm run dev          # Ejecutar en modo desarrollo
-npm start           # Ejecutar en modo producción
-
-# Testing
-npm test            # Ejecutar tests
-npm run test:watch  # Ejecutar tests en modo watch
-
-# Build
-npm run build       # Compilar el proyecto
+npm run dev      # Modo desarrollo con recarga automática (tsx + nodemon)
+npm run build    # Compila TypeScript a dist/
+npm start        # Producción desde dist/server.js
+npm test         # Ejecuta los tests con Jest
 ```
 
-## 🏗️ Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 sm-node/
 ├── src/
-│   ├── controllers/     # Controladores de la API
-│   ├── data/           # Datos estáticos
-│   ├── middlewares/    # Middlewares personalizados
-│   ├── models/         # Modelos de datos
-│   │   └── firebase/   # Modelos específicos de Firebase
-│   ├── routes/         # Definición de rutas
-│   ├── schemas/        # Esquemas de validación
-│   ├── test/           # Tests unitarios
-│   └── utils/          # Utilidades y constantes
-├── app.js              # Configuración de Express
-├── server.js           # Punto de entrada del servidor
-├── package.json        # Dependencias y scripts
-└── README.md          # Documentación
+│   ├── server.ts            # Punto de entrada, inicializa Firebase
+│   ├── app.ts               # Configuración de Express y rutas
+│   ├── controllers/         # Lógica de negocio
+│   ├── routes/              # Definición de rutas
+│   ├── models/
+│   │   ├── firebase/        # Modelos de Firestore (Product, Pedido, User, Category)
+│   │   └── aws/             # Modelo de archivos S3
+│   ├── middlewares/         # CORS, autenticación, multer
+│   ├── schemas/             # Esquemas de validación Zod
+│   ├── types/               # Tipos TypeScript
+│   ├── data/                # Datos estáticos para seed
+│   └── utils/               # Utilidades y constantes
+├── app.js                   # Wrapper para Vercel
+├── vercel.json              # Configuración de Vercel
+├── Dockerfile               # Configuración de Docker
+├── tsconfig.json            # Configuración de TypeScript
+├── jest.config.ts           # Configuración de Jest
+└── package.json
 ```
 
-## 🔐 Autenticación
+## Endpoints de la API
 
-La API utiliza Firebase Auth para la autenticación. El flujo es el siguiente:
+### Autenticación
 
-1. **Registro**: El usuario se registra con email y contraseña
-2. **Login**: Se autentica y recibe tokens de acceso
-3. **Cookies**: Los tokens se almacenan en cookies HTTP-only
-4. **Protección**: Los endpoints protegidos verifican la autenticación
+| Método | Endpoint | Auth | Descripción |
+|--------|----------|------|-------------|
+| POST | `/api/user/register` | No | Registrar nuevo usuario |
+| POST | `/api/user/auth` | No | Iniciar sesión |
 
-### Ejemplo de uso:
+### Productos
+
+| Método | Endpoint | Auth | Descripción |
+|--------|----------|------|-------------|
+| GET | `/api/productos` | Si | Obtener todos los productos |
+| GET | `/api/productos/:id` | Si | Obtener producto por ID |
+| POST | `/api/productos` | Si | Crear nuevo producto |
+| PATCH | `/api/productos/:id` | Si | Actualizar producto |
+| DELETE | `/api/productos/:id` | Si | Eliminar producto |
+
+### Categorías
+
+| Método | Endpoint | Auth | Descripción |
+|--------|----------|------|-------------|
+| GET | `/api/categories` | Si | Obtener todas las categorías |
+| POST | `/api/categories` | Si | Crear nueva categoría |
+
+### Pedidos
+
+| Método | Endpoint | Auth | Descripción |
+|--------|----------|------|-------------|
+| GET | `/api/pedidos` | Si | Obtener todos los pedidos (paginado) |
+| GET | `/api/pedidos/resume` | Si | Resumen de pedidos |
+| GET | `/api/pedidos/:id` | Si | Obtener pedido por ID |
+| POST | `/api/pedidos` | Si | Crear nuevo pedido |
+| PATCH | `/api/pedidos/:id` | Si | Actualizar pedido |
+| GET | `/api/public/pedidos` | No | Vista pública de pedidos |
+
+### Archivos
+
+| Método | Endpoint | Auth | Descripción |
+|--------|----------|------|-------------|
+| POST | `/api/files` | Si | Subir imagen a AWS S3 |
+
+### Utilidades
+
+| Método | Endpoint | Auth | Descripción |
+|--------|----------|------|-------------|
+| POST | `/api/seed` | No | Poblar base de datos con datos iniciales |
+
+## Autenticación
+
+La API usa Firebase Auth. El flujo es:
+
+1. El usuario se registra o inicia sesión
+2. Se genera un token que se almacena en una cookie HTTP-only
+3. Las rutas protegidas verifican la cookie en cada petición
 
 ```javascript
 // Login
-const response = await fetch('/user/login', {
+const response = await fetch('/api/user/auth', {
   method: 'POST',
+  credentials: 'include',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({
     email: 'user@example.com',
     password: 'SecurePass123!'
   })
 });
-
-// Las cookies se establecen automáticamente
-// Las siguientes peticiones incluirán la autenticación
+// Las peticiones siguientes incluyen la cookie automáticamente
 ```
 
-## 🗄️ Base de Datos
+## Base de Datos
 
-El proyecto utiliza Firebase Firestore como base de datos. Las colecciones principales son:
+Firebase Firestore con las siguientes colecciones:
 
-- `users`: Información de usuarios
-- `products`: Catálogo de productos
-- `sizes`: Tamaños disponibles
-- `pedidos`: Pedidos de clientes
+- `users` - Información de usuarios
+- `products` - Catálogo de productos
+- `categories` - Categorías de productos
+- `pedidos` - Pedidos de clientes
 
-## 🧪 Testing
+## Almacenamiento de Archivos
 
-Los tests están escritos con Jest y Supertest:
+Las imágenes se suben directamente a AWS S3 usando `multer-s3`. El endpoint `/api/files` recibe archivos multipart y retorna la URL pública del archivo subido.
 
-```bash
-# Ejecutar todos los tests
-npm test
+## Paginación
 
-# Ejecutar tests específicos
-npm test -- --testNamePattern="Catalogs sizes"
+Los endpoints de listas soportan paginación por cursor:
 
-# Ejecutar tests en modo watch
-npm run test:watch
+```
+GET /api/pedidos?pageSize=10&cursorFechaCreacion=2024-01-01T00:00:00.000Z
 ```
 
-## 🚀 Despliegue
+## Estados de Pedidos
 
-### Vercel
+- `BACKLOG` - Pendiente de procesar
+- `INCOMPLETE` - Incompleto
+- `DONE` - Completado
+- `CANCELED` - Cancelado
+- `DELETE` - Eliminado
 
-El proyecto incluye configuración para Vercel:
+## Estados de Pago
 
-```bash
-# Instalar Vercel CLI
-npm i -g vercel
+- `PENDIENTE` - Pago pendiente
+- `PAGADO` - Pago realizado
 
-# Desplegar
-vercel
-```
+## Configuración de CORS
 
-### Docker
-
-```bash
-# Construir imagen
-docker build -t sweet-moments-api .
-
-# Ejecutar contenedor
-docker run -p 3000:3000 sweet-moments-api
-```
-
-## 🔧 Configuración de CORS
-
-Los orígenes permitidos están configurados en `src/middlewares/cors.js`:
+Los orígenes permitidos están en `src/middlewares/cors.ts`:
 
 - `https://sweetmoments.mx`
 - `https://www.sweetmoments.mx`
@@ -228,41 +218,34 @@ Los orígenes permitidos están configurados en `src/middlewares/cors.js`:
 - `https://www.services.sweetmoments.mx`
 - `http://localhost:5173`
 - `http://localhost:8081`
+- `*.vercel.app`
 
-## 📝 Validación de Datos
+## Testing
 
-La API utiliza Zod para la validación de esquemas:
+```bash
+# Ejecutar todos los tests
+npm test
 
-- **Usuarios**: Email válido, contraseña segura
-- **Productos**: Descripción mínima, tags específicos
-- **Tamaños**: Descripción mínima, tags opcionales
-- **Pedidos**: Estructura compleja con productos y fechas
-
-## 🔄 Estados de Pedidos
-
-Los pedidos pueden tener los siguientes estados:
-
-- `BACKLOG`: Pendiente de procesar
-- `INCOMPLETE`: Incompleto
-- `DONE`: Completado
-- `CANCELED`: Cancelado
-- `DELETE`: Eliminado
-
-## 💳 Estados de Pago
-
-- `PENDIENTE`: Pago pendiente
-- `PAGADO`: Pago realizado
-
-## 📊 Paginación
-
-Los endpoints que devuelven listas grandes soportan paginación:
-
-```javascript
-// Ejemplo de paginación en pedidos
-GET /api/pedidos?pageSize=10&cursorFechaCreacion=2024-01-01T00:00:00.000Z
+# Ejecutar tests específicos
+npm test -- --testNamePattern="Catalogs sizes"
 ```
 
+## Despliegue
 
-## 📄 Licencia
+### Vercel
 
-Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
+```bash
+npm i -g vercel
+vercel
+```
+
+### Docker
+
+```bash
+docker build -t sweet-moments-api .
+docker run -p 3000:3000 sweet-moments-api
+```
+
+## Licencia
+
+Este proyecto está bajo la Licencia MIT.
