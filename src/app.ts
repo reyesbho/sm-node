@@ -1,5 +1,7 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import { apiReference } from '@scalar/express-api-reference';
+import { generateOpenApiDocument } from './docs/openapi.js';
 import { corsMiddleware } from './middlewares/cors.js';
 import { AuthenticationMidlleware } from './middlewares/authentication.js';
 import { ProductModel } from './models/firebase/Product.js';
@@ -38,9 +40,19 @@ export function createApp({authenticationModel, productModel, pedidoModel, userM
   app.use(cookieParser());
   app.use(express.json({ limit: '6mb' })); // Increase JSON body size limit
 
-  app.get('/', (req, res) => {
+  app.get('/', (_req, res) => {
     res.send('Hello World!');
   });
+
+  // API Docs
+  app.get('/api/docs/openapi.json', (_req, res) => {
+    res.json(generateOpenApiDocument());
+  });
+
+  app.use('/api/docs', apiReference({
+    url: '/api/docs/openapi.json',
+    theme: 'purple',
+  }));
 
   //user
   app.use('/api/user', createUserRouter({userModel}));

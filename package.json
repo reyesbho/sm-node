@@ -17,7 +17,9 @@
     "test": "jest --detectOpenHandles --forceExit"
   },
   "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^7.3.4",
     "@aws-sdk/client-s3": "^3.981.0",
+    "@scalar/express-api-reference": "^0.8.48",
     "cookie-parser": "1.4.7",
     "cors": "2.8.5",
     "dotenv": "16.5.0",
