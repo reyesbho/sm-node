@@ -58,6 +58,10 @@ export const pedidoCreateSchema = z.object({
   estatus: z.enum(['TODO', 'DONE', 'CANCELED','DELETE']),
   estatusPago: z.enum(['PENDIENTE', 'PAGADO', 'ABONADO']),
   tipoPago: z.enum(['EFECTIVO', 'TRANSFERENCIA']).optional(),
+  abonos: z.array(z.object({
+    monto: z.number().positive(),
+    fecha: firestoreTimestampSchema,
+  })).optional(),
 
   total: z.number().positive(),
   detalles: z.string().optional(),

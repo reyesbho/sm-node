@@ -386,7 +386,14 @@ Obtener todos los pedidos. Soporta filtrado por fecha, estatus, cliente y pagina
         }
       ],
       "estatus": "TODO",
-      "estatusPago": "PENDIENTE",
+      "estatusPago": "ABONADO",
+      "tipoPago": "EFECTIVO",
+      "abonos": [
+        {
+          "monto": 250,
+          "fecha": { "seconds": 1234567890, "nanoseconds": 0 }
+        }
+      ],
       "total": 51.98,
       "detalles": "Notas adicionales",
       "fechaCreacion": {
@@ -444,7 +451,14 @@ Obtener un pedido específico por ID.
     }
   ],
   "estatus": "TODO",
-  "estatusPago": "PENDIENTE",
+  "estatusPago": "ABONADO",
+  "tipoPago": "TRANSFERENCIA",
+  "abonos": [
+    {
+      "monto": 250,
+      "fecha": { "seconds": 1234567890, "nanoseconds": 0 }
+    }
+  ],
   "total": 51.98,
   "detalles": "Notas adicionales",
   "fechaCreacion": {
@@ -525,8 +539,14 @@ Crear un nuevo pedido.
     }
   ],
   "estatus": "TODO",
-  "estatusPago": "PENDIENTE",
+  "estatusPago": "ABONADO",
   "tipoPago": "EFECTIVO",
+  "abonos": [
+    {
+      "monto": 250,
+      "fecha": { "seconds": 1234567890, "nanoseconds": 0 }
+    }
+  ],
   "total": 51.98,
   "detalles": "Notas o instrucciones especiales"
 }
@@ -546,6 +566,9 @@ Crear un nuevo pedido.
 - `estatus`: TODO, DONE, CANCELED o DELETE
 - `estatusPago`: PENDIENTE, PAGADO o ABONADO
 - `tipoPago`: EFECTIVO o TRANSFERENCIA (opcional)
+- `abonos`: Lista de abonos (opcional), cada abono contiene:
+  - `monto`: Número positivo
+  - `fecha`: Timestamp de Firebase
 - `total`: Número positivo
 - `detalles`: String (opcional)
 
@@ -562,7 +585,14 @@ Crear un nuevo pedido.
   "lugarEntrega": "Dirección de entrega",
   "productos": [...],
   "estatus": "TODO",
-  "estatusPago": "PENDIENTE",
+  "estatusPago": "ABONADO",
+  "tipoPago": "EFECTIVO",
+  "abonos": [
+    {
+      "monto": 250,
+      "fecha": { "seconds": 1234567890, "nanoseconds": 0 }
+    }
+  ],
   "total": 51.98,
   "detalles": "Notas o instrucciones especiales",
   "fechaCreacion": {
@@ -612,6 +642,13 @@ Actualizar un pedido existente.
   ],
   "estatus": "DONE",
   "estatusPago": "PAGADO",
+  "tipoPago": "TRANSFERENCIA",
+  "abonos": [
+    {
+      "monto": 50,
+      "fecha": { "seconds": 1234567890, "nanoseconds": 0 }
+    }
+  ],
   "total": 107.97,
   "detalles": "Detalles actualizados"
 }
@@ -631,6 +668,13 @@ Actualizar un pedido existente.
   "productos": [...],
   "estatus": "DONE",
   "estatusPago": "PAGADO",
+  "tipoPago": "TRANSFERENCIA",
+  "abonos": [
+    {
+      "monto": 50,
+      "fecha": { "seconds": 1234567890, "nanoseconds": 0 }
+    }
+  ],
   "total": 107.97,
   "detalles": "Detalles actualizados",
   "fechaCreacion": {
