@@ -1,0 +1,10 @@
+node_modules
+dist
+.git
+.gitignore
+.env*
+*.md
+.vercel
+jest.config.ts
+babel.config.js
+src/test

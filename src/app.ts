@@ -44,6 +44,10 @@ export function createApp({authenticationModel, productModel, pedidoModel, userM
     res.send('Hello World!');
   });
 
+  app.get('/health', (_req, res) => {
+    res.json({ status: 'ok' });
+  });
+
   // API Docs
   app.get('/api/docs/openapi.json', (_req, res) => {
     res.json(generateOpenApiDocument());

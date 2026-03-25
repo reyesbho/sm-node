@@ -1,0 +1,64 @@
+services:
+  api-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      # Firebase Client SDK
+      APIKEY: ${APIKEY}
+      AUTHDOMAIN: ${AUTHDOMAIN}
+      DATABASEURL: ${DATABASEURL}
+      PROJECTID: ${PROJECTID}
+      STORAGEBUCKET: ${STORAGEBUCKET}
+      MESSAGINGSENDERID: ${MESSAGINGSENDERID}
+      APPID: ${APPID}
+      # Firebase Admin SDK
+      PRIVATEKEY: ${PRIVATEKEY}
+      CLIENTEMAIL: ${CLIENTEMAIL}
+      # AWS S3
+      AWSACCESSKEYID: ${AWSACCESSKEYID}
+      AWSSECRETACCESSKEY: ${AWSSECRETACCESSKEY}
+      AWSREGION: ${AWSREGION}
+      AWSBUCKETNAME: ${AWSBUCKETNAME}
+    volumes:
+      - ./src:/app/src
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      # Firebase Client SDK
+      APIKEY: ${APIKEY}
+      AUTHDOMAIN: ${AUTHDOMAIN}
+      DATABASEURL: ${DATABASEURL}
+      PROJECTID: ${PROJECTID}
+      STORAGEBUCKET: ${STORAGEBUCKET}
+      MESSAGINGSENDERID: ${MESSAGINGSENDERID}
+      APPID: ${APPID}
+      # Firebase Admin SDK
+      PRIVATEKEY: ${PRIVATEKEY}
+      CLIENTEMAIL: ${CLIENTEMAIL}
+      # AWS S3
+      AWSACCESSKEYID: ${AWSACCESSKEYID}
+      AWSSECRETACCESSKEY: ${AWSSECRETACCESSKEY}
+      AWSREGION: ${AWSREGION}
+      AWSBUCKETNAME: ${AWSBUCKETNAME}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s

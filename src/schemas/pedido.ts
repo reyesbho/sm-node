@@ -57,6 +57,7 @@ export const pedidoCreateSchema = z.object({
 
   estatus: z.enum(['TODO', 'DONE', 'CANCELED','DELETE']),
   estatusPago: z.enum(['PENDIENTE', 'PAGADO', 'ABONADO']),
+  tipoPago: z.enum(['EFECTIVO', 'TRANSFERENCIA']).optional(),
 
   total: z.number().positive(),
   detalles: z.string().optional(),
@@ -104,3 +105,4 @@ export const validatePedidoUpdate = (data: unknown) =>
 
 export type EstatusPedido = 'DONE' | 'TODO' | 'CANCELED' | 'DELETE';
 export type EstatusPago = 'PENDIENTE' | 'PAGADO' | 'ABONADO';
+export type TipoPago = 'EFECTIVO' | 'TRANSFERENCIA';

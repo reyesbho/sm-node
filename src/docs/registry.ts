@@ -101,6 +101,7 @@ const PedidoSchema = registry.register(
     productos: z.array(ProductoPedidoSchema),
     estatus: z.enum(['TODO', 'DONE', 'CANCELED', 'DELETE']).openapi({ example: 'TODO' }),
     estatusPago: z.enum(['PENDIENTE', 'PAGADO', 'ABONADO']).openapi({ example: 'PENDIENTE' }),
+    tipoPago: z.enum(['EFECTIVO', 'TRANSFERENCIA']).optional().openapi({ example: 'EFECTIVO' }),
     total: z.number().positive().openapi({ example: 1000 }),
     detalles: z.string().optional(),
     registradoPor: z.string().openapi({ example: 'user@example.com' }),
@@ -118,6 +119,7 @@ const PedidoCreateSchema = registry.register(
     productos: z.array(ProductoPedidoSchema).min(1),
     estatus: z.enum(['TODO', 'DONE', 'CANCELED', 'DELETE']).openapi({ example: 'TODO' }),
     estatusPago: z.enum(['PENDIENTE', 'PAGADO', 'ABONADO']).openapi({ example: 'PENDIENTE' }),
+    tipoPago: z.enum(['EFECTIVO', 'TRANSFERENCIA']).optional().openapi({ example: 'EFECTIVO' }),
     total: z.number().positive().openapi({ example: 1000 }),
     detalles: z.string().optional().openapi({ example: 'Sin nueces' }),
   })

@@ -24,6 +24,9 @@ Todos los endpoints están bajo la ruta `/api`:
 La mayoría de los endpoints requieren autenticación. Después del login, el servidor establece cookies HTTP-only con tokens de acceso. Incluye estas cookies en las siguientes solicitudes.
 
 **Rutas Públicas (sin autenticación requerida):**
+- `GET /health` - Health check
+- `GET /api/docs` - Documentación interactiva (Scalar)
+- `GET /api/docs/openapi.json` - Schema OpenAPI
 - `POST /user/register` - Registrar usuario
 - `POST /user/auth` - Login
 - `GET /public/pedidos` - Ver pedidos públicos
@@ -38,6 +41,36 @@ La mayoría de los endpoints requieren autenticación. Después del login, el se
 ---
 
 ## Endpoints
+
+### 0. General
+
+#### 0.1 Health Check
+**GET** `/health`
+
+Verificar que el servidor está funcionando correctamente.
+
+**Response (200):**
+```json
+{
+  "status": "ok"
+}
+```
+
+---
+
+#### 0.2 API Documentation (Scalar UI)
+**GET** `/api/docs`
+
+Interfaz interactiva de documentación generada con Scalar.
+
+---
+
+#### 0.3 OpenAPI Schema
+**GET** `/api/docs/openapi.json`
+
+Retorna el esquema OpenAPI en formato JSON, generado automáticamente con `zod-to-openapi`.
+
+---
 
 ### 1. User Management
 
@@ -493,6 +526,7 @@ Crear un nuevo pedido.
   ],
   "estatus": "TODO",
   "estatusPago": "PENDIENTE",
+  "tipoPago": "EFECTIVO",
   "total": 51.98,
   "detalles": "Notas o instrucciones especiales"
 }
@@ -511,6 +545,7 @@ Crear un nuevo pedido.
   - `subtotal`: Número positivo
 - `estatus`: TODO, DONE, CANCELED o DELETE
 - `estatusPago`: PENDIENTE, PAGADO o ABONADO
+- `tipoPago`: EFECTIVO o TRANSFERENCIA (opcional)
 - `total`: Número positivo
 - `detalles`: String (opcional)
 
@@ -892,5 +927,6 @@ curl -X POST http://localhost:3000/api/files \
 - Los tamaños disponibles son: Chica, Mediana, Grande, Familiar, Mini, Por defecto
 - Los estatus de pedido son: TODO, DONE, CANCELED, DELETE
 - Los estatus de pago son: PENDIENTE, PAGADO, ABONADO
+- Los tipos de pago son: EFECTIVO, TRANSFERENCIA
 - La paginación se implementa con cursores para mejor rendimiento
 - Los campos de búsqueda en pedidos son case-insensitive (se usa `clienteLower`) 
