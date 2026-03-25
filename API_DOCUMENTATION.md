@@ -29,7 +29,6 @@ La mayoría de los endpoints requieren autenticación. Después del login, el se
 - `GET /api/docs/openapi.json` - Schema OpenAPI
 - `POST /user/register` - Registrar usuario
 - `POST /user/auth` - Login
-- `GET /public/pedidos` - Ver pedidos públicos
 - `POST /seed` - Cargar datos iniciales
 
 **Rutas Protegidas (requieren autenticación):**
@@ -781,40 +780,7 @@ Cargar una imagen a AWS S3.
 
 ### 6. Public Routes (Sin autenticación)
 
-#### 6.1 Get Public Orders
-**GET** `/public/pedidos`
-
-Obtener pedidos públicos (sin autenticación requerida). Retorna versión sanitizada sin información sensible.
-
-**Query Parameters (opcionales):**
-- `fechaInicio`: Fecha de inicio (formato DD-MM-YYYY)
-- `fechaFin`: Fecha de fin (formato DD-MM-YYYY)
-- `estatus`: Estatus del pedido (TODO, DONE, CANCELED, DELETE)
-- `cliente`: Nombre del cliente a buscar
-- `pageSize`: Cantidad de resultados por página
-- `cursorFechaCreacion`: Cursor para paginación
-
-**Response (200):**
-```json
-{
-  "pedidos": [
-    {
-      "id": "order_id",
-      "cliente": "Nombre del cliente",
-      "fechaEntrega": {
-        "seconds": 1234567890,
-        "nanoseconds": 123456789
-      },
-      "lugarEntrega": "Dirección de entrega"
-    }
-  ],
-  "nextCursor": "cursor_value"
-}
-```
-
----
-
-#### 6.2 Seed Database
+#### 6.1 Seed Database
 **POST** `/seed`
 
 Cargar datos iniciales en la base de datos (sin autenticación requerida).

@@ -1,0 +1,460 @@
+{
+  "info": {
+    "name": "Sweet Moments API",
+    "description": "Colección completa de la API Sweet Moments",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api",
+      "type": "string"
+    },
+    {
+      "key": "productId",
+      "value": "product_id",
+      "type": "string"
+    },
+    {
+      "key": "pedidoId",
+      "value": "pedido_id",
+      "type": "string"
+    },
+    {
+      "key": "categoryId",
+      "value": "category_id",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "0. General",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:3000/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "3000",
+              "path": ["health"]
+            },
+            "description": "Verificar que el servidor está funcionando"
+          }
+        },
+        {
+          "name": "API Docs (Scalar UI)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/docs",
+              "host": ["{{baseUrl}}"],
+              "path": ["docs"]
+            },
+            "description": "Interfaz interactiva de documentación"
+          }
+        },
+        {
+          "name": "OpenAPI Schema",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/docs/openapi.json",
+              "host": ["{{baseUrl}}"],
+              "path": ["docs", "openapi.json"]
+            },
+            "description": "Schema OpenAPI en formato JSON"
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. User",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "register"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"SecurePass123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Registrar nueva cuenta de usuario"
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const cookie = pm.cookies.get('access_token');",
+                  "if (cookie) {",
+                  "  pm.collectionVariables.set('accessToken', cookie);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/user/auth",
+              "host": ["{{baseUrl}}"],
+              "path": ["user", "auth"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"SecurePass123!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Autenticar usuario — establece cookie HTTP-only access_token"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Productos",
+      "item": [
+        {
+          "name": "Get All Productos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/productos",
+              "host": ["{{baseUrl}}"],
+              "path": ["productos"],
+              "query": [
+                { "key": "tag", "value": "", "disabled": true },
+                { "key": "estatus", "value": "", "disabled": true },
+                { "key": "category", "value": "", "disabled": true }
+              ]
+            },
+            "description": "Obtener todos los productos. Filtros opcionales: tag, estatus, category"
+          }
+        },
+        {
+          "name": "Get Producto by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/productos/{{productId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["productos", "{{productId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Producto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/productos",
+              "host": ["{{baseUrl}}"],
+              "path": ["productos"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Pastel de Chocolate\",\n  \"descripcion\": \"Delicioso pastel casero\",\n  \"imagen\": \"https://example.com/image.jpg\",\n  \"estatus\": true,\n  \"sizes\": [\n    { \"size\": \"Mediana\", \"price\": 25.99 },\n    { \"size\": \"Grande\", \"price\": 35.99 }\n  ],\n  \"category\": \"pasteles\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Update Producto",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/productos/{{productId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["productos", "{{productId}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nombre actualizado\",\n  \"descripcion\": \"Descripción actualizada\",\n  \"estatus\": false,\n  \"sizes\": [\n    { \"size\": \"Grande\", \"price\": 40.99 }\n  ],\n  \"category\": \"pasteles\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Delete Producto",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/productos/{{productId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["productos", "{{productId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Pedidos",
+      "item": [
+        {
+          "name": "Get All Pedidos",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/pedidos",
+              "host": ["{{baseUrl}}"],
+              "path": ["pedidos"],
+              "query": [
+                { "key": "fechaInicio", "value": "", "disabled": true, "description": "DD-MM-YYYY" },
+                { "key": "fechaFin", "value": "", "disabled": true, "description": "DD-MM-YYYY" },
+                { "key": "estatus", "value": "", "disabled": true, "description": "TODO | DONE | CANCELED | DELETE" },
+                { "key": "cliente", "value": "", "disabled": true },
+                { "key": "pageSize", "value": "", "disabled": true },
+                { "key": "cursorFechaCreacion", "value": "", "disabled": true }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Orders Resume",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/pedidos/resume",
+              "host": ["{{baseUrl}}"],
+              "path": ["pedidos", "resume"],
+              "query": [
+                { "key": "fechaInicio", "value": "", "disabled": true, "description": "DD-MM-YYYY" },
+                { "key": "fechaFin", "value": "", "disabled": true, "description": "DD-MM-YYYY" }
+              ]
+            },
+            "description": "Resumen de pedidos con totales por estatus"
+          }
+        },
+        {
+          "name": "Get Pedido by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/pedidos/{{pedidoId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["pedidos", "{{pedidoId}}"]
+            }
+          }
+        },
+        {
+          "name": "Create Pedido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pedidos",
+              "host": ["{{baseUrl}}"],
+              "path": ["pedidos"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cliente\": \"Nombre del cliente\",\n  \"clienteLower\": \"nombre del cliente\",\n  \"fechaEntrega\": {\n    \"seconds\": 1234567890,\n    \"nanoseconds\": 0\n  },\n  \"lugarEntrega\": \"Dirección de entrega\",\n  \"productos\": [\n    {\n      \"id\": \"item_id_unique\",\n      \"cantidad\": 2,\n      \"size\": {\n        \"size\": \"Mediana\",\n        \"price\": 25.99\n      },\n      \"producto\": {\n        \"id\": \"product_id\",\n        \"name\": \"Nombre del producto\",\n        \"imagen\": \"image_url\"\n      },\n      \"caracteristicas\": \"Sin nueces\",\n      \"subtotal\": 51.98\n    }\n  ],\n  \"estatus\": \"TODO\",\n  \"estatusPago\": \"ABONADO\",\n  \"tipoPago\": \"EFECTIVO\",\n  \"abonos\": [\n    {\n      \"monto\": 250,\n      \"fecha\": { \"seconds\": 1234567890, \"nanoseconds\": 0 }\n    }\n  ],\n  \"total\": 51.98,\n  \"detalles\": \"Notas o instrucciones especiales\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Update Pedido",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/pedidos/{{pedidoId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["pedidos", "{{pedidoId}}"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"estatus\": \"DONE\",\n  \"estatusPago\": \"PAGADO\",\n  \"tipoPago\": \"TRANSFERENCIA\",\n  \"abonos\": [\n    {\n      \"monto\": 50,\n      \"fecha\": { \"seconds\": 1234567890, \"nanoseconds\": 0 }\n    }\n  ],\n  \"total\": 107.97,\n  \"detalles\": \"Detalles actualizados\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Categories",
+      "item": [
+        {
+          "name": "Get All Categories",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories"]
+            }
+          }
+        },
+        {
+          "name": "Create Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"descripcion\": \"nombre_categoria\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Solo letras minúsculas y guiones bajos"
+          }
+        },
+        {
+          "name": "Delete Category",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/categories/{{categoryId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["categories", "{{categoryId}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Files",
+      "item": [
+        {
+          "name": "Upload Image",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/files",
+              "host": ["{{baseUrl}}"],
+              "path": ["files"]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "",
+                  "description": "Archivo de imagen"
+                }
+              ]
+            },
+            "description": "Cargar imagen a AWS S3. Usar multipart/form-data"
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Public",
+      "item": [
+        {
+          "name": "Seed Database",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/seed",
+              "host": ["{{baseUrl}}"],
+              "path": ["seed"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Cargar datos iniciales — sin autenticación"
+          }
+        }
+      ]
+    }
+  ]
+}

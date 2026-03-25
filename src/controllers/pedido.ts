@@ -11,31 +11,6 @@ export class PedidoController {
         this.pedidoModel = pedidoModel;
     }
 
-    getAllPublic = async (req: Request, res: Response) => {
-        const { fechaInicio, fechaFin, estatus, cursorFechaCreacion, pageSize, cliente } = req.query;
-        const response = await this.pedidoModel.getAll({
-            fechaInicio: fechaInicio as string ?? undefined,
-            fechaFin: fechaFin as string ?? undefined,
-            estatus: estatus as EstatusPedido ?? undefined,
-            cursorFechaCreacion: cursorFechaCreacion as string ?? undefined,
-            cliente: cliente as string?? undefined,
-            pageSize: pageSize as string && !isNaN(Number(pageSize))
-                ? Number(pageSize)
-                : undefined
-        });
-        // Remove sensitive information from pedidos
-        const pedidosPublic = response.pedidos.map((pedido) => {
-            return {
-                id: pedido.id,
-                fechaEntrega: pedido.fechaEntrega,
-                cliente: pedido.cliente,
-                lugarEntrega: pedido.lugarEntrega
-            }
-        });
-        // Return the sanitized pedidos
-        return res.json(pedidosPublic);
-    }
-
     getAll = async (req: Request, res: Response) => {
         const { fechaInicio, fechaFin, estatus, cursorFechaCreacion, pageSize, cliente } = req.query;
         const response = await this.pedidoModel.getAll({

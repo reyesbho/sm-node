@@ -458,22 +458,6 @@ registry.registerPath({
 });
 
 /* -----------------------------------------------
-   Paths - Público
------------------------------------------------ */
-registry.registerPath({
-  method: 'get',
-  path: '/api/public/pedidos',
-  tags: ['Público'],
-  summary: 'Ver pedidos públicamente (sin autenticación)',
-  responses: {
-    200: {
-      description: 'Lista de pedidos públicos',
-      content: { 'application/json': { schema: z.array(PedidoSchema) } },
-    },
-  },
-});
-
-/* -----------------------------------------------
    Paths - Archivos
 ----------------------------------------------- */
 registry.registerPath({

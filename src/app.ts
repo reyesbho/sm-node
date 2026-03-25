@@ -8,7 +8,6 @@ import { ProductModel } from './models/firebase/Product.js';
 import { PedidoModel } from './models/firebase/Pedido.js';
 import { UserModel } from './models/firebase/User.js';
 import { createUserRouter } from './routes/user.js';
-import { createPedidoPublicRouter } from './routes/pedidoPublic.js';
 import { createProductRouter } from './routes/product.js';
 import { createPedidoRouter } from './routes/pedido.js';
 import { createSeedRouter } from './routes/seed.js';
@@ -60,9 +59,6 @@ export function createApp({authenticationModel, productModel, pedidoModel, userM
 
   //user
   app.use('/api/user', createUserRouter({userModel}));
-
-  // Public routes for pedidos
-  app.use('/api/public/pedidos', createPedidoPublicRouter({pedidoModel}));
 
   // Public seed
   app.use('/api/seed', createSeedRouter(pedidoModel, productModel, categoryModel));
