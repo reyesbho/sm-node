@@ -17,7 +17,7 @@ http://localhost:3000/api
 
 ### Estructura de Base URL
 Todos los endpoints están bajo la ruta `/api`:
-- Rutas públicas: `/api/user`, `/api/public/pedidos`, `/api/seed`
+- Rutas públicas: `/api/user`, `/api/seed`
 - Rutas protegidas: `/api/productos`, `/api/pedidos`, `/api/categories`, `/api/files`
 
 ## Autenticación
@@ -110,31 +110,34 @@ Registrar una nueva cuenta de usuario.
 #### 1.2 User Login
 **POST** `/user/auth`
 
-Autenticar usuario y recibir token de acceso.
+Autenticar usuario usando un Firebase ID Token obtenido previamente desde el cliente (Firebase SDK). El servidor crea una session cookie a partir del token.
 
 **Request Body:**
 ```json
 {
-  "email": "user@example.com",
-  "password": "SecurePass123!"
+  "idToken": "firebase_id_token_string"
 }
 ```
+
+**Validación:**
+- `idToken`: Campo requerido (string)
 
 **Response (200):**
 ```json
 {
-  "token": "access_token_string",
-  "uid": "user_id"
+  "message": "success auth"
 }
 ```
 
 **Cookies Establecidas:**
-- `access_token`: HTTP-only cookie
+- `access_token`: HTTP-only cookie con la sesión de Firebase (duración: 1 hora)
+  - `secure: true` en producción, `false` en desarrollo
+  - `sameSite: none` en producción, `lax` en desarrollo
 
-**Error Response (401):**
+**Error Response (400):**
 ```json
 {
-  "message": "Invalid credentials"
+  "message": "Validation error details"
 }
 ```
 
@@ -887,8 +890,7 @@ curl -X POST http://localhost:3000/api/user/auth \
   -H "Content-Type: application/json" \
   -c cookies.txt \
   -d '{
-    "email": "user@example.com",
-    "password": "SecurePass123!"
+    "idToken": "firebase_id_token_string"
   }'
 ```
 
@@ -938,5 +940,6 @@ curl -X POST http://localhost:3000/api/files \
 - Los estatus de pedido son: TODO, DONE, CANCELED, DELETE
 - Los estatus de pago son: PENDIENTE, PAGADO, ABONADO
 - Los tipos de pago son: EFECTIVO, TRANSFERENCIA
+- El campo `abonos` es un arreglo de objetos `{ monto: number, fecha: Timestamp }` para registrar pagos parciales con su fecha
 - La paginación se implementa con cursores para mejor rendimiento
 - Los campos de búsqueda en pedidos son case-insensitive (se usa `clienteLower`) 
